@@ -1,0 +1,36 @@
+version: '3'  # view README.md before running if admin db and admin user needed
+services:
+  ps_utils_dev:
+    image: ps-utils:dev
+    container_name: ps_utils_dev
+    environment:
+#      - local=true
+      - TERM=xterm
+      - ENVIRONMENT=development
+      - DB_AUTH='root'
+      - DB_PASS='yourpassword'
+      - DB_HOST='db'
+      - DB_PORT='3306'
+    ports: ['8080:80']
+    volumes:
+      - ./ps_utils:/app
+    logging:
+      options:
+        max-size: "100k"
+        max-file: "20"
+# for weave network
+    # network_mode: "bridge"
+    # dns_search:
+    #   - weave.local
+
+  db:
+    image: percona
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8090:8080

@@ -1,0 +1,6 @@
+meinheld
+gunicorn
+flask-appbuilder
+boto3
+suds-py3
+mysqlclient

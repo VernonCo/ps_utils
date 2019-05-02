@@ -1,0 +1,14 @@
+*.pyc
+app.db
+./tmp
+./build/*
+.idea
+env
+venv
+*.sublime*
+*__pycache__*
+2zappa_settings.json
+docker/build.sh
+docker/dev-build.sh
+docker-compose.yml
+app-bak
