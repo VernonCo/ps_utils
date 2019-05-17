@@ -425,7 +425,9 @@ class Utilities(BaseView):
     @expose('/updatePasswords/')
     @has_access
     def updatePasswords(self):
-        "get passwords from previous data so you don't have to migrate them manually"
+        """get passwords from previous data so you don't have to migrate them manually
+            set the fields used from your previous db in your config file to map to current db
+        """
         #set up a connection to your database that has passwords
         conn = MySQLdb.connect(
             host='{}'.format(app.config['OLD_DB_HOST']),

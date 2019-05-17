@@ -1,0 +1,43 @@
+{
+    "production": {
+        "app_function": "main",
+        "aws_region": "us-west-2",
+        "profile_name": "default",
+        "project_name": "ps-utils",
+        "runtime": "python3.6",
+        "s3_bucket": "yourcompany-ps-utils",
+        "vpc_config": {
+            "SubnetIds": [ "subnet-f4e94383" ],
+            "SecurityGroupIds": [ "sg-8e2d13eb" ]
+        },
+        "tags": {
+            "Name": "ps-utils",
+            "emailq": "lambda"
+        },
+        "domain": "ps-utils.yourdomain.com",
+        "certificate_arn": "arn:aws:acm:us-east-1:your_aws_account_no:certificate/certificate_no",
+        "timeout_seconds": 900,
+        "touch_path": "/healthcheck"
+    },
+    "dev": {
+        "app_function": "run",
+        "aws_region": "us-west-2",
+        "profile_name": "default",
+        "project_name": "ps-utils-dev",
+        "runtime": "python3.6",
+        "s3_bucket": "yourcompany-ps-utils-dev",
+        "vpc_config": {
+            "SubnetIds": [ "subnet-f4e94383", "subnet-cf21e896","subnet-6c24b109"],
+            "SecurityGroupIds": [ "sg-8e2d13eb","sg-9f9b99fa" ]
+        },
+        "tags": {
+            "Name": "ps-utils-dev",
+            "emailq": "lambda"
+        },
+        "domain": "ps-utils-dev.yourdomain.com",
+        "certificate_arn": "arn:aws:acm:us-east-1:your_aws_account_no:certificate/certificate_no",
+        "log_level": "INFO",
+        "timeout_seconds": 900,
+        "touch_path": "/healthcheck"
+    }
+}

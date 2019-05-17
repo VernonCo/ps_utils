@@ -20,19 +20,18 @@ DB_PASS = os.getenv('DB_PASS', 'password')
 DB_HOST = os.getenv('DB_HOST', '127.0.0.1')
 DB_PORT = os.getenv('DB_PORT', '3306')
 DATABASE = os.getenv('DATABASE', 'ps_utils')
-
 # The SQLAlchemy connection string.
 # SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
 SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}:{}/{}'.format(DB_AUTH, DB_PASS, DB_HOST, DB_PORT, DATABASE)
 # SQLALCHEMY_DATABASE_URI = 'postgresql://root:password@localhost/myapp'
 
 # used for transfering password from previous db.
-# Change river and connection string as needed in view.py updatePasswords
+# Change driver and connection string as needed in view.py updatePasswords
 # pass these through the environment variables or set default
-OLD_DB_AUTH = os.getenv('DB_AUTH', 'admin')
-OLD_DB_PASS = os.getenv('DB_PASS', 'password')
-OLD_DB_HOST = os.getenv('DB_HOST', '127.0.0.1')
-OLD_DB_PORT = os.getenv('DB_PORT', '3306')
+OLD_DB_AUTH = os.getenv('OLD_DB_AUTH', 'admin')
+OLD_DB_PASS = os.getenv('OLD_DB_PASS', 'password')
+OLD_DB_HOST = os.getenv('OLD_DB_HOST', '127.0.0.1')
+OLD_DB_PORT = os.getenv('OLD_DB_PORT', '3306')
 OLD_DATABASE = os.getenv('OLD_DATABASE', 'invreq')
 ERP_ID = os.getenv('ERP_ID', 'entity')  # field name
 PS_USER = os.getenv('PS_USER', 'userName')  # field name

@@ -83,7 +83,12 @@ DB_AUTH=youruser
 DB_PASS=yourpassword
 DB_HOST=yourhost
 DB_PORT=yourhostport
-CONFIG_FILE='config'   # or setup config-local
 SERVER_PATH=/path to/ps_utils
+CONFIG_FILE='config'   # or setup config-4passwords to move existing credentials
+#for passwords move
+OLD_DB_AUTH=youruser
+OLD_DB_PASS=yourpassword
+OLD_DB_HOST=yourhost
+OLD_DB_PORT=yourhostport
 
 ```
