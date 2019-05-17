@@ -1,7 +1,8 @@
 # PS Utilities
 - Can update a db with a list of companies and their working endpoints (/update).
 - Returns json for PS Service POST requests
-- can use a plugin to update your ERP
+- can use a plugin to update your ERP order status
+- has forms for manual use
 ## to setup the database to test or run on production, it needs to be accessible to the local run (see # create db and admin user) or follow steps for docker-compose
 
 ## clone repository
@@ -92,3 +93,8 @@ OLD_DB_HOST=yourhost
 OLD_DB_PORT=yourhostport
 
 ```
+
+## requests conditional sequence
+- 1st call using local wsdl and inject location
+- else on error: call using remote wsdl
+- else on error: call using remote wsdl and inject location

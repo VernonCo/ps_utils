@@ -168,7 +168,7 @@ class Inventory(SimpleFormView):
         """
         data = 'Unable to get Response'
         c = db.session.query(Company).get(int(request.form['field1']))
-        # set schema doctor to fix missing schemas
+        # get the local wsdl
         url = getDoctor('INV', c.inventory_version, url=True)
         kw = dict(
                 password=c.password,
