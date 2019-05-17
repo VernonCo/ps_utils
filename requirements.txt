@@ -1,6 +1,8 @@
-meinheld
-gunicorn
+# meinheld
+# gunicorn
+uWSGI
 flask-appbuilder
 boto3
 suds-py3
 mysqlclient
+# zappa

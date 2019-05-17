@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<wsdl:definitions
+     name="OrderStatus_v1_0_0"
+     targetNamespace="http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    > 
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<xsd:import namespace="http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/" schemaLocation="GetOrderStatusDetailsRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<xsd:import namespace="http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/" schemaLocation="GetOrderStatusDetailsResponse.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<xsd:import namespace="http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/" schemaLocation="GetOrderStatusTypesRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<xsd:import namespace="http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/" schemaLocation="GetOrderStatusTypesResponse.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="GetOrderStatusDetailsRequestMessage">
+		<wsdl:part name="GetOrderStatusDetailsRequest" element="tns:GetOrderStatusDetailsRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetOrderStatusDetailsResponseMessage">
+		<wsdl:part name="GetOrderStatusDetailsResponse" element="tns:GetOrderStatusDetailsResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetOrderStatusTypesRequestMessage">
+		<wsdl:part name="GetOrderStatusTypesRequest" element="tns:GetOrderStatusTypesRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetOrderStatusTypesResponseMessage">
+		<wsdl:part name="GetOrderStatusTypesResponse" element="tns:GetOrderStatusTypesResponse"/>
+	</wsdl:message>	
+	<wsdl:portType name="OrderStatusService">
+		<wsdl:operation name="getOrderStatusDetails">
+			<wsdl:input message="tns:GetOrderStatusDetailsRequestMessage"/>
+			<wsdl:output message="tns:GetOrderStatusDetailsResponseMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="getOrderStatusTypes">
+			<wsdl:input message="tns:GetOrderStatusTypesRequestMessage"/>
+			<wsdl:output message="tns:GetOrderStatusTypesResponseMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="OrderStatusServiceBinding" type="tns:OrderStatusService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getOrderStatusDetails">
+				<soap:operation style="document" soapAction="getOrderStatusDetails"/>
+				<wsdl:input>
+						<soap:body use="literal"/>
+				</wsdl:input>
+				<wsdl:output>
+						<soap:body use="literal"/>
+				</wsdl:output>			
+		</wsdl:operation>
+		<wsdl:operation name="getOrderStatusTypes">
+				<soap:operation style="document" soapAction="getOrderStatusTypes"/>
+				<wsdl:input>
+						<soap:body use="literal"/>
+				</wsdl:input>
+				<wsdl:output>
+						<soap:body use="literal"/>
+				</wsdl:output>			
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="OrderStatusService">
+		<wsdl:port name="OrderStatusServiceBinding" binding="tns:OrderStatusServiceBinding">
+				<soap:address location="http://localhost:58607/CustomerOrderStatusService.svc"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

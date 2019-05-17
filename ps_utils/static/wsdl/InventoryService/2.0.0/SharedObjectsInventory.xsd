@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:ns1="http://www.promostandards.org/WSDL/Inventory/2.0.0/"
+            xmlns:ns2="http://www.promostandards.org/WSDL/Inventory/2.0.0/SharedObjects/"
+            xmlns:ns3="http://www.codesynthesis.com/xmlns/xsstl" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.promostandards.org/WSDL/Inventory/2.0.0/SharedObjects/"
+            elementFormDefault="qualified">
+    <xsd:import namespace="http://www.codesynthesis.com/xmlns/xsstl" schemaLocation="iso3166-country-code.xsd"/>
+    <xsd:element name="attributeSelection">
+        <xsd:annotation>
+            <xsd:documentation>
+                Description of the generic selection criteria
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="64"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="replenishmentLeadTime">
+        <xsd:annotation>
+            <xsd:documentation>Time to replenish buy to order or made to order
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:int">
+                <xsd:totalDigits value="3"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="buyToOrder">
+        <xsd:annotation>
+            <xsd:documentation>
+                Is it a made to order(unlimited inventory) item?
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:boolean"/>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="ServiceMessageArray">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:ServiceMessage" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ServiceMessage">
+        <xsd:annotation>
+            <xsd:documentation>Response for any message requiring notification to requestor</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="code" type="xsd:int">
+                    <xsd:annotation>
+                        <xsd:documentation>Response for any message requiring notification to requestor
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="description">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Response for any message requiring notification to requestor
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                            <xsd:maxLength value="256"/>
+                            <xsd:minLength value="1"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="severity">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The severity of the message. Values are enumerated: {Error, Information, Warning}
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="ns2:SeverityType">
+                            <xsd:maxLength value="64"/>
+                            <xsd:minLength value="1"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Filter">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:partIdArray" minOccurs="0"/>
+                <xsd:element ref="ns2:LabelSizeArray" minOccurs="0"/>
+                <xsd:element ref="ns2:PartColorArray" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="FutureAvailabilityArray">
+        <xsd:annotation>
+            <xsd:documentation>
+                An array of future incoming stock
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:FutureAvailability" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="availableOn" type="xsd:dateTime">
+        <xsd:annotation>
+            <xsd:documentation>
+                A date timestamp in UTC specifying the valid timestamp depicting when the inventory will be available
+                for allocation to sales orders.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="FutureAvailability">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:Quantity"/>
+                <xsd:element ref="ns2:availableOn"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="id">
+        <xsd:annotation>
+            <xsd:documentation>
+                The customer Id or any other agreed upon Id.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="64"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="Inventory">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:productId"/>
+                <xsd:element ref="ns2:PartInventoryArray" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="LabelSizeArray">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of sizes to be used when filtering.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:labelSize" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="labelSize">
+        <xsd:annotation>
+            <xsd:documentation>
+                The apparel items tagged size. e.g. XSmall, Small, etc.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="ns2:labelSizeEnum">
+                <xsd:maxLength value="6"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="mainPart">
+        <xsd:annotation>
+            <xsd:documentation>
+                Is it a main part or accessory?
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:boolean"/>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="manufacturedItem">
+        <xsd:annotation>
+            <xsd:documentation>
+                Is it a manufactured item?
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:boolean"/>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="PartColorArray">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of colors to be used when filtering.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:partColor" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Part Color
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="partColor">
+        <xsd:annotation>
+            <xsd:documentation>
+                Description of the color of the part
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="64"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="partDescription">
+        <xsd:annotation>
+            <xsd:documentation>
+                Part’s description
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="256"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="partId">
+        <xsd:annotation>
+            <xsd:documentation>
+                The part ID
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="64"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="PartInventoryArray">
+        <xsd:annotation>
+            <xsd:documentation>
+                An array of inventory levels grouped by variation.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="PartInventory" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="ns2:partId"/>
+                            <xsd:element ref="ns2:mainPart">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        A boolean value indicating if this is a main part of the product. In a tumbler
+                                        with an optional lid configuration, the parts associated with the tumbler would
+                                        be set to TRUE. The parts associated with the Lid would be set to false.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element ref="ns2:partColor" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Description of the color of the part
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element ref="ns2:labelSize" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        The apparel items tagged size. e.g. XSmall, Small, etc.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element ref="ns2:partDescription" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>Description of the part
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element ref="ns2:quantityAvailable" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>An integer which shows the sum of inventory of all warehouses of
+                                        the part
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element ref="ns2:manufacturedItem">
+                                <xsd:annotation>
+                                    <xsd:documentation>Indicates that the supplier produces this part according to
+                                        demand. The supplier may keep a limited amount of inventory or inventory may be
+                                        0.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element ref="ns2:buyToOrder">
+                                <xsd:annotation>
+                                    <xsd:documentation>Indicates that the supplier purchases this product to order.
+                                        The supplier may keep a limited amount of inventory, show available inventory to buy,
+                                        or it might be 0.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element ref="ns2:replenishmentLeadTime" minOccurs="0">
+                            </xsd:element>
+                            <xsd:element ref="ns2:attributeSelection" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>A string describing the attribute of the product other than size
+                                        and color
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element ref="ns2:InventoryLocationArray" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>An array of InventoryLocation objects
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element ref="ns2:lastModified" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        A date timestamp in UTC specifying the last time inventory was modified.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="password">
+        <xsd:annotation>
+            <xsd:documentation>
+                The password associated with the Id
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="64"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="productId">
+        <xsd:annotation>
+            <xsd:documentation>
+                The product ID
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="64"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="quantityAvailable">
+        <xsd:annotation>
+            <xsd:documentation>
+                The quantity available
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:Quantity"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Quantity">
+        <xsd:annotation>
+            <xsd:documentation>
+                The quantity object that contains the value and unit of measure
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="uom">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The unit of measure; values are enumerated.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="ns2:QuantityUomType">
+                            <xsd:maxLength value="2"/>
+                            <xsd:minLength value="1"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="value" type="xsd:decimal">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The quantity value
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="selection">
+        <xsd:annotation>
+            <xsd:documentation>
+                Selection
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="256"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="partIdArray">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of SKUs to be used when filtering.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:partId" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="lastModified" type="xsd:dateTime">
+        <xsd:annotation>
+            <xsd:documentation>
+                The last time inventory was modified
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="InventoryLocationArray">
+        <xsd:annotation>
+            <xsd:documentation>
+                An array of inventory locations
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:InventoryLocation" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="inventoryLocationId">
+        <xsd:annotation>
+            <xsd:documentation>
+                The inventory location ID
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="64"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="inventoryLocationName">
+        <xsd:annotation>
+            <xsd:documentation>
+                Inventory location name
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="64"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="inventoryLocationQuantity">
+        <xsd:annotation>
+            <xsd:documentation>
+                The quantity available
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:Quantity"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="InventoryLocation">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:inventoryLocationId">
+                    <xsd:annotation>
+                        <xsd:documentation>The inventory location ID</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element ref="ns2:inventoryLocationName" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Inventory location name</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="postalCode" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>The postal code</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:maxLength value="10"/>
+                            <xsd:minLength value="1"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="country" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>The country</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="ns3:ISO3166CountyCode">
+                            <xsd:maxLength value="2"/>
+                            <xsd:minLength value="1"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element ref="ns2:inventoryLocationQuantity">
+                    <xsd:annotation>
+                        <xsd:documentation>The quantity available in a workcenter</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element ref="ns2:FutureAvailabilityArray" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>An array of future incoming stock</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="wsVersion">
+        <xsd:annotation>
+            <xsd:documentation>
+                The Standard Version of the Web Service being referenced {2.0.0}
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="ns2:WsVersionType">
+                <xsd:maxLength value="64"/>
+                <xsd:minLength value="1"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:simpleType name="labelSizeEnum">
+        <xsd:annotation>
+            <xsd:documentation/>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="2XL"/>
+            <xsd:enumeration value="2XS"/>
+            <xsd:enumeration value="3XL"/>
+            <xsd:enumeration value="3XS"/>
+            <xsd:enumeration value="4XL"/>
+            <xsd:enumeration value="4XS"/>
+            <xsd:enumeration value="5XL"/>
+            <xsd:enumeration value="5XS"/>
+            <xsd:enumeration value="6XL"/>
+            <xsd:enumeration value="6XS"/>
+            <xsd:enumeration value="CUSTOM"/>
+            <xsd:enumeration value="L"/>
+            <xsd:enumeration value="M"/>
+            <xsd:enumeration value="OSFA"/>
+            <xsd:enumeration value="S"/>
+            <xsd:enumeration value="XL"/>
+            <xsd:enumeration value="XS"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="QuantityUomType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The type of Quantity UOM
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="BX"/>
+            <xsd:enumeration value="CA"/>
+            <xsd:enumeration value="DZ"/>
+            <xsd:enumeration value="EA"/>
+            <xsd:enumeration value="KT"/>
+            <xsd:enumeration value="PK"/>
+            <xsd:enumeration value="PR"/>
+            <xsd:enumeration value="RL"/>
+            <xsd:enumeration value="SL"/>
+            <xsd:enumeration value="ST"/>
+            <xsd:enumeration value="TH"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="SeverityType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The severity type
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Error"/>
+            <xsd:enumeration value="Information"/>
+            <xsd:enumeration value="Warning"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="WsVersionType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The severity type
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="2.0.0"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

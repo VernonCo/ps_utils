@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/Inventory/2.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/Inventory/2.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/Inventory/2.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/Inventory/2.0.0/SharedObjects/" schemaLocation="SharedObjectsInventory.xsd"/>
+	<xsd:element name="GetFilterValuesRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:wsVersion"/>
+				<xsd:element ref="ns2:id"/>
+				<xsd:element ref="ns2:password" minOccurs="0"/>
+				<xsd:element ref="ns2:productId"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

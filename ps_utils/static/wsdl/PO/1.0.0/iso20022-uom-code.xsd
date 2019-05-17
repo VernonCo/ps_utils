@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:stl="http://www.iso20022.org/" targetNamespace="http://www.iso20022.org/">
+
+	<xsd:simpleType name="ISO20022UomCode">
+		<xsd:annotation>
+			<xsd:documentation>
+			https://www.iso20022.org/standardsrepository/public/wqt/Description/mx/dico/codesets/_Y4XF0tp-Ed-ak6NoX_4Aeg_385163498
+			The type of Dimension UOM
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="PIEC"/>
+			<xsd:enumeration value="TONS"/>
+			<xsd:enumeration value="FOOT"/>
+			<xsd:enumeration value="GBGA"/>
+			<xsd:enumeration value="USGA"/>
+			<xsd:enumeration value="GRAM"/>
+			<xsd:enumeration value="INCH"/>
+			<xsd:enumeration value="KILO"/>
+			<xsd:enumeration value="PUND"/>
+			<xsd:enumeration value="METR"/>
+			<xsd:enumeration value="CMET"/>
+			<xsd:enumeration value="MMET"/>
+			<xsd:enumeration value="LITR"/>
+			<xsd:enumeration value="CELI"/>
+			<xsd:enumeration value="MILI"/>
+			<xsd:enumeration value="GBOU"/>
+			<xsd:enumeration value="USOU"/>
+			<xsd:enumeration value="GBQA"/>
+			<xsd:enumeration value="USQA"/>
+			<xsd:enumeration value="GBPI"/>
+			<xsd:enumeration value="USPI"/>
+			<xsd:enumeration value="MILE"/>
+			<xsd:enumeration value="KMET"/>
+			<xsd:enumeration value="YARD"/>
+			<xsd:enumeration value="SQKI"/>
+			<xsd:enumeration value="HECT"/>
+			<xsd:enumeration value="ARES"/>
+			<xsd:enumeration value="SMET"/>
+			<xsd:enumeration value="SCMT"/>
+			<xsd:enumeration value="SMIL"/>
+			<xsd:enumeration value="SQMI"/>
+			<xsd:enumeration value="SQYA"/>
+			<xsd:enumeration value="SQFO"/>
+			<xsd:enumeration value="SQIN"/>
+			<xsd:enumeration value="ACRE"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

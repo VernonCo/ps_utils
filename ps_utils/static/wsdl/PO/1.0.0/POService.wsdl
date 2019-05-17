@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.promostandards.org/WSDL/PO/1.0.0/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns="http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/" xmlns:ns1="http://www.codesynthesis.com/xmlns/xsstl" xmlns:ns2="http://www.isotc211.org/iso4217/" xmlns:ns3="http://www.iso20022.org/" name="PO_v1_0_0" targetNamespace="http://www.promostandards.org/WSDL/PO/1.0.0/">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/PO/1.0.0/" schemaLocation="GetSupportedOrderTypesRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/PO/1.0.0/" schemaLocation="GetSupportedOrderTypesResponse.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/PO/1.0.0/" schemaLocation="SendPORequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/PO/1.0.0/" schemaLocation="SendPOResponse.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="GetSupportedOrderTypesRequestMessage">
+		<wsdl:part name="GetSupportedOrderTypesRequest" element="tns:GetSupportedOrderTypesRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetSupportedOrderTypesResponseMessage">
+		<wsdl:part name="GetSupportedOrderTypesResponse" element="tns:GetSupportedOrderTypesResponse"/>
+	</wsdl:message>
+	<wsdl:message name="SendPORequestMessage">
+		<wsdl:part name="SendPORequest" element="tns:SendPORequest"/>
+	</wsdl:message>
+	<wsdl:message name="SendPOResponseMessage">
+		<wsdl:part name="SendPOResponse" element="tns:SendPOResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="POService">
+		<wsdl:operation name="getSupportedOrderTypes">
+			<wsdl:input message="tns:GetSupportedOrderTypesRequestMessage"/>
+			<wsdl:output message="tns:GetSupportedOrderTypesResponseMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="sendPO">
+			<wsdl:input message="tns:SendPORequestMessage"/>
+			<wsdl:output message="tns:SendPOResponseMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="POServiceBinding" type="tns:POService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getSupportedOrderTypes">
+			<soap:operation soapAction="getSupportedOrderTypes" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="sendPO">
+			<soap:operation soapAction="sendPO" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="POService">
+		<wsdl:port name="POServiceBinding" binding="tns:POServiceBinding">
+			<soap:address location="[Endpoint URL]"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

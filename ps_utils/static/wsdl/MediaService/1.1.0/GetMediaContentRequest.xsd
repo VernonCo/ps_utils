@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2016 (x64) (http://www.altova.com) by Network Admin (Leedsworld Inc.) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/MediaService/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" schemaLocation="SharedMediaObjects.xsd"/>
+	<xsd:element name="GetMediaContentRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:wsVersion"/>
+				<xsd:element ref="ns2:id"/>
+				<xsd:element ref="ns2:password" minOccurs="0"/>
+				<xsd:element ref="ns2:cultureName" minOccurs="0"/>
+				<xsd:element ref="ns2:mediaType"/>
+				<xsd:element ref="ns2:productId"/>
+				<xsd:element ref="ns2:partId" minOccurs="0"/>
+				<xsd:element name="classType" type="xsd:int" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The part ID associated to the product ID.
+            </xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

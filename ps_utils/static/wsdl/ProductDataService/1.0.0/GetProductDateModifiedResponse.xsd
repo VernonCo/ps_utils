@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" xmlns:ns3="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/SharedObjects/" schemaLocation="SharedProductObjects.xsd"/>
+	<xsd:element name="ProductDateModified">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:productId"/>
+				<xsd:element ref="ns3:partId" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="GetProductDateModifiedResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ProductDateModifiedArray" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:ProductDateModified" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns3:ErrorMessage" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

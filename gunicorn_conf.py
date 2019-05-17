@@ -2,7 +2,7 @@ import json
 import multiprocessing
 import os
 
-workers_per_core_str = os.getenv("WORKERS_PER_CORE", "2")
+workers_per_core_str = os.getenv("WORKERS_PER_CORE", "4")
 web_concurrency_str = os.getenv("WEB_CONCURRENCY", None)
 host = os.getenv("HOST", "0.0.0.0")
 port = os.getenv("PORT", "80")
@@ -13,8 +13,8 @@ if bind_env:
 else:
     use_bind = f"{host}:{port}"
 
-cores = multiprocessing.cpu_count()
-workers_per_core = float(workers_per_core_str)
+cores = 1  #  multiprocessing.cpu_count()
+workers_per_core = 1   #float(workers_per_core_str)
 default_web_concurrency = workers_per_core * cores
 if web_concurrency_str:
     web_concurrency = int(web_concurrency_str)

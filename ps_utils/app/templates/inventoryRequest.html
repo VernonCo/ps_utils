@@ -1,0 +1,30 @@
+{% extends "appbuilder/base.html" %}
+{% block content %}
+    <h1>prouctID {{data['productID']}}</h1>
+    {% if data['errorMessage'] %}
+    {{data['errorMessage']}}
+    {% else %}
+        <table class="table-bordered table-striped table-responsive" width="100%">
+            <thead>
+                <tr>
+                    {% for key in data['ProductVariationInventoryArray']['ProductVariationInventory'][0].keys() %}
+                    <th style="text-align: center;">&nbsp;{{key}}&nbsp;</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data['ProductVariationInventoryArray']['ProductVariationInventory'] %}
+                    <tr class="{{ loop.cycle('odd', 'even') }}">
+                        <td>{{row.partID}}&nbsp;</td>
+                        <td>&nbsp;{{row.partDescription}}&nbsp;</td>
+                        <td>&nbsp;{{row.partBrand}}&nbsp;</td>
+                        <td style="text-align: right;">{{row.quantityAvailable}}&nbsp;</td>
+                        <td>&nbsp;{{row.attributeColor}}&nbsp;</td>
+                        <td style="text-align: center;">{{row.attributeSize}}</td>
+                        <td>&nbsp;{{row.validTimestamp}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

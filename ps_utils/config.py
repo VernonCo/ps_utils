@@ -12,6 +12,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # Your App secret key
 SECRET_KEY = "\2\1thisismyscretkey\1\2\e\y\y\h"
 
+PRODUCTION = os.getenv('ENVIRONMENT', False)
+
 DB_AUTH = os.getenv('DB_AUTH', 'admin')
 DB_PASS = os.getenv('DB_PASS', 'password')
 DB_HOST = os.getenv('DB_HOST', 'db')
@@ -101,10 +103,10 @@ IMG_UPLOAD_URL = "/static/uploads/"
 # these are located on static/appbuilder/css/themes
 # you can create your own and easily use them placing them on the same dir structure to override
 # APP_THEME = "bootstrap-theme.css"  # default bootstrap
-# APP_THEME = "cerulean.css"
+APP_THEME = "cerulean.css"
 # APP_THEME = "amelia.css"
 # APP_THEME = "cosmo.css"
-APP_THEME = "cyborg.css"
+# APP_THEME = "cyborg.css"
 # APP_THEME = "flatly.css"
 # APP_THEME = "journal.css"
 # APP_THEME = "readable.css"

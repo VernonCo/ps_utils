@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2016 rel. 2 (http://www.altova.com) by Hit Promotional Products (Hit Promotional Products) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/" xmlns:ns3="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/SharedObjects/" schemaLocation="SharedObjectsPricingAndConfiguration.xsd"/>
+	<xsd:element name="AvailableLocation">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:locationId"/>
+				<xsd:element ref="ns3:locationName"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="GetAvailableLocationsResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="AvailableLocationArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+                            An Array of location names
+                        </xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:AvailableLocation" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns3:ErrorMessage" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -1,18 +1,28 @@
-FROM python:3.7
+FROM python:3.7-slim
 
 LABEL maintainer="Stuart Zurcher <stuartz@vernoncompany.com>"
 
 COPY ./requirements.txt /
-RUN pip install --upgrade pip \
-    && pip install -r /requirements.txt
+RUN DEBIAN_FRONTEND="noninteractive" \
+    && apt update && apt upgrade -y \
+    && apt install -y nginx python3-dev  build-essential mysql-client default-libmysqlclient-dev \
+    nano wget locate \
+    # openssl ca-certificates ntpdate \
+    && pip install --upgrade pip \
+    && pip install -r /requirements.txt \
+    && pip install --upgrade certifi \
+    && apt autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    # remove python certs to use openssl
+    # && rm /usr/local/lib/python3.7/site-packages/pip/_vendor/certifi/cacert.pem \
+    # && rm /usr/local/lib/python3.7/site-packages/certifi/cacert.pem
 
 COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
-COPY ./start.sh /start.sh
-RUN chmod +x /start.sh
+COPY ./start.sh  ./prestart.sh /
+RUN chmod +x /entrypoint.sh && chmod +x /start.sh
 
-COPY ./gunicorn_conf.py /gunicorn_conf.py
+# COPY ./gunicorn_conf.py /gunicorn_conf.py
+COPY nginx.conf /etc/nginx
 
 COPY ./ps_utils /app
 

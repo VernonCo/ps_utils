@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/Invoice/1.0.0/"
+            xmlns:ns2="http://www.promostandards.org/WSDL/Invoice/1.0.0/"
+            xmlns:ns3="http://www.promostandards.org/WSDL/Invoice/1.0.0/SharedObjects/"
+            targetNamespace="http://www.promostandards.org/WSDL/Invoice/1.0.0/" elementFormDefault="qualified">
+    <xsd:import namespace="http://www.promostandards.org/WSDL/Invoice/1.0.0/SharedObjects/"
+                schemaLocation="SharedObjectsInvoice.xsd"/>
+    <xsd:element name="Invoice">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns3:invoiceNumber"/>
+                <xsd:element ref="ns3:invoiceType"/>
+                <xsd:element ref="ns3:invoiceDate"/>
+                <xsd:element ref="ns3:purchaseOrderNumber" minOccurs="0"/>
+                <xsd:element name="BillTo">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="ns3:AccountInfo"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="SoldTo">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="ns3:AccountInfo"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element ref="ns3:terms" minOccurs="0"/>
+                <xsd:element ref="ns3:currency" minOccurs="0"/>
+                <xsd:element ref="ns3:fob" minOccurs="0"/>
+                <xsd:element ref="ns3:salesAmount"/>
+                <xsd:element ref="ns3:totalAmount"/>
+                <xsd:element ref="ns3:shippingAndHandlingAmount"/>
+                <xsd:element ref="ns3:advancePaymentAmount"/>
+                <xsd:element ref="ns3:invoiceAmount"/>
+                <xsd:element name="InvoiceLineItemsArray">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            An Array of invoice lines
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="ns3:InvoiceLineItem" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="SalesOrderNumberArray">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            An Array of sales orders
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="ns3:salesOrderNumber" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="GetInvoicesResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="InvoiceArray" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            An Array of invoices
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="ns1:Invoice" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element ref="ns3:ErrorMessage" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

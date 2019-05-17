@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/MediaService/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" schemaLocation="SharedMediaObjects.xsd"/>
+	<xsd:element name="GetMediaDateModifiedRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:wsVersion"/>
+				<xsd:element ref="ns2:id"/>
+				<xsd:element ref="ns2:password" minOccurs="0"/>
+				<xsd:element ref="ns2:cultureName" minOccurs="0"/>
+				<xsd:element ref="ns2:changeTimeStamp"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

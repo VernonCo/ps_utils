@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.promostandards.org/WSDL/MediaService/1.0.0/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" name="Media_v1_0_0" targetNamespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/" schemaLocation="GetMediaContentRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/" schemaLocation="GetMediaContentResponse.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/" schemaLocation="GetMediaDateModifiedRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/" schemaLocation="GetMediaDateModifiedResponse.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="GetMediaContentResponseMessage">
+		<wsdl:part name="GetMediaContentResponse" element="tns:GetMediaContentResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetMediaContentRequestMessage">
+		<wsdl:part name="GetMediaContentRequest" element="tns:GetMediaContentRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetMediaDateModifiedRequestMessage">
+		<wsdl:part name="parameter" element="tns:GetMediaDateModifiedRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetMediaDateModifiedResponseMessage">
+		<wsdl:part name="parameter" element="tns:GetMediaDateModifiedResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="MediaContentService">
+		<wsdl:operation name="getMediaContent">
+			<wsdl:input message="tns:GetMediaContentRequestMessage"/>
+			<wsdl:output message="tns:GetMediaContentResponseMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="getMediaDateModified">
+			<wsdl:input message="tns:GetMediaDateModifiedRequestMessage"/>
+			<wsdl:output message="tns:GetMediaDateModifiedResponseMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="MediaContentServiceBinding" type="tns:MediaContentService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getMediaContent">
+			<soap:operation soapAction="getMediaContent" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getMediaDateModified">
+			<soap:operation soapAction="urn:getMediaDateModified" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="MediaContentService">
+		<wsdl:port name="MediaServiceBinding" binding="tns:MediaContentServiceBinding">
+			<soap:address location="[EndPoint URL]"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

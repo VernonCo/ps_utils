@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/SharedObjects/" xmlns:ns1="http://www.codesynthesis.com/xmlns/xsstl" name="ProductData_v1_0_0" targetNamespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" schemaLocation="GetProductRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" schemaLocation="GetProductResponse.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" schemaLocation="GetProductDateModifiedRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" schemaLocation="GetProductDateModifiedResponse.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" schemaLocation="GetProductCloseOutRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" schemaLocation="GetProductCloseOutResponse.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" schemaLocation="GetProductSellableRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" schemaLocation="GetProductSellableResponse.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="GetProductRequestMessage">
+		<wsdl:part name="GetProductRequest" element="tns:GetProductRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetProductResponseMessage">
+		<wsdl:part name="GetProductResponse" element="tns:GetProductResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetProductDateModifiedRequestMessage">
+		<wsdl:part name="GetProductDateModifiedRequest" element="tns:GetProductDateModifiedRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetProductDateModifiedResponseMessage">
+		<wsdl:part name="GetProductDateModifiedResponse" element="tns:GetProductDateModifiedResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetProductCloseOutRequestMessage">
+		<wsdl:part name="GetProductCloseOutRequest" element="tns:GetProductCloseOutRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetProductCloseOutResponseMessage">
+		<wsdl:part name="GetProductCloseOutResponse" element="tns:GetProductCloseOutResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetProductSellableRequestMessage">
+		<wsdl:part name="GetProductSellableRequest" element="tns:GetProductSellableRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetProductSellableResponseMessage">
+		<wsdl:part name="GetProductSellableResponse" element="tns:GetProductSellableResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="ProductDataService">
+		<wsdl:operation name="getProduct">
+			<wsdl:input message="tns:GetProductRequestMessage"/>
+			<wsdl:output message="tns:GetProductResponseMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="getProductDateModified">
+			<wsdl:input message="tns:GetProductDateModifiedRequestMessage"/>
+			<wsdl:output message="tns:GetProductDateModifiedResponseMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="getProductCloseOut">
+			<wsdl:input message="tns:GetProductCloseOutRequestMessage"/>
+			<wsdl:output message="tns:GetProductCloseOutResponseMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="getProductSellable">
+			<wsdl:input message="tns:GetProductSellableRequestMessage"/>
+			<wsdl:output message="tns:GetProductSellableResponseMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ProductDataServiceBinding" type="tns:ProductDataService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getProduct">
+			<soap:operation soapAction="getProduct" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getProductSellable">
+			<soap:operation soapAction="getProductSellable" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getProductCloseOut">
+			<soap:operation soapAction="getProductCloseOut" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getProductDateModified">
+			<soap:operation soapAction="getProductDateModified" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ProductDataService">
+		<wsdl:port name="ProductDataServiceBinding" binding="tns:ProductDataServiceBinding">
+			<soap:address location="http://localhost/ProductDataService.svc"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

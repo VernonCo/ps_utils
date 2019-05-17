@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<wsdl:definitions
+     name="Inventory_v1_2_1"
+     targetNamespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.promostandards.org/WSDL/InventoryService/1.0.0/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    >   
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/" schemaLocation="GetFilterValuesRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/" schemaLocation="GetFilterValuesReply.xsd"/>
+        </xsd:schema> 
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/" schemaLocation="InventoryRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/" schemaLocation="InventoryReply.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="GetFilterValuesRequestMessage">
+      <wsdl:part name="GetFilterValuesRequest" element="tns:GetFilterValuesRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetFilterValuesResponseMessage">
+      <wsdl:part name="GetFilterValuesReply" element="tns:GetFilterValuesReply"/>
+    </wsdl:message>
+    <wsdl:message name="getInventoryLevelsRequest">
+        <wsdl:part name="Request" element="tns:Request"/>
+    </wsdl:message>
+    <wsdl:message name="getInventoryLevelsResponse">
+        <wsdl:part name="Reply" element="tns:Reply"/>
+    </wsdl:message>	
+    <wsdl:portType name="InventoryService">
+        <wsdl:operation name="getFilterValues">
+          <wsdl:input message="tns:GetFilterValuesRequestMessage"/>
+          <wsdl:output message="tns:GetFilterValuesResponseMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="getInventoryLevels">
+            <wsdl:input message="tns:getInventoryLevelsRequest"/>
+            <wsdl:output message="tns:getInventoryLevelsResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="InventoryServiceBinding" type="tns:InventoryService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="getFilterValues">
+            <soap:operation style="document" soapAction="getFilterValues"/>
+              <wsdl:input>
+                  <soap:body use="literal"/>
+              </wsdl:input>
+              <wsdl:output>
+                  <soap:body use="literal"/>
+              </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getInventoryLevels">
+            <soap:operation style="document" soapAction="getInventoryLevels"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>			
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="InventoryService">
+        <wsdl:port name="InventoryServiceBinding" binding="tns:InventoryServiceBinding">
+            <soap:address location="http://localhost:50710/SampleInventoryService.svc"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

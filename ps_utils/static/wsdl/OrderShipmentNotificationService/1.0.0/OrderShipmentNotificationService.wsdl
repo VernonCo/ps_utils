@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" name="OrderShipmentNotification_v1_0_0" targetNamespace="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/" schemaLocation="GetOrderShipmentNotificationRequest.xsd"/>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/" schemaLocation="GetOrderShipmentNotificationResponse.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="GetOrderShipmentNotificationRequestMessage">
+		<wsdl:part name="GetOrderShipmentNotificationRequest" element="tns:GetOrderShipmentNotificationRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetOrderShipmentNotificationResponseMessage">
+		<wsdl:part name="GetOrderShipmentNotificationResponse" element="tns:GetOrderShipmentNotificationResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="OrderShipmentNotificationService">
+		<wsdl:operation name="getOrderShipmentNotification">
+			<wsdl:input message="tns:GetOrderShipmentNotificationRequestMessage"/>
+			<wsdl:output message="tns:GetOrderShipmentNotificationResponseMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="OrderShipmentNotificationServiceBinding" type="tns:OrderShipmentNotificationService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getOrderShipmentNotification">
+			<soap:operation soapAction="getOrderShipmentNotification" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="OrderShipmentNotificationService">
+		<wsdl:port name="OrderShipmentNotificationServiceBinding" binding="tns:OrderShipmentNotificationServiceBinding">
+			<soap:address location="http://localhost/OrderShipmentNotificationService.svc"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

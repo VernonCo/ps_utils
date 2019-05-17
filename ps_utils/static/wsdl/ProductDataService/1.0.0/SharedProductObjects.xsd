@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/SharedObjects/" xmlns:ns3="http://www.codesynthesis.com/xmlns/xsstl" targetNamespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/SharedObjects/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.codesynthesis.com/xmlns/xsstl" schemaLocation="iso3166-country-code.xsd"/>
+	<xsd:simpleType name="specificationTypeEnum">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Length"/>
+			<xsd:enumeration value="Thickness"/>
+			<xsd:enumeration value="Radius"/>
+			<xsd:enumeration value="Volume"/>
+			<xsd:enumeration value="Capacity"/>
+			<xsd:enumeration value="Memory"/>
+			<xsd:enumeration value="Data Ports"/>
+			<xsd:enumeration value="Capacitance"/>
+			<xsd:enumeration value="Voltage"/>
+			<xsd:enumeration value="Point Size"/>
+			<xsd:enumeration value="Sheet Size"/>
+			<xsd:enumeration value="Sheet Count"/>
+			<xsd:enumeration value="Pockets"/>
+			<xsd:enumeration value="Inseam"/>
+			<xsd:enumeration value="Bust"/>
+			<xsd:enumeration value="Chest"/>
+			<xsd:enumeration value="Waist"/>
+			<xsd:enumeration value="Hips"/>
+			<xsd:enumeration value="Cup"/>
+			<xsd:enumeration value="Rise"/>
+			<xsd:enumeration value="Neck"/>
+			<xsd:enumeration value="Thigh"/>
+			<xsd:enumeration value="Shoulders"/>
+			<xsd:enumeration value="Sleeve"/>
+			<xsd:enumeration value="Device Size"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="apparelStyleEnum">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Unisex"/>
+			<xsd:enumeration value="Youth"/>
+			<xsd:enumeration value="Girls"/>
+			<xsd:enumeration value="Boys"/>
+			<xsd:enumeration value="Womens"/>
+			<xsd:enumeration value="WomensTall"/>
+			<xsd:enumeration value="Mens"/>
+			<xsd:enumeration value="MensTall"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="labelSizeEnum">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="OSFA"/>
+			<xsd:enumeration value="6XS"/>
+			<xsd:enumeration value="5XS"/>
+			<xsd:enumeration value="4XS"/>
+			<xsd:enumeration value="3XS"/>
+			<xsd:enumeration value="2XS"/>
+			<xsd:enumeration value="XS"/>
+			<xsd:enumeration value="S"/>
+			<xsd:enumeration value="M"/>
+			<xsd:enumeration value="L"/>
+			<xsd:enumeration value="XL"/>
+			<xsd:enumeration value="2XL"/>
+			<xsd:enumeration value="3XL"/>
+			<xsd:enumeration value="4XL"/>
+			<xsd:enumeration value="5XL"/>
+			<xsd:enumeration value="6XL"/>
+			<xsd:enumeration value="CUSTOM"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="dimensionUomEnum">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="MM"/>
+			<xsd:enumeration value="CM"/>
+			<xsd:enumeration value="MR"/>
+			<xsd:enumeration value="IN"/>
+			<xsd:enumeration value="FT"/>
+			<xsd:enumeration value="YD"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="weightUomEnum">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ME"/>
+			<xsd:enumeration value="KG"/>
+			<xsd:enumeration value="OZ"/>
+			<xsd:enumeration value="LB"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="relationTypeEnum">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Substitute"/>
+			<xsd:enumeration value="Companion Sell"/>
+			<xsd:enumeration value="Common Grouping"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="wsVersion">
+		<xsd:annotation>
+			<xsd:documentation>
+The Standard Version of the Web Service being referenced
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="id">
+		<xsd:annotation>
+			<xsd:documentation>
+The customer Id or any other agreed upon Id.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="password">
+		<xsd:annotation>
+			<xsd:documentation>The password associated with the Id
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="changeTimeStamp" type="xsd:dateTime">
+		<xsd:annotation>
+			<xsd:documentation>Beginning date time since last change in UTC</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="localizationCountry">
+		<xsd:annotation>
+			<xsd:documentation>ISO 3166-1 Alpha 2 code for Country</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:maxLength value="2"/>
+				<xsd:minLength value="2"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="localizationLanguage">
+		<xsd:annotation>
+			<xsd:documentation>ISO 639-1 Alpha 2 code for Language</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:minLength value="2"/>
+				<xsd:maxLength value="2"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="ErrorMessage">
+		<xsd:annotation>
+			<xsd:documentation>
+Response for any error requiring notification to requestor
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="code" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>
+Response for any error requiring notification to requestor
+            </xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="description">
+					<xsd:annotation>
+						<xsd:documentation>
+Response for any error requiring notification to requestor</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="256"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="productId">
+		<xsd:annotation>
+			<xsd:documentation>The product ID</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="partId">
+		<xsd:annotation>
+			<xsd:documentation>The part ID</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="description">
+		<xsd:annotation>
+			<xsd:documentation>Description</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="2048"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="marketingDescription">
+		<xsd:annotation>
+			<xsd:documentation>Marketing description generally used for all public facing</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="1024"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="endDate" type="xsd:dateTime" nillable="true">
+		<xsd:annotation>
+			<xsd:documentation>The date this product expires from supplier availability </xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="effectiveDate" type="xsd:dateTime" nillable="true">
+		<xsd:annotation>
+			<xsd:documentation>The date this product initially becomes available from the supplier </xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="isCaution" type="xsd:boolean" nillable="true">
+		<xsd:annotation>
+			<xsd:documentation>Cautionary status to review for specific warnings about using product data</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="cautionComment">
+		<xsd:annotation>
+			<xsd:documentation>Cautionary comments</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="1024"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="isSellable" type="xsd:boolean">
+		<xsd:annotation>
+			<xsd:documentation>Indicates if sellable</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="countryOfOrigin">
+		<xsd:annotation>
+			<xsd:documentation>Country of Origin</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="ns3:ISO3166CountyCode">
+				<xsd:maxLength value="2"/>
+				<xsd:minLength value="2"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="isCloseout" type="xsd:boolean" nillable="true">
+		<xsd:annotation>
+			<xsd:documentation>Indicates if a closeout</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="dimensionUom">
+		<xsd:annotation>
+			<xsd:documentation>The dimensional unit of measure</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="ns2:dimensionUomEnum">
+				<xsd:maxLength value="2"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="depth" type="xsd:decimal" nillable="true">
+		<xsd:annotation>
+			<xsd:documentation>The depth/length using the unit of measure specified in dimensionUom</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="height" type="xsd:decimal" nillable="true">
+		<xsd:annotation>
+			<xsd:documentation>The height using the unit of measure specified in dimensionUom</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="weight" type="xsd:decimal" nillable="true">
+		<xsd:annotation>
+			<xsd:documentation>The weight using the unit of measure specified in weightUom</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="width" type="xsd:decimal" nillable="true">
+		<xsd:annotation>
+			<xsd:documentation>The width using the unit of measure specified in dimensionUom</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="weightUom">
+		<xsd:annotation>
+			<xsd:documentation>The weight unit of measure</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="ns2:weightUomEnum">
+				<xsd:maxLength value="2"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="quantity" type="xsd:decimal">
+		<xsd:annotation>
+			<xsd:documentation>Quantity</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="packageType">
+		<xsd:annotation>
+			<xsd:documentation>Part specific rush service</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="256"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="ApparelSize">
+		<xsd:annotation>
+			<xsd:documentation>Used to describe an apparel size</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="apparelStyle">
+					<xsd:annotation>
+						<xsd:documentation>Ladies, Men, Youth, etc.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:apparelStyleEnum">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="labelSize">
+					<xsd:annotation>
+						<xsd:documentation>The apparel items tagged size. e.g. XSmall, Small, etc.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:labelSizeEnum">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="6"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="customSize" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Used to communicate custom size when labelSize is CUSTOM.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="SizeApparelArray">
+		<xsd:annotation>
+			<xsd:documentation>Size</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="SizeApparel" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="apparelStyle" type="ns2:apparelStyleEnum">
+								<xsd:annotation>
+									<xsd:documentation>Ladies, Men, Youth, etc.</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="labelSize" type="ns2:labelSizeEnum">
+								<xsd:annotation>
+									<xsd:documentation>The apparel items tagged size. e.g. XSmall, Small, etc.</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

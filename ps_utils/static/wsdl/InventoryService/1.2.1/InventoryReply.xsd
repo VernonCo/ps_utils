@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"            
+            targetNamespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/"
+            elementFormDefault="qualified">
+  <xsd:element name="Reply">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="productID">
+          <xsd:annotation>
+            <xsd:documentation>
+              The associated product
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:minLength value="1"/>
+              <xsd:maxLength value="64"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="ProductVariationInventoryArray" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+              An array of inventory levels grouped by variation.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="ProductVariationInventory" maxOccurs="unbounded">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="partID">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          The associated part
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="partDescription" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Part’s description
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="256"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="partBrand" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Part’s brand
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="priceVariance" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Variance from requested part’s price
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="quantityAvailable" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          The quantity available
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="attributeColor" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Description of the color of the part
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>  
+                    </xsd:element>
+                    <xsd:element name="attributeSize" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Description of the size of the part
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="attributeSelection" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Description of the generic selection criteria
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="AttributeFlexArray" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Array of the part’s attributes ARRAY
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="AttributeFlex" maxOccurs="unbounded">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="id" minOccurs="0">
+                                  <xsd:simpleType>
+                                    <xsd:restriction base="xsd:token">
+                                      <xsd:minLength value="1"/>
+                                      <xsd:maxLength value="64"/>
+                                    </xsd:restriction>
+                                  </xsd:simpleType>
+                                </xsd:element>
+                                <xsd:element name="name" minOccurs="0">
+                                  <xsd:simpleType>
+                                    <xsd:restriction base="xsd:token">
+                                      <xsd:minLength value="1"/>
+                                      <xsd:maxLength value="64"/>
+                                    </xsd:restriction>
+                                  </xsd:simpleType>
+                                </xsd:element>
+                                <xsd:element name="value" minOccurs="0">
+                                  <xsd:simpleType>
+                                    <xsd:restriction base="xsd:token">
+                                      <xsd:minLength value="1"/>
+                                      <xsd:maxLength value="256"/>
+                                    </xsd:restriction>
+                                  </xsd:simpleType>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="customProductMessage" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          customProductMessage5 Message from the supplier regarding the stock
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="256"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="entryType" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Record type (exact, alternate)
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="validTimestamp" minOccurs="0" type="xsd:dateTime">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Datetime inventory is available
+                        </xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="ProductCompanionInventoryArray" minOccurs="0" >
+          <xsd:annotation>
+            <xsd:documentation>
+              Array of companion items’ inventory levels.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="ProductCompanionInventory" maxOccurs="unbounded">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="partID">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          The companion part
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="partDescription" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Part’s description
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="256"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="partBrand" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Part’s brand
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="price" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Companion item price
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="quantityAvailable" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          The quantity available
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="attributeColor" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Description of the color of the part
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="attributeSize" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Description of the size of the part
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="attributeSelection" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Description of the generic selection criteria of the part
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="AttributeFlexArray" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          of the part’s attributes ARRAY
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="AttributeFlex" maxOccurs="unbounded">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="id">
+                                  <xsd:simpleType>
+                                    <xsd:restriction base="xsd:token">
+                                      <xsd:minLength value="1"/>
+                                      <xsd:maxLength value="64"/>
+                                    </xsd:restriction>
+                                  </xsd:simpleType>
+                                </xsd:element>
+                                <xsd:element name="name">
+                                  <xsd:simpleType>
+                                    <xsd:restriction base="xsd:token">
+                                      <xsd:minLength value="1"/>
+                                      <xsd:maxLength value="64"/>
+                                    </xsd:restriction>
+                                  </xsd:simpleType>
+                                </xsd:element>
+                                <xsd:element name="value">
+                                  <xsd:simpleType>
+                                    <xsd:restriction base="xsd:token">
+                                      <xsd:minLength value="1"/>
+                                      <xsd:maxLength value="256"/>
+                                    </xsd:restriction>
+                                  </xsd:simpleType>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="customProductMessage" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          customProductMessage5 Message from the supplier regarding the stock
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="256"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="entryType" minOccurs="0">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Record type (exact, alternate)
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="validTimestamp" minOccurs="0" type="xsd:dateTime">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          Datetime inventory is available
+                        </xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="errorMessage" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+              Response for any error requiring notification to requestor
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:minLength value="1"/>
+              <xsd:maxLength value="256"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="CustomMessageArray" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+              An array of custom data that the supplier/distributor is free to implement in any way they see fit.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="customMessage" maxOccurs="unbounded">
+                <xsd:simpleType>
+                  <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1"/>
+                    <xsd:maxLength value="256"/>
+                  </xsd:restriction>
+                </xsd:simpleType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

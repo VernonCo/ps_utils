@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/MediaService/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" schemaLocation="SharedMediaObjects.xsd"/>
+	<xsd:element name="MediaContent">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:productId"/>
+				<xsd:element ref="ns2:partId" minOccurs="0"/>
+				<xsd:element name="url">
+					<xsd:annotation>
+						<xsd:documentation>The URL of the media location.  Any valid URL can be returned including prefixes like http and ftp.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="1024"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns2:mediaType"/>
+				<xsd:element name="ClassTypeArray">
+					<xsd:annotation>
+						<xsd:documentation>An array of ClassType objects that classify of the media.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:ClassType" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="fileSize" type="xsd:double" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The file size</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="width" type="xsd:decimal" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Width</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="height" type="xsd:decimal" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Height</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dpi" type="xsd:int" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Dots per inch</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="color" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The color description</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="256"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="DecorationArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An array of decoration objects that describe the decorations associated with the media</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:Decoration" minOccurs="0" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="LocationArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An array of location objects that describe the locations associated with the media</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:Location" minOccurs="0" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="decorationId" type="xsd:int" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Deprecated.  Use DecorationArray.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="description" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Information about the media</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="1024"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="singlePart" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Identifies whether the partId one to one corresponds with the image</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:changeTimeStamp" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ClassType">
+		<xsd:annotation>
+			<xsd:documentation>The type of media</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="classTypeId" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>The classification of the media</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="classTypeName">
+					<xsd:annotation>
+						<xsd:documentation>The classification short name</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Decoration">
+		<xsd:annotation>
+			<xsd:documentation>The type of media</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="decorationId" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>The decoration id associated with the media</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="decorationName">
+					<xsd:annotation>
+						<xsd:documentation>The name of the decoration associated with the id</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Location">
+		<xsd:annotation>
+			<xsd:documentation>The type of media</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="locationId" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>The location id associated with the media</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="locationName">
+					<xsd:annotation>
+						<xsd:documentation>The name of the location associated with the id</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="GetMediaContentResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MediaContentArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+              An array of different selections the product is offered and can be provided as a filter to Inventory Service getInventoryLevels.
+            </xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:MediaContent" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns2:errorMessage" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"            
+            targetNamespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/"
+            elementFormDefault="qualified">
+  <xsd:element name="GetFilterValuesReply">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="productID">
+          <xsd:annotation>
+            <xsd:documentation>
+              The associated product
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:minLength value="1"/>
+              <xsd:maxLength value="64"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="FilterColorArray" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+              An array of different selections the product is offered and can be provided as a filter to Inventory Service getInventoryLevels.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="filterColor" maxOccurs="unbounded">
+                <xsd:simpleType>
+                  <xsd:restriction base="xsd:token">
+                    <xsd:minLength value="1"/>
+                    <xsd:maxLength value="256"/>
+                  </xsd:restriction>
+                </xsd:simpleType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="FilterSizeArray" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+              An array of different selections the product is offered and can be provided as a filter to Inventory Service getInventoryLevels.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="filterSize" maxOccurs="unbounded">
+                <xsd:simpleType>
+                  <xsd:restriction base="xsd:token">
+                    <xsd:minLength value="1"/>
+                    <xsd:maxLength value="256"/>
+                  </xsd:restriction>
+                </xsd:simpleType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="FilterSelectionArray" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+              An array of different selections other than Color and Size the product is offered and can be provided as a filter to Inventory Service getInventoryLevels
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="filterSelection" maxOccurs="unbounded">
+                <xsd:simpleType>
+                  <xsd:restriction base="xsd:token">
+                    <xsd:minLength value="1"/>
+                    <xsd:maxLength value="256"/>
+                  </xsd:restriction>
+                </xsd:simpleType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="errorMessage" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+              Response for any error requiring notification to requestor
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:minLength value="1"/>
+              <xsd:maxLength value="256"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

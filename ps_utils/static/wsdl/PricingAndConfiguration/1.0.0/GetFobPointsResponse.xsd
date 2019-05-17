@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/" xmlns:ns3="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/PricingAndConfiguration/1.0.0/SharedObjects/" schemaLocation="SharedObjectsPricingAndConfiguration.xsd"/>
+	<xsd:element name="FobPoint">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:fobId"/>
+				<xsd:element name="fobCity">
+					<xsd:annotation>
+						<xsd:documentation>
+                            The fob city
+                        </xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="fobState">
+					<xsd:annotation>
+						<xsd:documentation>
+                            The fob state
+                        </xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns3:fobPostalCode"/>
+				<xsd:element name="fobCountry">
+					<xsd:annotation>
+						<xsd:documentation>
+                            The fob country
+                        </xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="CurrencySupportedArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+                            An Array of currencies supported
+                        </xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:CurrencySupported" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ProductArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+                            An Array of Product Ids
+                        </xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:Product" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CurrencySupported">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:currency"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Product">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:productId"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="GetFobPointsResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="FobPointArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+                            An Array of fob points
+                        </xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:FobPoint" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns3:ErrorMessage" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

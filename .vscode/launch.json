@@ -9,14 +9,8 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
-            "program": "${workspaceRoot}/venv/bin/flask",
-            "env": {
-                "FLASK_APP": "${workspaceRoot}/ps_utils/run.py",
-                "DB_AUTH": "stuartz",
-                "DB_PASS": "5tillh3r3!",
-                "DB_HOST": "127.0.0.1",
-                "DB_PORT": "3310"
-            },
+            "program": "${workspaceFolder}/venv/bin/flask",
+            "envFile": "${workspaceFolder}/../.env",
             "args": [
                 "run",
                 "--no-debugger",

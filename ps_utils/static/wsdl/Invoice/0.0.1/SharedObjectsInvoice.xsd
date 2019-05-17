@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/Invoice/1.0.0/"
+            xmlns:ns2="http://www.promostandards.org/WSDL/Invoice/1.0.0/SharedObjects/"
+            xmlns:ns3="http://www.codesynthesis.com/xmlns/xsstl"
+            xmlns:ns4="http://www.isotc211.org/iso4217/"
+            targetNamespace="http://www.promostandards.org/WSDL/Invoice/1.0.0/SharedObjects/"
+            elementFormDefault="qualified">
+    <xsd:import namespace="http://www.codesynthesis.com/xmlns/xsstl" schemaLocation="iso3166-country-code.xsd"/>
+    <xsd:import namespace="http://www.isotc211.org/iso4217/" schemaLocation="iso4217-currency-code.xsd"/>
+    <xsd:element name="wsVersion">
+        <xsd:annotation>
+            <xsd:documentation>
+                The Standard Version of the Web Service being referenced
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="id">
+        <xsd:annotation>
+            <xsd:documentation>
+                The customer Id or any other agreed upon Id.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="password">
+        <xsd:annotation>
+            <xsd:documentation>The password associated with the Id
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="invoiceNumber">
+        <xsd:annotation>
+            <xsd:documentation>The invoice number
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="localizationCountry">
+        <xsd:annotation>
+            <xsd:documentation>ISO 3166-1 Alpha 2 code for Country</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:maxLength value="2"/>
+                <xsd:minLength value="2"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="localizationLanguage">
+        <xsd:annotation>
+            <xsd:documentation>ISO 639-1 Alpha 2 code for Language</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="2"/>
+                <xsd:maxLength value="2"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="ErrorMessage">
+        <xsd:annotation>
+            <xsd:documentation>
+                Response for any error requiring notification to requester
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="code" type="xsd:int">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Response for any error requiring notification to requester
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="description">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Response for any error requiring notification to requester
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                            <xsd:minLength value="1"/>
+                            <xsd:maxLength value="256"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="invoiceType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The type of Invoice
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="INVOICE"/>
+            <xsd:enumeration value="CREDIT MEMO"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="queryType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The type of query you wish to perform. 1 = PO Number, 2 = Invoice Number, 3 = Invoice date search
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:int">
+            <xsd:enumeration value="1"/>
+            <xsd:enumeration value="2"/>
+            <xsd:enumeration value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="accountName">
+        <xsd:annotation>
+            <xsd:documentation>
+                The Account Name
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="accountNumber">
+        <xsd:annotation>
+            <xsd:documentation>
+                The Account Number
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="city">
+        <xsd:annotation>
+            <xsd:documentation>
+                The city
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="state">
+        <xsd:annotation>
+            <xsd:documentation>
+                The state
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="5"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="postalCode">
+        <xsd:annotation>
+            <xsd:documentation>
+                The postal code
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="purchaseOrderNumber">
+        <xsd:annotation>
+            <xsd:documentation>
+                The purchase order number
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="referenceNumber">
+        <xsd:annotation>
+            <xsd:documentation>
+                The purchase order/sales order/invoice number associated with the order
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="salesOrderNumber">
+        <xsd:annotation>
+            <xsd:documentation>
+                The sales order number
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="invoiceRequestedDate" type="xsd:dateTime">
+        <xsd:annotation>
+            <xsd:documentation>
+                The date of the invoice used in search method 3
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="invoiceDate" type="xsd:dateTime">
+        <xsd:annotation>
+            <xsd:documentation>
+                The date of the invoice
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="queryType">
+        <xsd:simpleType>
+            <xsd:restriction base="ns2:queryType"/>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="invoiceType">
+        <xsd:simpleType>
+            <xsd:restriction base="ns2:invoiceType">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="AccountInfo">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:accountName" minOccurs="0"/>
+                <xsd:element ref="ns2:accountNumber" minOccurs="0"/>
+                <xsd:element name="AddressLinesArray" maxOccurs="4">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:minLength value="1"/>
+                            <xsd:maxLength value="64"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element ref="ns2:city" minOccurs="0"/>
+                <xsd:element ref="ns2:state" minOccurs="0"/>
+                <xsd:element ref="ns2:postalCode" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="terms">
+        <xsd:annotation>
+            <xsd:documentation>
+                The terms
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="fob">
+        <xsd:annotation>
+            <xsd:documentation>The fob ID</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="salesAmount">
+        <xsd:annotation>
+            <xsd:documentation>
+                The sales amount
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+                <xsd:fractionDigits value="4"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="totalAmount">
+        <xsd:annotation>
+            <xsd:documentation>
+                The invoice amount
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+                <xsd:fractionDigits value="4"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="shippingAndHandlingAmount">
+        <xsd:annotation>
+            <xsd:documentation>
+                The shipping and handling amount
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+                <xsd:fractionDigits value="4"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="advancePaymentAmount">
+        <xsd:annotation>
+            <xsd:documentation>
+                The advance payment amount
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+                <xsd:fractionDigits value="4"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="invoiceAmount">
+        <xsd:annotation>
+            <xsd:documentation>
+                The invoice amount
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+                <xsd:fractionDigits value="4"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="currency" type="ns4:CurrencyCodeType"/>
+    <xsd:element name="invoiceLineItemId">
+        <xsd:annotation>
+            <xsd:documentation>
+                The id of the line item
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:int"/>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="invoiceLineItemNumber">
+        <xsd:annotation>
+            <xsd:documentation>
+                The invoice line item number
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+                <xsd:fractionDigits value="4"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="purchaseOrderLineItemNumber">
+        <xsd:annotation>
+            <xsd:documentation>
+                The purchase order line item number
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+                <xsd:fractionDigits value="4"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:simpleType name="lineItemType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The line item type
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="LINE ITEM"/>
+            <xsd:enumeration value="TAX"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="orderedQuantity">
+        <xsd:annotation>
+            <xsd:documentation>
+                The ordered quantity
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="invoiceQuantity">
+        <xsd:annotation>
+            <xsd:documentation>
+                The invoice quantity
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="backOrderedQuantity">
+        <xsd:annotation>
+            <xsd:documentation>
+                The back ordered quantity
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="quantityUOM">
+        <xsd:annotation>
+            <xsd:documentation>
+                The quantity UOM
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="lineItemDescription">
+        <xsd:annotation>
+            <xsd:documentation>
+                The line item description
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="1024"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="unitPrice">
+        <xsd:annotation>
+            <xsd:documentation>
+                The unit price
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+                <xsd:fractionDigits value="4"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="extendedPrice">
+        <xsd:annotation>
+            <xsd:documentation>
+                The extended price
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+                <xsd:fractionDigits value="4"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="lineItemTax" type="xsd:boolean"/>
+    <xsd:simpleType name="lineItemTaxType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The line item tax type
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SALES"/>
+            <xsd:enumeration value="HST/GST"/>
+            <xsd:enumeration value="PST"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="lineItemType">
+        <xsd:simpleType>
+            <xsd:restriction base="ns2:lineItemType">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="lineItemTaxType">
+        <xsd:simpleType>
+            <xsd:restriction base="ns2:lineItemTaxType">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="64"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+    <xsd:element name="InvoiceLineItem">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns2:invoiceLineItemId"/>
+                <xsd:element ref="ns2:invoiceLineItemNumber" minOccurs="0"/>
+                <xsd:element ref="ns2:purchaseOrderLineItemNumber" minOccurs="0"/>
+                <xsd:element ref="ns2:lineItemType"/>
+                <xsd:element ref="ns2:orderedQuantity" minOccurs="0"/>
+                <xsd:element ref="ns2:invoiceQuantity"/>
+                <xsd:element ref="ns2:backOrderedQuantity" minOccurs="0"/>
+                <xsd:element ref="ns2:quantityUOM"/>
+                <xsd:element ref="ns2:lineItemDescription"/>
+                <xsd:element ref="ns2:unitPrice"/>
+                <xsd:element ref="ns2:extendedPrice"/>
+                <xsd:element ref="ns2:lineItemTax"/>
+                <xsd:element ref="ns2:lineItemTaxType" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

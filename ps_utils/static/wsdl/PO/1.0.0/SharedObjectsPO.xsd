@@ -1,0 +1,1317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:ns1="http://www.promostandards.org/WSDL/PO/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/" xmlns:ns3="http://www.codesynthesis.com/xmlns/xsstl" xmlns:ns4="http://www.isotc211.org/iso4217/" xmlns:ns5="http://www.iso20022.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/" elementFormDefault="qualified">
+	<!--ELEMENTS-->
+	<!--ENUMERATORS-->
+	<!--OBJECTS-->
+	<xsd:import namespace="http://www.codesynthesis.com/xmlns/xsstl" schemaLocation="iso3166-country-code.xsd"/>
+	<xsd:import namespace="http://www.iso20022.org/" schemaLocation="iso20022-uom-code.xsd"/>
+	<xsd:import namespace="http://www.isotc211.org/iso4217/" schemaLocation="iso4217-currency-code.xsd"/>
+	<xsd:element name="accountName">
+		<xsd:annotation>
+			<xsd:documentation>The name of the account that will be invoiced for the purchase order.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="accountNumber">
+		<xsd:annotation>
+			<xsd:documentation>The number of the account that will be invoiced for the purchase order.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="ArtworkFileArray">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:ArtworkFile" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ArtworkFile">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="artworkType" minOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>The purpose of the artwork file; values are enumerated</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:ArtworkType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="fileLocation" minOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>The exact path/location to the artwork</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="1024"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="fileName" minOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>The file name and extension only of the artwork</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="256"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="transportMechanism" minOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>The mechanism that will be used to transport the artwork; values are enumerated</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:TransportMechanismType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Artwork">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="instructions" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Any instructions regarding the processing or modification of artwork. Adding instructions will cause delays in processing.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="refArtworkId" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>A pre-shared artwork Id that can be used by the supplier to find and reference the artwork.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="totalStitchCount" type="xsd:int" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The total stitch count for the specified embroidery art</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:ArtworkFileArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An array of artwork file data</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:description" minOccurs="0"/>
+				<xsd:element ref="ns2:Dimensions" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The dimensions of the artwork</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:Layers" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An object that explains how the artwork layers or stops will be handled</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:TypesetArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An array of typeset data</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="chargeId" type="xsd:int">
+		<xsd:annotation>
+			<xsd:documentation>The charge ID</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="chargeName">
+		<xsd:annotation>
+			<xsd:documentation>The Charge name</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="128"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="chargeType">
+		<xsd:annotation>
+			<xsd:documentation>
+				The charge name
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="ns2:ChargeTypeType">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="Charge">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:chargeName" minOccurs="0"/>
+				<xsd:element ref="ns2:description" minOccurs="0"/>
+				<xsd:element ref="ns2:extendedPrice" minOccurs="0"/>
+				<xsd:element ref="ns2:unitPrice" minOccurs="0"/>
+				<xsd:element ref="ns2:chargeId"/>
+				<xsd:element ref="ns2:chargeType"/>
+				<xsd:element ref="ns2:Quantity"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="colorId">
+		<xsd:annotation>
+			<xsd:documentation>The color ID</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="colorName">
+		<xsd:annotation>
+			<xsd:documentation>The color name</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="comments" type="xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>Use comments only when absolutely necessary, as it may cause delays in order processing.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="Configuration">
+		<xsd:annotation>
+			<xsd:documentation>An object containing line item configuration data</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ChargeArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An array of charge information. This array should be populated with information from the supplier's Promostandards Product Pricing and Configuration service</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns2:Charge" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="LocationArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An array of Decoration Location Information. This array should be populated with information from the supplier's Promostandards Product Pricing and Configuration service</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns2:Location" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="referenceNumberType" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The type of the prior order reference; values are enumerated</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:ReferenceNumberTypeType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="referenceNumber" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The previous order number that this purchase order is referencing</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="preProductionProof" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Indicates that this line item is for a preproduction proof</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ContactDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="attentionTo" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Attention To (first and last name of contact)</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="35"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="companyName" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The company name</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="35"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="address1" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Address line 1</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="35"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="address2" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Address line 2</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="35"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="address3" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Address line 3</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="35"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="city" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The city</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="30"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="region" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The 2 character US state abbreviation or 2-3 character non-US region</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="3"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="postalCode" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The postal code</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="10"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="country" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The country</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns3:ISO3166CountyCode">
+							<xsd:maxLength value="2"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns2:email" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The email</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="phone" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The phone</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="32"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns2:comments" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Use comments only when absolutely necessary, as it may cause delays in order processing.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Contact">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:accountName" minOccurs="0"/>
+				<xsd:element ref="ns2:accountNumber" minOccurs="0"/>
+				<xsd:element name="contactType">
+					<xsd:annotation>
+						<xsd:documentation>The type of contact.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:ContactTypeType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns2:ContactDetails"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="currency" type="ns4:CurrencyCodeType">
+		<xsd:annotation>
+			<xsd:documentation>The currency the purchase order is transacted in ISO4217 format.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="decorationId" type="xsd:int">
+		<xsd:annotation>
+			<xsd:documentation>The Decoration ID</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="decorationName">
+		<xsd:annotation>
+			<xsd:documentation>The decoration name</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:maxLength value="128"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="Decoration">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:decorationName" minOccurs="0"/>
+				<xsd:element ref="ns2:Artwork">
+					<xsd:annotation>
+						<xsd:documentation>The object containing the details of the artwork</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:decorationId"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="description" type="xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>The description</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="diameter">
+		<xsd:annotation>
+			<xsd:documentation>The diameter</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:decimal">
+				<xsd:fractionDigits value="4"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="DigitalProofAddress">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="type">
+					<xsd:annotation>
+						<xsd:documentation>The type of address of the digital proof. Values are enumerated: Email, Webservice</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:DigitalProofAddressTypeType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns2:email"/>
+				<xsd:element ref="ns2:lineItemGroupingId"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DigitalProof">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="DigitalProofAddressArray">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns2:DigitalProofAddress" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="required" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>A Boolean value set to TRUE indicates a proof is required for this purchase order; the value is FALSE otherwise.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Dimensions">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:diameter" minOccurs="0"/>
+				<xsd:element ref="ns2:height" minOccurs="0"/>
+				<xsd:element ref="ns2:uom" minOccurs="0"/>
+				<xsd:element ref="ns2:width" minOccurs="0"/>
+				<xsd:element name="useMaxLocationDimensions" type="xsd:boolean"/>
+				<xsd:element ref="ns2:geometry"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="email">
+		<xsd:annotation>
+			<xsd:documentation>The email of the contact</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:maxLength value="128"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="extendedPrice" type="xsd:decimal">
+		<xsd:annotation>
+			<xsd:documentation>The extended Price</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="fobId">
+		<xsd:annotation>
+			<xsd:documentation>Used to indicate the FOB point. Use fobId from the supplier's Product Pricing and Configuration Service to populate this information.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="FreightDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="carrier">
+					<xsd:annotation>
+						<xsd:documentation>The carrier used for this shipment.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="service">
+					<xsd:annotation>
+						<xsd:documentation>The service type requested by the carrier.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="geometry">
+		<xsd:annotation>
+			<xsd:documentation>The decoration geometry</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="ns2:GeometryType">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="height">
+		<xsd:annotation>
+			<xsd:documentation>The height</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:decimal">
+				<xsd:fractionDigits value="4"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="id">
+		<xsd:annotation>
+			<xsd:documentation>The customer Id or any other agreed upon Id.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="LayerOrStop">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="color">
+					<xsd:annotation>
+						<xsd:documentation>The color value that corresponds to the colorSystem defined</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="nameOrNumber">
+					<xsd:annotation>
+						<xsd:documentation>The name or number of the layer/stop</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns2:description"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Layers">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="colorSystem">
+					<xsd:annotation>
+						<xsd:documentation>The color system to use</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:ColorSystemType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="LayerOrStopArray">
+					<xsd:annotation>
+						<xsd:documentation>An array of layers for the artwork</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns2:LayerOrStop" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="lineItemGroupingId" type="xsd:int">
+		<xsd:annotation>
+			<xsd:documentation>An identifier that allows configuration data to be spread out among multiple purchase order lines. Keep lineItemGroupingID unique when referencing the same product on the purchase order. Any change to the product, location, decoration, or artwork should produce a unique lineItemGroupingID to the purchase order.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="localizationCountry">
+		<xsd:annotation>
+			<xsd:documentation>ISO 3166-1 Alpha 2 code for Country</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:maxLength value="2"/>
+				<xsd:minLength value="2"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="localizationLanguage">
+		<xsd:annotation>
+			<xsd:documentation>ISO 639-1 Alpha 2 code for Language</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:maxLength value="2"/>
+				<xsd:minLength value="2"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="locationId" type="xsd:int">
+		<xsd:annotation>
+			<xsd:documentation>The supplier's location Id</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="locationLinkId" type="xsd:int">
+		<xsd:annotation>
+			<xsd:documentation>An array of location link Ids. This links the part to its configured locations.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="locationName">
+		<xsd:annotation>
+			<xsd:documentation>The location name</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:maxLength value="128"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="Location">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:locationName" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The locationName from the supplier's PromoStandards Product Pricing and Configuration service.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="DecorationArray">
+					<xsd:annotation>
+						<xsd:documentation>An array of product decoration information</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns2:Decoration" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="locationLinkId" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>An identifier to be used within the Part Array to link configured locations to a part. Due to different colors and sizes, identical locations may need to be decorated differently.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:locationId">
+					<xsd:annotation>
+						<xsd:documentation>The locationId from the supplier's PromoStandards Product Pricing and Configuration service</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="partGroup">
+		<xsd:annotation>
+			<xsd:documentation>The part Group</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="partId">
+		<xsd:annotation>
+			<xsd:documentation>The part ID</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="Part">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:partGroup" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An identifier that links common line item parts together</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:partId">
+					<xsd:annotation>
+						<xsd:documentation>The part Id</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="customerPartId" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>How the part is being represented to the distributor's customer</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="customerSupplied" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>The part will be supplied by the customer or another entity other than the supplier</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:description" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The description</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:Quantity">
+					<xsd:annotation>
+						<xsd:documentation>The quantity object that contains the value and unit of measure</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:locationLinkId" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>An array of location link Ids. This links the part to its configured locations.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:unitPrice" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The unit price</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:extendedPrice" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The extended Price</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ShipmentLinkArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Link this part and a specified quantity to one or many shipments.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns2:ShipmentLink" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="password">
+		<xsd:annotation>
+			<xsd:documentation>The password associated with the Id</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="productId">
+		<xsd:annotation>
+			<xsd:documentation>The product Id</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="Program">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id" minOccurs="0">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="name" minOccurs="0">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Quantity">
+		<xsd:annotation>
+			<xsd:documentation>The quantity object that contains the value and unit of measure</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="uom">
+					<xsd:annotation>
+						<xsd:documentation>The unit of measure; values are enumerated.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:QuantityUomType">
+							<xsd:maxLength value="2"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="value" type="xsd:decimal">
+					<xsd:annotation>
+						<xsd:documentation>The quantity value</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ServiceMessageArray">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:ServiceMessage" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ServiceMessage">
+		<xsd:annotation>
+			<xsd:documentation>Response for any error requiring notification to requestor</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="code" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>Response for any error requiring notification to requestor</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="description">
+					<xsd:annotation>
+						<xsd:documentation>Response for any error requiring notification to requestor</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:maxLength value="256"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="severity">
+					<xsd:annotation>
+						<xsd:documentation>The severity of the error. Values are enumerated: {Error, Information, Warning}</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:SeverityType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="shipmentId" type="xsd:int">
+		<xsd:annotation>
+			<xsd:documentation>The shipment Id</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="ShipmentLink">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:Quantity"/>
+				<xsd:element ref="ns2:shipmentId"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Shipment">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="shipReferences" minOccurs="0" maxOccurs="2">
+					<xsd:annotation>
+						<xsd:documentation>Array of two strings max</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns2:comments" minOccurs="0"/>
+				<xsd:element ref="ns2:ThirdPartyAccount" minOccurs="0"/>
+				<xsd:element name="allowConsolidation" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Allow consolidation of shipments</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="blindShip" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Require blind shipping</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="packingListRequired" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Packing list required</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:FreightDetails">
+					<xsd:annotation>
+						<xsd:documentation>The details on the freight: carrier and service</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:ShipTo"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ShipTo">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="customerPickup" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>The shipment will be a pickup and will not be shipped.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns2:ContactDetails"/>
+				<xsd:element ref="ns2:shipmentId">
+					<xsd:annotation>
+						<xsd:documentation>The shipment Id</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TaxInformation">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="taxJurisdiction" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Tax Jurisdictions</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="taxExempt" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Tax Exempt</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="taxId">
+					<xsd:annotation>
+						<xsd:documentation>The purchasers tax identifier</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="taxType">
+					<xsd:annotation>
+						<xsd:documentation>The type of tax the identifier applies to.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:TaxTypeType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="taxAmount" type="xsd:decimal" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The amount of tax for this purchase order</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ThirdPartyAccount">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:accountName"/>
+				<xsd:element ref="ns2:accountNumber"/>
+				<xsd:element ref="ns2:ContactDetails"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ToleranceDetails">
+		<xsd:annotation>
+			<xsd:documentation>The object containing how tolerant this line is to overrun and underruns.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="uom" minOccurs="0">
+					<xsd:simpleType>
+						<xsd:restriction base="ns2:ToleranceUomType">
+							<xsd:maxLength value="10"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="value" type="xsd:decimal" minOccurs="0"/>
+				<xsd:element name="tolerance" type="ns2:ToleranceType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TypesetArray">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:Typeset" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Typeset">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="fontSize" type="xsd:decimal" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The font size to use for the typeset</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="font" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The font to use for the typeset</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="sequenceNumber" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>The order of the typeset information</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="value">
+					<xsd:annotation>
+						<xsd:documentation>The typeset to be used on the order</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="1024"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="unitPrice" type="xsd:decimal">
+		<xsd:annotation>
+			<xsd:documentation>The unit price</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="uom" type="ns5:ISO20022UomCode">
+		<xsd:annotation>
+			<xsd:documentation>The UOM</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="width">
+		<xsd:annotation>
+			<xsd:documentation>The width</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:decimal">
+				<xsd:fractionDigits value="4"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="wsVersion">
+		<xsd:annotation>
+			<xsd:documentation>The Standard Version of the Web Service being referenced</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:maxLength value="64"/>
+				<xsd:minLength value="1"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:simpleType name="ArtworkType">
+		<xsd:annotation>
+			<xsd:documentation>The purpose of the artwork file</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="NonProductionReady"/>
+			<xsd:enumeration value="ProductionReady"/>
+			<xsd:enumeration value="SupplierArtTemplate"/>
+			<xsd:enumeration value="VirtualProof"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ChargeTypeType">
+		<xsd:annotation>
+			<xsd:documentation>The type of charge</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Freight"/>
+			<xsd:enumeration value="Order"/>
+			<xsd:enumeration value="Run"/>
+			<xsd:enumeration value="Setup"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ColorSystemType">
+		<xsd:annotation>
+			<xsd:documentation>The type of color system</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Cmyk"/>
+			<xsd:enumeration value="Other"/>
+			<xsd:enumeration value="Pms"/>
+			<xsd:enumeration value="Rgb"/>
+			<xsd:enumeration value="Thread"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ContactTypeType">
+		<xsd:annotation>
+			<xsd:documentation>The type of contact</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Art"/>
+			<xsd:enumeration value="Bill"/>
+			<xsd:enumeration value="Expeditor"/>
+			<xsd:enumeration value="Order"/>
+			<xsd:enumeration value="Sales"/>
+			<xsd:enumeration value="Sold"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DigitalProofAddressTypeType">
+		<xsd:annotation>
+			<xsd:documentation>The type of digital proof address</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Email"/>
+			<xsd:enumeration value="Webservice"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="GeometryType">
+		<xsd:annotation>
+			<xsd:documentation>The geometry type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Circle"/>
+			<xsd:enumeration value="Other"/>
+			<xsd:enumeration value="Rectangle"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LineTypeType">
+		<xsd:annotation>
+			<xsd:documentation>The type of order line</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="New"/>
+			<xsd:enumeration value="Reference"/>
+			<xsd:enumeration value="Repeat"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderTypeType">
+		<xsd:annotation>
+			<xsd:documentation>The type of order</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Blank"/>
+			<xsd:enumeration value="Configured"/>
+			<xsd:enumeration value="Sample"/>
+			<xsd:enumeration value="Simple"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="QuantityUomType">
+		<xsd:annotation>
+			<xsd:documentation>The type of Quantity UOM</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="BX"/>
+			<xsd:enumeration value="CA"/>
+			<xsd:enumeration value="DZ"/>
+			<xsd:enumeration value="EA"/>
+			<xsd:enumeration value="KT"/>
+			<xsd:enumeration value="PK"/>
+			<xsd:enumeration value="PR"/>
+			<xsd:enumeration value="RL"/>
+			<xsd:enumeration value="SL"/>
+			<xsd:enumeration value="ST"/>
+			<xsd:enumeration value="TH"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ReferenceNumberTypeType">
+		<xsd:annotation>
+			<xsd:documentation>The type of reference number</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="JobOrWorkOrder"/>
+			<xsd:enumeration value="PurchaseOrder"/>
+			<xsd:enumeration value="SalesOrder"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SeverityType">
+		<xsd:annotation>
+			<xsd:documentation>The severity type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Error"/>
+			<xsd:enumeration value="Information"/>
+			<xsd:enumeration value="Warning"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TaxTypeType">
+		<xsd:annotation>
+			<xsd:documentation>The type of tax</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Hst-Gst"/>
+			<xsd:enumeration value="Pst"/>
+			<xsd:enumeration value="SalesTax"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ToleranceType">
+		<xsd:annotation>
+			<xsd:documentation>The type of tolerance allowed</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="AllowOverrun"/>
+			<xsd:enumeration value="AllowUnderrun"/>
+			<xsd:enumeration value="AllowOverrunOrUnderrun"/>
+			<xsd:enumeration value="ExactOnly"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ToleranceUomType">
+		<xsd:annotation>
+			<xsd:documentation>The type of tolerance UOM</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Percent"/>
+			<xsd:enumeration value="Quantity"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TransportMechanismType">
+		<xsd:annotation>
+			<xsd:documentation>The type of transport mechanism</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ArtworkToFollow"/>
+			<xsd:enumeration value="Email"/>
+			<xsd:enumeration value="Ftp"/>
+			<xsd:enumeration value="Url"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

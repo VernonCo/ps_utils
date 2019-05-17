@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/" elementFormDefault="qualified">
+  <xsd:element name="GetOrderStatusDetailsRequest">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="wsVersion">
+          <xsd:annotation>
+            <xsd:documentation>The Standard Version of the Web Service being referenced</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:minLength value="1"/>
+              <xsd:maxLength value="64"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="id">
+          <xsd:annotation>
+            <xsd:documentation>The customerID or any other agreed upon ID.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:minLength value="1"/>
+              <xsd:maxLength value="64"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="password" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+              The password associated with the customerID.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:minLength value="1"/>
+              <xsd:maxLength value="64"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="queryType" type="xsd:int">
+          <xsd:annotation>
+            <xsd:documentation>
+              The type of query you wish to perform. 1 = PO Number, 2 = Sales Order Number, 3 = Last update, 4 = All Open
+            </xsd:documentation>
+          </xsd:annotation>
+          <!--
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:integer">
+              <xsd:enumeration value="1" />
+              <xsd:enumeration value="2" />
+              <xsd:enumeration value="3" />
+              <xsd:enumeration value="4" />
+            </xsd:restriction>
+          </xsd:simpleType>
+          -->
+        </xsd:element>
+        <xsd:element name="referenceNumber" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+              The purchase order number associated with the Order. If you pass in a purchaseOrderNumber then you will expect to a response of an array with a SINGLE order status for that purchase order.  If this field is left blank it will assume that you are requesting multiple order statuses.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:minLength value="1"/>
+              <xsd:maxLength value="64"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="statusTimeStamp" type="xsd:dateTime" nillable="true">
+          <xsd:annotation>
+            <xsd:documentation>
+              Beginning date time since last status change. This field will indicate the change date time for any status change GREATER the date time stamp provided.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>        
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

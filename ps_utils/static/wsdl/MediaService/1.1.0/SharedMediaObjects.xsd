@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/MediaService/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" elementFormDefault="qualified">
+	<xsd:simpleType name="mediaTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Image"/>
+			<xsd:enumeration value="Video"/>
+			<xsd:enumeration value="Audio"/>
+			<xsd:enumeration value="Document"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="sourceTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Web"/>
+			<xsd:enumeration value="Ftp"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="wsVersion">
+		<xsd:annotation>
+			<xsd:documentation>
+The Standard Version of the Web Service being referenced
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="id">
+		<xsd:annotation>
+			<xsd:documentation>
+The customer Id or any other agreed upon Id.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="password">
+		<xsd:annotation>
+			<xsd:documentation>The password associated with the Id
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="cultureName" type="xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>The language culture name.  This tailors the response to a specific culture. i.e. language, units of measure, etc. Null assumes en-US.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="errorMessage">
+		<xsd:annotation>
+			<xsd:documentation>
+Response for any error requiring notification to requestor
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="code" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>
+Response for any error requiring notification to requestor
+            </xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="description">
+					<xsd:annotation>
+						<xsd:documentation>
+Response for any error requiring notification to requestor
+            </xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="256"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="changeTimeStamp" type="xsd:dateTime">
+		<xsd:annotation>
+			<xsd:documentation>The date time since last change in UTC</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="productId">
+		<xsd:annotation>
+			<xsd:documentation>The product Id
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="partId">
+		<xsd:annotation>
+			<xsd:documentation>The part Id associated to the product ID.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:token">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="64"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="mediaType" type="ns2:mediaTypeType">
+		<xsd:annotation>
+			<xsd:documentation>The type of media</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+</xsd:schema>

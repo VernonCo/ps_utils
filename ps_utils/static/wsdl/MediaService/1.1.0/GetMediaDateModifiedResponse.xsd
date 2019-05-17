@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/MediaService/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/MediaService/1.0.0/SharedObjects/" schemaLocation="SharedMediaObjects.xsd"/>
+	<xsd:element name="MediaDateModified">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns2:productId"/>
+				<xsd:element ref="ns2:partId"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="GetMediaDateModifiedResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MediaDateModifiedArray" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:MediaDateModified" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns2:errorMessage" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

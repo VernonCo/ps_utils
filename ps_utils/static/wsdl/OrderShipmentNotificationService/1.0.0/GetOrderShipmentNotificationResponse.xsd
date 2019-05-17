@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/" xmlns:ns3="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/SharedObjects/" schemaLocation="SharedOSNObjects.xsd"/>
+	<xsd:simpleType name="shipmentDestinationTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Commercial"/>
+			<xsd:enumeration value="Residential"/>
+			<xsd:enumeration value="None"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="dimUOMType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Inches"/>
+			<xsd:enumeration value="Feet"/>
+			<xsd:enumeration value="mm"/>
+			<xsd:enumeration value="cm"/>
+			<xsd:enumeration value="Meters"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="weightUOMType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Ounces"/>
+			<xsd:enumeration value="Pounds"/>
+			<xsd:enumeration value="Grams"/>
+			<xsd:enumeration value="KG"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="GetOrderShipmentNotificationResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="OrderShipmentNotificationArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+An Array of order shipment notifications
+            </xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="OrderShipmentNotification" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="purchaseOrderNumber" type="xsd:string">
+											<xsd:annotation>
+												<xsd:documentation>The associated purchase order.</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="complete" type="xsd:boolean">
+											<xsd:annotation>
+												<xsd:documentation>All shipments for this purchase order are complete.</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="SalesOrderArray" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>
+An Array of sales orders
+            </xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element name="SalesOrder" maxOccurs="unbounded">
+														<xsd:complexType>
+															<xsd:sequence>
+																<xsd:element name="salesOrderNumber">
+																	<xsd:annotation>
+																		<xsd:documentation>The associated sales order.</xsd:documentation>
+																	</xsd:annotation>
+																	<xsd:simpleType>
+																		<xsd:restriction base="xsd:token">
+																			<xsd:minLength value="1"/>
+																			<xsd:maxLength value="64"/>
+																		</xsd:restriction>
+																	</xsd:simpleType>
+																</xsd:element>
+																<xsd:element name="complete" type="xsd:boolean">
+																	<xsd:annotation>
+																		<xsd:documentation>All shipments for this sales order are complete.</xsd:documentation>
+																	</xsd:annotation>
+																</xsd:element>
+																<xsd:element name="ShipmentLocationArray">
+																	<xsd:annotation>
+																		<xsd:documentation>An array of shipment locations.</xsd:documentation>
+																	</xsd:annotation>
+																	<xsd:complexType>
+																		<xsd:sequence>
+																			<xsd:element name="ShipmentLocation" maxOccurs="unbounded">
+																				<xsd:complexType>
+																					<xsd:sequence>
+																						<xsd:element name="id" type="xsd:integer" nillable="false" minOccurs="0">
+																							<xsd:annotation>
+																								<xsd:documentation>The id of the location.</xsd:documentation>
+																							</xsd:annotation>
+																						</xsd:element>
+																						<xsd:element name="complete" type="xsd:boolean">
+																							<xsd:annotation>
+																								<xsd:documentation>All shipments for this location are complete.</xsd:documentation>
+																							</xsd:annotation>
+																						</xsd:element>
+																						<xsd:element name="ShipFromAddress">
+																							<xsd:complexType>
+																								<xsd:sequence>
+																									<xsd:element ref="ns3:address1"/>
+																									<xsd:element ref="ns3:address2" minOccurs="0"/>
+																									<xsd:element ref="ns3:address3" minOccurs="0"/>
+																									<xsd:element ref="ns3:address4" minOccurs="0"/>
+																									<xsd:element ref="ns3:city"/>
+																									<xsd:element ref="ns3:region"/>
+																									<xsd:element ref="ns3:postalCode"/>
+																									<xsd:element ref="ns3:country" minOccurs="0"/>
+																								</xsd:sequence>
+																							</xsd:complexType>
+																						</xsd:element>
+																						<xsd:element name="ShipToAddress">
+																							<xsd:complexType>
+																								<xsd:sequence>
+																									<xsd:element ref="ns3:address1"/>
+																									<xsd:element ref="ns3:address2" minOccurs="0"/>
+																									<xsd:element ref="ns3:address3" minOccurs="0"/>
+																									<xsd:element ref="ns3:address4" minOccurs="0"/>
+																									<xsd:element ref="ns3:city"/>
+																									<xsd:element ref="ns3:region"/>
+																									<xsd:element ref="ns3:postalCode"/>
+																									<xsd:element ref="ns3:country" minOccurs="0"/>
+																								</xsd:sequence>
+																							</xsd:complexType>
+																						</xsd:element>
+																						<xsd:element name="shipmentDestinationType" type="ns1:shipmentDestinationTypeType" minOccurs="0">
+																							<xsd:annotation>
+																								<xsd:documentation>Used to identify the type of destination for the Ship-To address.</xsd:documentation>
+																							</xsd:annotation>
+																						</xsd:element>
+																						<xsd:element name="PackageArray" minOccurs="0">
+																							<xsd:annotation>
+																								<xsd:documentation>An array of shipment packages.</xsd:documentation>
+																							</xsd:annotation>
+																							<xsd:complexType>
+																								<xsd:sequence>
+																									<xsd:element name="Package" maxOccurs="unbounded">
+																										<xsd:complexType>
+																											<xsd:sequence>
+																												<xsd:element name="id" type="xsd:integer" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The id of the package. </xsd:documentation>
+																													</xsd:annotation>
+																												</xsd:element>
+																												<xsd:element name="trackingNumber">
+																													<xsd:annotation>
+																														<xsd:documentation>The tracking number for the package.</xsd:documentation>
+																													</xsd:annotation>
+																													<xsd:simpleType>
+																														<xsd:restriction base="xsd:token">
+																															<xsd:minLength value="1"/>
+																															<xsd:maxLength value="128"/>
+																														</xsd:restriction>
+																													</xsd:simpleType>
+																												</xsd:element>
+																												<xsd:element name="shipmentDate" type="xsd:dateTime">
+																													<xsd:annotation>
+																														<xsd:documentation>The date for the shipment in UTC.  ISO 8601</xsd:documentation>
+																													</xsd:annotation>
+																												</xsd:element>
+																												<xsd:element name="dimUOM" type="ns1:dimUOMType" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The dimensional unit of measure.</xsd:documentation>
+																													</xsd:annotation>
+																												</xsd:element>
+																												<xsd:element name="length" type="xsd:decimal" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The length of the package.</xsd:documentation>
+																													</xsd:annotation>
+																												</xsd:element>
+																												<xsd:element name="width" type="xsd:decimal" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The width of the package.</xsd:documentation>
+																													</xsd:annotation>
+																												</xsd:element>
+																												<xsd:element name="height" type="xsd:decimal" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The height of the package. </xsd:documentation>
+																													</xsd:annotation>
+																												</xsd:element>
+																												<xsd:element name="weightUOM" type="ns1:weightUOMType" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The dimensional unit of measure.</xsd:documentation>
+																													</xsd:annotation>
+																												</xsd:element>
+																												<xsd:element name="weight" type="xsd:decimal" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The weight of the package.</xsd:documentation>
+																													</xsd:annotation>
+																												</xsd:element>
+																												<xsd:element name="carrier" type="xsd:string" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The carrier delivering the package</xsd:documentation>
+																													</xsd:annotation>
+																												</xsd:element>
+																												<xsd:element name="shipmentMethod" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The method used for shipping (Ground).</xsd:documentation>
+																													</xsd:annotation>
+																													<xsd:simpleType>
+																														<xsd:restriction base="xsd:token">
+																															<xsd:minLength value="1"/>
+																															<xsd:maxLength value="128"/>
+																														</xsd:restriction>
+																													</xsd:simpleType>
+																												</xsd:element>
+																												<xsd:element name="shippingAccount" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The shipping account used for this shipment.</xsd:documentation>
+																													</xsd:annotation>
+																													<xsd:simpleType>
+																														<xsd:restriction base="xsd:token">
+																															<xsd:minLength value="1"/>
+																															<xsd:maxLength value="128"/>
+																														</xsd:restriction>
+																													</xsd:simpleType>
+																												</xsd:element>
+																												<xsd:element name="shipmentTerms" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>The terms of the shipment.</xsd:documentation>
+																													</xsd:annotation>
+																													<xsd:simpleType>
+																														<xsd:restriction base="xsd:token">
+																															<xsd:minLength value="1"/>
+																															<xsd:maxLength value="128"/>
+																														</xsd:restriction>
+																													</xsd:simpleType>
+																												</xsd:element>
+																												<xsd:element name="ItemArray" minOccurs="0">
+																													<xsd:annotation>
+																														<xsd:documentation>A list of items and quantities contained in the package.</xsd:documentation>
+																													</xsd:annotation>
+																													<xsd:complexType>
+																														<xsd:sequence>
+																															<xsd:element name="Item" maxOccurs="unbounded">
+																																<xsd:complexType>
+																																	<xsd:sequence>
+																																		<xsd:element name="supplierProductId" minOccurs="0">
+																																			<xsd:annotation>
+																																				<xsd:documentation>The supplier product Id</xsd:documentation>
+																																			</xsd:annotation>
+																																			<xsd:simpleType>
+																																				<xsd:restriction base="xsd:token">
+																																					<xsd:minLength value="1"/>
+																																					<xsd:maxLength value="64"/>
+																																				</xsd:restriction>
+																																			</xsd:simpleType>
+																																		</xsd:element>
+																																		<xsd:element name="supplierPartId" minOccurs="0">
+																																			<xsd:annotation>
+																																				<xsd:documentation>The supplier part Id associated to the supplier product Id</xsd:documentation>
+																																			</xsd:annotation>
+																																			<xsd:simpleType>
+																																				<xsd:restriction base="xsd:token">
+																																					<xsd:minLength value="1"/>
+																																					<xsd:maxLength value="64"/>
+																																				</xsd:restriction>
+																																			</xsd:simpleType>
+																																		</xsd:element>
+																																		<xsd:element name="distributorProductId" minOccurs="0">
+																																			<xsd:annotation>
+																																				<xsd:documentation>The distributor product Id</xsd:documentation>
+																																			</xsd:annotation>
+																																			<xsd:simpleType>
+																																				<xsd:restriction base="xsd:token">
+																																					<xsd:minLength value="1"/>
+																																					<xsd:maxLength value="64"/>
+																																				</xsd:restriction>
+																																			</xsd:simpleType>
+																																		</xsd:element>
+																																		<xsd:element name="distributorPartId" minOccurs="0">
+																																			<xsd:annotation>
+																																				<xsd:documentation>The distributor part Id associated to the supplier product Id</xsd:documentation>
+																																			</xsd:annotation>
+																																			<xsd:simpleType>
+																																				<xsd:restriction base="xsd:token">
+																																					<xsd:minLength value="1"/>
+																																					<xsd:maxLength value="64"/>
+																																				</xsd:restriction>
+																																			</xsd:simpleType>
+																																		</xsd:element>
+																																		<xsd:element name="purchaseOrderLineNumber" minOccurs="0">
+																																			<xsd:annotation>
+																																				<xsd:documentation>The line number of the item on the purchase order.</xsd:documentation>
+																																			</xsd:annotation>
+																																			<xsd:simpleType>
+																																				<xsd:restriction base="xsd:token">
+																																					<xsd:minLength value="1"/>
+																																					<xsd:maxLength value="64"/>
+																																				</xsd:restriction>
+																																			</xsd:simpleType>
+																																		</xsd:element>
+																																		<xsd:element name="quantity" type="xsd:decimal" minOccurs="0">
+																																			<xsd:annotation>
+																																				<xsd:documentation>The length of the package.</xsd:documentation>
+																																			</xsd:annotation>
+																																		</xsd:element>
+																																	</xsd:sequence>
+																																</xsd:complexType>
+																															</xsd:element>
+																														</xsd:sequence>
+																													</xsd:complexType>
+																												</xsd:element>
+																											</xsd:sequence>
+																										</xsd:complexType>
+																									</xsd:element>
+																								</xsd:sequence>
+																							</xsd:complexType>
+																						</xsd:element>
+																					</xsd:sequence>
+																				</xsd:complexType>
+																			</xsd:element>
+																		</xsd:sequence>
+																	</xsd:complexType>
+																</xsd:element>
+															</xsd:sequence>
+														</xsd:complexType>
+													</xsd:element>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns3:errorMessage" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

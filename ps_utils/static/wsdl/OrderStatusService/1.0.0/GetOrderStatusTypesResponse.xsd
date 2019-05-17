@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/" elementFormDefault="qualified">
+	<xsd:element name="GetOrderStatusTypesResponse">
+		<xsd:complexType>
+		<xsd:sequence>
+				<xsd:element name="StatusArray">
+          <xsd:annotation>
+            <xsd:documentation>
+              An Array of order statuses
+            </xsd:documentation>
+          </xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="Status" maxOccurs="unbounded">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    10 - Order Received (Order has been received)
+                    11 - Order Entry Hold (Vendor has a problem with the data in the purchase order, and it is preventing the order from being entered)
+                    20 - Order Confirmed (Order has been received, entered, and accepted)
+                    30 - Pre‐Production (Vendor has begun to process the order, but it is not in production)
+                    40 - General Hold (Something is preventing the order from being entered)
+                    41 - Credit Hold (Vendor is awaiting payment from customer)
+                    42 - Proof Hold (Vendor is awaiting response to proof)
+                    43 - Art Hold (Vendor is awaiting suitable artwork from customer)
+                    44 - Back Order (Hold Order has been backordered; Nothing has shipped yet.)
+                    60 - In Production (Production of the order has started)
+                    70 - In Storage (Order is complete, but vendor is waiting to ship goods)
+                    75 - Partial Shipment (Order has shipped in Part; remaining items in production)
+                    80 - Complete (Order has shipped in full—No further updates will be given)
+                    99 - Canceled (Order has been canceled—No further updates will be given)
+                  </xsd:documentation>
+                </xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+                    <xsd:element name="id" type="xsd:int">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          The numerical value of the order status
+                        </xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="name">
+                      <xsd:annotation>
+                        <xsd:documentation>
+                          The string status name from possible values
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                          <xsd:minLength value="1"/>
+                          <xsd:maxLength value="256"/>
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+      <xsd:element name="errorMessage" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Response for any error requiring notification to requestor
+          </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="256"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>	
+	</xsd:element>
+</xsd:schema>

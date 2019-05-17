@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.promostandards.org/WSDL/Invoice/1.0.0/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns="http://www.promostandards.org/WSDL/Invoice/1.0.0/SharedObjects/" xmlns:ns1="http://www.codesynthesis.com/xmlns/xsstl" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" name="Invoice_v1_0_0" targetNamespace="http://www.promostandards.org/WSDL/Invoice/1.0.0/">
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.promostandards.org/WSDL/Invoice/1.0.0/" schemaLocation="GetInvoicesRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.promostandards.org/WSDL/Invoice/1.0.0/" schemaLocation="GetInvoicesResponse.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="GetInvoicesRequestMessage">
+        <wsdl:part name="GetInvoicesRequest" element="tns:GetInvoicesRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetInvoicesResponseMessage">
+        <wsdl:part name="GetInvoicesResponse" element="tns:GetInvoicesResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="InvoiceService">
+        <wsdl:operation name="getInvoices">
+            <wsdl:input message="tns:GetInvoicesRequestMessage"/>
+            <wsdl:output message="tns:GetInvoicesResponseMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="InvoiceServiceBinding" type="tns:InvoiceService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="getInvoices">
+            <soap:operation soapAction="getInvoices" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="InvoiceService">
+        <wsdl:port name="InvoiceServiceBinding" binding="tns:InvoiceServiceBinding">
+            <soap:address location="[URL]"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

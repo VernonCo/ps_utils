@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:ns1="http://www.promostandards.org/WSDL/PO/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/PO/1.0.0/" xmlns:ns3="http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/" xmlns:ns5="http://www.isotc211.org/iso4217/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.promostandards.org/WSDL/PO/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.isotc211.org/iso4217/" schemaLocation="iso4217-currency-code.xsd"/>
+	<xsd:import namespace="http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/" schemaLocation="SharedObjectsPO.xsd"/>
+	<xsd:element name="LineItem">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="lineNumber" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>The line number of the line item</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="lineReferenceId" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The line identifier used by the distributor</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns3:description"/>
+				<xsd:element name="lineType">
+					<xsd:annotation>
+						<xsd:documentation>The type of order</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns3:LineTypeType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns3:Quantity" minOccurs="0"/>
+				<xsd:element ref="ns3:fobId" minOccurs="0"/>
+				<xsd:element ref="ns3:ToleranceDetails"/>
+				<xsd:element name="allowPartialShipments" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Allow partial shipments of this line item</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns3:unitPrice" minOccurs="0"/>
+				<xsd:element name="lineItemTotal" type="xsd:decimal"/>
+				<xsd:element name="requestedShipDate" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The date the line item is requested to ship from the FOB point.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="requestedInHandsDate" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The date the line item is requested to arrive at the shipping destination</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="referenceSalesQuote" minOccurs="0">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns3:Program" minOccurs="0"/>
+				<xsd:element name="endCustomerSalesOrder" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The distributor's order number provided to the end customer</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns3:productId" minOccurs="0"/>
+				<xsd:element name="customerProductId" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The distributor's product id</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns3:lineItemGroupingId" minOccurs="0"/>
+				<xsd:element name="PartArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An array of product part information. This array should be populated with information from the supplier's Promostandards Product Pricing and Configuration service</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns3:Part" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns3:Configuration" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="PO">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="orderType">
+					<xsd:annotation>
+						<xsd:documentation>The type of data transferred in the request</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns3:OrderTypeType">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="orderNumber">
+					<xsd:annotation>
+						<xsd:documentation>Purchase order number</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="orderDate" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:documentation>The date and time of the purchase order.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="lastModified" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The date and time the purchase order was last modified</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="totalAmount" type="xsd:decimal">
+					<xsd:annotation>
+						<xsd:documentation>The total dollar amount of the purchase order</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="paymentTerms" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The terms of the purchase order. i.e. NET15, NET30, etc.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="rush" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Used to indicate a rush on the purchase order.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns3:currency"/>
+				<xsd:element ref="ns3:DigitalProof" minOccurs="0"/>
+				<xsd:element name="OrderContactArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An array of contact information</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns3:Contact" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ShipmentArray">
+					<xsd:annotation>
+						<xsd:documentation>Any array of purchase order shipments</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns3:Shipment" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="LineItemArray">
+					<xsd:annotation>
+						<xsd:documentation>An array of purchase order line items </xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:LineItem" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="termsAndConditions" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation>The terms and conditions for this purchase order.  Information that is order specific or information dealing with the configuration or shipment of the order should not be entered here.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="salesChannel" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The sales channel</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="promoCode" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The promotion code</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="TaxInformationArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>An array of TaxInformation objects related to calculating taxes</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns3:TaxInformation" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="SendPORequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:wsVersion"/>
+				<xsd:element ref="ns3:id"/>
+				<xsd:element ref="ns3:password" minOccurs="0"/>
+				<xsd:element ref="ns1:PO"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -10,6 +10,8 @@ from flask_appbuilder import AppBuilder, SQLA
 logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 logging.getLogger().setLevel(logging.DEBUG)
 
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 app = Flask(__name__)
 app.config.from_object("config")
 db = SQLA(app)

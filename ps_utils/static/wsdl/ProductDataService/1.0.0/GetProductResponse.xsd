@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" xmlns:ns3="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/1.0.0/SharedObjects/" schemaLocation="SharedProductObjects.xsd"/>
+	<xsd:simpleType name="shipmentDestinationTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Commercial"/>
+			<xsd:enumeration value="Residential"/>
+			<xsd:enumeration value="None"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="dimUOMType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Inches"/>
+			<xsd:enumeration value="Feet"/>
+			<xsd:enumeration value="mm"/>
+			<xsd:enumeration value="cm"/>
+			<xsd:enumeration value="Meters"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="weightUOMType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Ounces"/>
+			<xsd:enumeration value="Pounds"/>
+			<xsd:enumeration value="Grams"/>
+			<xsd:enumeration value="KG"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="Dimension">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:dimensionUom"/>
+				<xsd:element ref="ns3:depth"/>
+				<xsd:element ref="ns3:height"/>
+				<xsd:element ref="ns3:width"/>
+				<xsd:element ref="ns3:weightUom"/>
+				<xsd:element ref="ns3:weight"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ProductPackage">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="default" type="xsd:boolean">
+					<xsd:annotation>
+						<xsd:documentation>Defalult packaging</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns3:packageType"/>
+				<xsd:element ref="ns3:description" minOccurs="0"/>
+				<xsd:element ref="ns3:quantity"/>
+				<xsd:element ref="ns3:dimensionUom"/>
+				<xsd:element ref="ns3:depth"/>
+				<xsd:element ref="ns3:height"/>
+				<xsd:element ref="ns3:width"/>
+				<xsd:element ref="ns3:weightUom"/>
+				<xsd:element ref="ns3:weight"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ShippingPackage">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:packageType"/>
+				<xsd:element ref="ns3:description" minOccurs="0"/>
+				<xsd:element ref="ns3:quantity"/>
+				<xsd:element ref="ns3:dimensionUom"/>
+				<xsd:element ref="ns3:depth"/>
+				<xsd:element ref="ns3:height"/>
+				<xsd:element ref="ns3:width"/>
+				<xsd:element ref="ns3:weightUom"/>
+				<xsd:element ref="ns3:weight"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Specification">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="specificationType">
+					<xsd:annotation>
+						<xsd:documentation>The type of size</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns3:specificationTypeEnum">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="SpecificationUom" nillable="true">
+					<xsd:annotation>
+						<xsd:documentation>Specification UOM </xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="measurementValue">
+					<xsd:annotation>
+						<xsd:documentation>Specification Measurement Value. </xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ProductCategory">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="category">
+					<xsd:annotation>
+						<xsd:documentation>Product category</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="256"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="subCategory" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Product subcategory</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="256"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="RelatedProduct">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="relationType">
+					<xsd:annotation>
+						<xsd:documentation>The relationship type between two products</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="ns3:relationTypeEnum">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns3:productId"/>
+				<xsd:element ref="ns3:partId" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ProductKeyword">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="keyword">
+					<xsd:annotation>
+						<xsd:documentation>A product keyword commonly utilized for search or other functions</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="16384"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ProductMarketingPoint">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="pointType" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Basic category or type of Marketing point being made.  e.g. Highlights, Size, Safety</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="pointCopy">
+					<xsd:annotation>
+						<xsd:documentation>Marketing bullet or point copy</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="1024"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Color">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="colorName">
+					<xsd:annotation>
+						<xsd:documentation>Supplier specific color name.  Go to market color</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="hex" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The HEX code representation .  This is not a supplement for product color but data used for generating web user interfaces</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="approximatePms" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The PMS code representation.  This is not a supplement for product color.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="64"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Product">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:productId"/>
+				<xsd:element name="productName">
+					<xsd:annotation>
+						<xsd:documentation>The supplier name for the product</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="256"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="ns3:description" maxOccurs="unbounded"/>
+				<xsd:element name="ProductMarketingPointArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Array of the marketing point type and content</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:ProductMarketingPoint" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ProductKeywordArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Array of keywords often used in searching for this product</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:ProductKeyword" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="productBrand" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Product Brand</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="export" type="xsd:boolean" nillable="true">
+					<xsd:annotation>
+						<xsd:documentation>Product status for export</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ProductCategoryArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>The product’s categorization array</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:ProductCategory" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="RelatedProductArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Array of all part specific product data</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns1:RelatedProduct" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ProductPartArray" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Array of all part specific product data</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ProductPart" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element ref="ns3:partId"/>
+										<xsd:element ref="ns3:description" minOccurs="0" maxOccurs="unbounded"/>
+										<xsd:element ref="ns3:countryOfOrigin" minOccurs="0"/>
+										<xsd:element name="ColorArray" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Colors</xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element ref="ns1:Color" maxOccurs="unbounded"/>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="primaryMaterial" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Primary material of construction</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:token">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="64"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="SpecificationArray" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Specifications</xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element ref="ns1:Specification" maxOccurs="unbounded"/>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="shape" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>General shape</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:token">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="64"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element ref="ns3:ApparelSize" minOccurs="0"/>
+										<xsd:element ref="ns1:Dimension" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Physical dimensions and weight</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="leadTime" type="xsd:int" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Lead time in days</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="unspsc" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>United Nations Standard Products and Services Code (UNSPSC)</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:token">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="8"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="gtin" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Global Trade Item Number (GTIN)</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:token">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="14"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="isRushService" type="xsd:boolean" nillable="true">
+											<xsd:annotation>
+												<xsd:documentation>Part specific rush service</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="ProductPackagingArray" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Packaging option details; e.g. Gift Box, Cello Pack, Sleeve</xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element ref="ns1:ProductPackage" maxOccurs="unbounded"/>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="ShippingPackageArray" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Shipping package option details for the partPackaging Default package type; e.g. Carton, Box, Pallet.</xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element ref="ns1:ShippingPackage" maxOccurs="unbounded"/>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element ref="ns3:endDate"/>
+										<xsd:element ref="ns3:effectiveDate"/>
+										<xsd:element ref="ns3:isCloseout"/>
+										<xsd:element ref="ns3:isCaution"/>
+										<xsd:element ref="ns3:cautionComment" minOccurs="0"/>
+										<xsd:element name="nmfcCode" type="xsd:decimal" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>National Motor Freight Classification Code</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="nmfcDescription" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>National Motor Freight Classification Description</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:token">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="1024"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="nmfcNumber" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>National Motor Freight Classification Number</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:token">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="64"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="isOnDemand" type="xsd:boolean" nillable="true">
+											<xsd:annotation>
+												<xsd:documentation>Manufactured on demand / Made to order</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="isHazmat" type="xsd:boolean" nillable="true">
+											<xsd:annotation>
+												<xsd:documentation>Contains hazardous material</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="lastChangeDate" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:documentation>The date time stamp of the most recent change </xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="creationDate" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:documentation>The date time stamp when this products data initially became available </xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="ns3:endDate"/>
+				<xsd:element ref="ns3:effectiveDate"/>
+				<xsd:element ref="ns3:isCaution"/>
+				<xsd:element ref="ns3:cautionComment" minOccurs="0"/>
+				<xsd:element ref="ns3:isCloseout"/>
+				<xsd:element name="lineName" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Line Name / Division to which this product belongs</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:token">
+							<xsd:maxLength value="64"/>
+							<xsd:minLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="GetProductResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns1:Product" minOccurs="0"/>
+				<xsd:element ref="ns3:ErrorMessage" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

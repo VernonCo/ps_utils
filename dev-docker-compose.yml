@@ -1,36 +1,61 @@
 version: '3'  # view README.md before running if admin db and admin user needed
 services:
   ps_utils_dev:
-    image: ps-utils:dev
+    image: vernonco/ps-utils:dev
     container_name: ps_utils_dev
     environment:
 #      - local=true
       - TERM=xterm
-      - ENVIRONMENT=development
-      - DB_AUTH='root'
-      - DB_PASS='yourpassword'
-      - DB_HOST='db'
-      - DB_PORT='3306'
-    ports: ['8080:80']
+      - ENVIRONMENT= # use 1 or production for production
+      - DB_AUTH=youruser
+      - DB_PASS=yourpassword
+      - DB_HOST=db
+      - DB_PORT=3306
+      - CONFIG_FILE=config  # or config-local if bringing over previous passwords
+      - FLASK_APP="app:app"   # set to run flask fab create-admin (see README.md).
+      - FLASK_ENV=development
+      - SERVER_PATH=/app
+    ports: ['8089:80', '5001:5000']
     volumes:
       - ./ps_utils:/app
     logging:
       options:
         max-size: "100k"
         max-file: "20"
+    links:
+      - db:db
 # for weave network
     # network_mode: "bridge"
     # dns_search:
     #   - weave.local
+    # command: flask run  #  to run as flask instead of gunicorn
+
 
   db:
     image: percona
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: yourpassword
+        - MYSQL_ROOT_PASSWORD=rootpassword
+        - MYSQL_USER=youruser
+        - MYSQL_PASSWORD=yourpassword
+        - MYSQL_DATABASE=ps_utils
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin" ,"ping", "-h","localhost"]
+    #   timeout: 20s
+    #   retries: 10
+# for weave network
+    # network_mode: "bridge"
+    # dns_search:
+    #   - weave.local
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8090:8080
+    links:
+      - db:db
+# for weave network
+    # network_mode: "bridge"
+    # dns_search:
+    #   - weave.local
