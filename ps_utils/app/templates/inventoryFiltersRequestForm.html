@@ -1,0 +1,103 @@
+{% extends "appbuilder/base.html" %}
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+        <h4 class="panel-title">Inventory Request Form</h4>
+        </div>
+        {% if data['errorMessage'] %}
+            <h2>{{data['errorMessage']}}</h2>
+            <div class="well well-sm">
+                <a href="/back" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip" title=""
+                    data-original-title="Back">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+            </div>
+        {% else %}
+        <div id="Home" class="tab-pane active">
+            <form id="model_form" action="" method="post" enctype="multipart/form-data" _lpchecked="1">
+                <input type="hidden" id="field1" name="field1" value="{{data['vendorID']}}">
+                <input type="hidden" id="field2" name="field2" value="{{data['productID']}}">
+                <input type="hidden" id="field3" name="field3" required="" value="getInventoryLevels">
+                <input type="hidden" id="field4" name="field4" required="" value="page">
+                {{ form.csrf_token }}
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="supplier" control-label="">
+                                        Supplier<strong style="color: red">*</strong></label>
+                                </td>
+                                <td>
+                                    <input id="supplier" disabled required="" value="{{data['vendorName']}}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="sku" control-label="">
+                                        Product SKU<strong style="color: red">*</strong></label>
+                                </td>
+                                <td>
+                                    <input id="sku" disabled required="" value="{{data['productID']}}">
+                                </td>
+                            </tr>
+                            {% if 'FilterColorArray' in data and data['FilterColorArray']['filterColor'] %}
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="color" control-label="">Color Filter
+                                            <br>( Select One or More If Desired )
+                                        </label>
+                                </td>
+                                <td>
+                                    <select class="form-control" id="color" name="color" multiple>
+                                        {% for color in data['FilterColorArray']['filterColor'] %}
+                                        <option value="{{color}}">{{color}}</option>
+                                        {% endfor %}
+                                </td>
+                            </tr>
+                            {% endif %}
+
+                            {% if 'FilterSizeArray' in data and data['FilterSizeArray']['filterSize'] %}
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="size" control-label="">Size Filter
+                                        <br>( Select One or More If Desired )
+                                    </label>
+                                </td>
+                                <td>
+                                    <select class="form-control" id="size" name="size" multiple>
+                                        {% for size in data['FilterSizeArray']['filterSize'] %}
+                                        <option value="{{size}}">{{size}}</option>
+                                        {% endfor %}
+                                </td>
+                            </tr>
+                            {% endif %}
+
+                            {% if 'filterSelectionArray' in data and data['filterSelectionArray']['filterSelection'] %}
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="misc" control-label="">Misc Filter
+                                            <br>( Select One or More If Desired )
+                                        </label>
+                                </td>
+                                <td>
+                                    <select class="form-control" id="misc" name="misc" multiple>
+                                        {% for misc in data['filterSelectionArray']['filterSelection'] %}
+                                        <option value="{{misc}}">{{misc}}</option>
+                                        {% endfor %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                    </tbody></table>
+                </div>
+                <div class="well well-sm">
+                    <button type="submit" class="btn  btn-sm btn-primary">Submit<i class="fa fa-save"></i></button>
+                    <a href="/inventory/index/?field1={{data['vendorID']}}&field2={{data['productID']}}" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip" title="" data-original-title="Back">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

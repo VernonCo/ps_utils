@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 from suds.client import Client
 from suds.xsd.doctor import Import, ImportDoctor
 from suds.sudsobject import asdict
+from zeep import Client as zClient
 # logging.getLogger('suds.wsdl').setLevel(logging.DEBUG)
 # logging.getLogger('suds.client').setLevel(logging.DEBUG)
 from flask import render_template, flash, request, jsonify, config
@@ -147,16 +148,29 @@ class Companies(ModelView):
 appbuilder.add_view( Companies, "List Companies", icon="fa-list", category="Companies", category_icon='fa-database')
 
 class Inventory(SimpleFormView):
+    default_view = 'index'
     form = InventoryForm
-    form_title = "Inventory Request Form"
-    message = "Form was submitted"
+    def check4InventoryFiltersV1(self, client, kw):
+        """ check for filters to set on soap call on version 1.0.0 and 1.2.1"""
+        if 'color' in request.form:
+            filterColorArray = client.factory.create('FilterColorArray')
+            filterColorArray.filterColor = request.form.getlist('color')
+            kw['FilterColorArray'] = filterColorArray
+        if 'size' in request.form:
+            filterSizeArray = client.factory.create('FilterSizeArray')
+            filterSizeArray.filterSize = request.form.getlist('size')
+            kw['FilterSizeArray'] = filterSizeArray
+        if 'misc' in request.form:
+            filterMiscArray = client.factory.create('FilterSelectionArray')
+            filterMiscArray.filterSelection = request.form.getlist('misc')
+            kw['FilterSelectionArray'] = filterMiscArray
+        return kw
 
-    def form_get(self, form, **kw):  # get the form to display
-        form.field1.data = 126
-        form.field2.data = "2825"
-
-    def form_post(self, form):  # process the form submission
+    @expose('/index/', methods=['GET', 'POST'])
+    def index(self, **kw):
         """
+        form and display for inventory requests
+
         field1 = companyID
         field2 = productID
         field3 = service method
@@ -166,10 +180,59 @@ class Inventory(SimpleFormView):
             size = size filter
             misc = generic filter
         """
-        data = 'Unable to get Response'
-        c = db.session.query(Company).get(int(request.form['field1']))
-        # get the local wsdl
-        url = getDoctor('INV', c.inventory_version, url=True)
+        form_title = "Inventory Request Form"
+        if request.method == 'GET':
+            c = db.session.query(Company).all()
+            id = request.args.get('field1', 126)
+            prodID = request.args.get('field2', 8268)
+            return self.render_template(
+                    'inventoryRequestForm.html', companies = c, title=form_title, id=int(id),
+                    prodID=prodID, form=self.form, message = "Form was submitted"
+                    )
+        else:
+            data = 'Unable to get Response'
+            c = db.session.query(Company).get(int(request.form['field1']))
+            # get the local wsdl and inject the endpoint
+            # ...should almost always work if they follow the wsdl and give a valid endpoint to PS
+            if c.inventory_version[:1] == '1':
+                data = self.inventoryCallv1(c)
+            else:
+                data = self.inventoryCallv2(c)
+
+            if data == 'Unable to get Response':
+                if  request.form['field4'] == 'json':
+                    data = json.dumps(data)
+                    return data, 200,  {'Content-Type':'applicaion/json'}
+                flash('Submitted request to {}'.format(c), "info")
+                return data
+            elif request.form['field3'] == 'getFilterValues':
+                if 'SoapFault' in data:
+                    data['errorMessage'] = data['SoapFault']
+                #redirect to new form with filter options
+                data = sobject_to_dict(data)
+                data['vendorID'] = c.id
+                data['vendorName'] = c.company_name
+                return self.render_template('inventoryFiltersRequestForm.html', data=data, form=self.form)
+            else:
+                if  request.form['field4'] == 'json':
+                    data = sobject_to_json(data)
+                    return data, 200,  {'Content-Type':'applicaion/json'}
+                #redirct to results page
+                data=sobject_to_dict(data, json_serialize=True)
+                # assert False
+                if 'SoapFault' in data:
+                    data['errorMessage'] == data['SoapFault']
+                if 'errorMessage' in data and data['errorMessage']:
+                    checkRow = None
+                else:
+                    checkRow = data['ProductVariationInventoryArray']['ProductVariationInventory'][0]
+                return self.render_template(
+                    'inventoryRequest.html', data=data, checkRow=checkRow, productID=request.form['field2']
+                    )
+
+    def inventoryCallv1(self,c):
+        """ used with version 1.0.0 and 1.2.1 """
+        local_wsdl = getDoctor('INV', c.inventory_version, url=True)
         kw = dict(
                 password=c.password,
                 id=c.user_name,
@@ -177,20 +240,8 @@ class Inventory(SimpleFormView):
                 productIDtype='Supplier',
                 wsVersion= c.inventory_version)
         try:
-            client = Client(url, location='{}'.format(c.inventory_url))  #c.inventory_wsdl, doctor=d
-
-            if 'color' in request.form:
-                filterColorArray = client.factory.create('FilterColorArray')
-                filterColorArray.filterColor = request.form.getlist('color')
-                kw['FilterColorArray'] = filterColorArray
-            if 'size' in request.form:
-                filterSizeArray = client.factory.create('FilterSizeArray')
-                filterSizeArray.filterSize = request.form.getlist('size')
-                kw['FilterSizeArray'] = filterSizeArray
-            if 'misc' in request.form:
-                filterMiscArray = client.factory.create('FilterSelectionArray')
-                filterMiscArray.filterSelection = request.form.getlist('misc')
-                kw['FilterSelectionArray'] = filterMiscArray
+            client = Client(local_wsdl, location='{}'.format(c.inventory_url))
+            kw = self.check4InventoryFiltersV1(client, kw)
 
             # call the method
             func = getattr(client.service, request.form['field3'])
@@ -199,24 +250,14 @@ class Inventory(SimpleFormView):
             if not PRODUCTION:
                 logging.error('Error on local wsdl and location: {}'.format(c.inventory_url))
             logging.error(str(e))
+            # set up error message to be given if all tries fail. As this one should have worked, give this error
+            error_msg = {'SoapFault':str(e)}
             try:
                 # use remote wsdl
                 # set schema doctor to fix missing schemas
                 d = getDoctor('INV', c.inventory_version)
                 client = Client(c.inventory_wsdl, doctor=d)
-
-                if 'color' in request.form:
-                    filterColorArray = client.factory.create('FilterColorArray')
-                    filterColorArray.filterColor = request.form.getlist('color')
-                    kw['FilterColorArray'] = filterColorArray
-                if 'size' in request.form:
-                    filterSizeArray = client.factory.create('FilterSizeArray')
-                    filterSizeArray.filterSize = request.form.getlist('size')
-                    kw['FilterSizeArray'] = filterSizeArray
-                if 'misc' in request.form:
-                    filterMiscArray = client.factory.create('FilterSelectionArray')
-                    filterMiscArray.filterSelection = request.form.getlist('misc')
-                    kw['FilterSelectionArray'] = filterMiscArray
+                kw = self.check4InventoryFiltersV1(client, kw)
 
                 func = getattr(client.service, request.form['field3'])
                 data = func(**kw)
@@ -229,19 +270,7 @@ class Inventory(SimpleFormView):
                     # doctor to fix missing schemas
                     d = getDoctor('INV', c.inventory_version)
                     client = Client(c.inventory_wsdl, location='{}'.format(c.inventory_url), doctor=d)
-
-                    if 'color' in request.form:
-                        filterColorArray = client.factory.create('FilterColorArray')
-                        filterColorArray.filterColor = request.form.getlist('color')
-                        kw['FilterColorArray'] = filterColorArray
-                    if 'size' in request.form:
-                        filterSizeArray = client.factory.create('FilterSizeArray')
-                        filterSizeArray.filterSize = request.form.getlist('size')
-                        kw['FilterSizeArray'] = filterSizeArray
-                    if 'misc' in request.form:
-                        filterMiscArray = client.factory.create('FilterSelectionArray')
-                        filterMiscArray.filterSelection = request.form.getlist('misc')
-                        kw['FilterSelectionArray'] = filterMiscArray
+                    kw = self.check4InventoryFiltersV1(client, kw)
 
                     func = getattr(client.service, request.form['field3'])
                     data = func(**kw)
@@ -249,37 +278,23 @@ class Inventory(SimpleFormView):
                     if not PRODUCTION:
                         logging.error('Error on remote wsdl and location: {}'.format(c.inventory_url))
                     logging.error(str(e))
-        # assert False
+                    data = error_msg
+        return data
 
-        if data == 'Unable to get Response':
-            if  request.form['field4'] == 'json':
-                data = json.dumps(data)
-                return data, 200,  {'Content-Type':'applicaion/json'}
-            flash('Submitted request to {}'.format(c), "info")
-            return data
-        elif request.form['field3'] == 'getFilterValues':
-            #redirect to new form with filter options
-                data = sobject_to_dict(data)
-                data['vendorID'] = c.id
-                data['vendorName'] = c.company_name
-                return self.render_template('inventoryRequestForm.html', data=data, form=form)
-        else:
-            if  request.form['field4'] == 'json':
-                data = sobject_to_json(data)
-                return data, 200,  {'Content-Type':'applicaion/json'}
-            #redirct to results page
-            data=sobject_to_dict(data, json_serialize=True)
-            # assert False
-            return self.render_template('inventoryRequest.html', data=data)
-
+    def inventoryCallv2(self,c):
+        """ used with version 2.0.0 """
+        # TODO: finish code for version 2.0.0
+        return {"SoapFault": 'Version 2.0.0 is not available yet.'}
 
 appbuilder.add_view(
     Inventory,
     "INV Request",
+    href='/inventory/index/',
     icon="fa-search",
     category='Forms',
     category_icon='fa-wpforms'
 ) #  label=_("Inventory Request Form"),
+
 
 class Utilities(BaseView):
 

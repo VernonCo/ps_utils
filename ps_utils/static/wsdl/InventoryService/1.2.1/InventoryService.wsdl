@@ -5,14 +5,14 @@
      xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
      xmlns:tns="http://www.promostandards.org/WSDL/InventoryService/1.0.0/"
      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-    >   
+    >
     <wsdl:types>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
             <xsd:import namespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/" schemaLocation="GetFilterValuesRequest.xsd"/>
         </xsd:schema>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
             <xsd:import namespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/" schemaLocation="GetFilterValuesReply.xsd"/>
-        </xsd:schema> 
+        </xsd:schema>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
             <xsd:import namespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/" schemaLocation="InventoryRequest.xsd"/>
         </xsd:schema>
@@ -31,7 +31,7 @@
     </wsdl:message>
     <wsdl:message name="getInventoryLevelsResponse">
         <wsdl:part name="Reply" element="tns:Reply"/>
-    </wsdl:message>	
+    </wsdl:message>
     <wsdl:portType name="InventoryService">
         <wsdl:operation name="getFilterValues">
           <wsdl:input message="tns:GetFilterValuesRequestMessage"/>
@@ -60,12 +60,12 @@
             </wsdl:input>
             <wsdl:output>
                 <soap:body use="literal"/>
-            </wsdl:output>			
+            </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="InventoryService">
         <wsdl:port name="InventoryServiceBinding" binding="tns:InventoryServiceBinding">
-            <soap:address location="http://localhost:50710/SampleInventoryService.svc"/>
+            <soap:address location=""/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
