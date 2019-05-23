@@ -1,6 +1,6 @@
 # PS Utilities
 - Can update a db with a list of companies and their working endpoints (/update).
-- Returns json for PS Service POST requests
+- Returns json or table html for ajax requests  ie field4=json or field4=table
 - can use a plugin to update your ERP order status
 - has forms for manual use
 ## to setup the database to test or run on production, it needs to be accessible to the local run (see # create db and admin user) or follow steps for docker-compose
