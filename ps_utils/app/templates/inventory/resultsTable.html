@@ -1,0 +1,156 @@
+<h1>prouctID {{productID}}</h1>
+    {% if data['errorMessage'] %}
+    {{data['errorMessage']}}
+    {% else %}
+        <table class="table-bordered table-striped table-responsive" width="100%">
+            <thead>
+                <tr>
+                <!-- found Brand and partID to be optional in returns -->
+                    {% if 'brand' in checkRow and checkRow['brand'] %}
+                        {% set brand = "1" %}
+                        <th class="center">Brand</th>'
+                    {% endif %}
+                    {% if 'partID' in checkRow and checkRow['partID'] %}
+                        {% set productNo = "1" %}
+                        <th>Part ID</th>
+                    {% endif %}
+                    <th class="center">Description</th>
+                    <th class="center">Quantity</th>
+                    {% if 'attributeColor' in checkRow and checkRow['attributeColor'] %}
+                        {% set color = "1" %}
+                        <th class="center">Color</th>
+                    {% endif %}
+                    {% if 'attributeSize' in checkRow and checkRow['attributeSize'] %}
+                        {% set size = "1" %}
+                        <th class="center">Size</th>
+                    {% endif %}
+                    <th class="center">Extra Attr</th>
+                    {% if 'entryType' in checkRow and checkRow['entryType'] %}
+                        {% set entryType = "1" %}
+                        <th class="hidden-xs center">Entry Type</th>
+                    {% endif %}
+                    <th class="hidden-xs center">Timestamp</th>
+                    <th class="hidden-xs center">Msg?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data['ProductVariationInventoryArray']['ProductVariationInventory'] %}
+                    <tr class="{{ loop.cycle('odd', 'even') }}">
+                        {% if brand %}
+                        <td>&nbsp;{{row.brand}}&nbsp;</td>
+                        {% endif %}
+                        {% if productNo %}
+                        <td>{{row.partID}}&nbsp;</td>
+                        {% endif %}
+                        <td>&nbsp;{{row.partDescription}}&nbsp;</td>
+                        <td style="text-align: right;">{{row.quantityAvailable}}&nbsp;</td>
+                        {% if color %}
+                        <td>&nbsp;{{row.attributeColor}}&nbsp;</td>
+                        {% endif %}
+                        {% if size %}
+                        <td style="text-align: center;">{{row.attributeSize}}</td>
+                        {% endif %}
+                        <td style="text-align: right;">
+                        {% if 'AttributeFlexArray' in row and 'AttributeFlex' in row.AttributeFlexArray %}
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for extra in row.AttributeFlexArray.AttributeFlex %}
+                                    <tr>
+                                        <td>ID: {{extra.id}} </td>
+                                        <td>Name: {{extra.name}} </td>
+                                        <td>Value: {{extra.value}} </td>
+                                    </tr>
+                                    {%endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                        </td>
+                        {% if entryType %}
+                        <td style="text-align: right;">{{row.entryType}}</td>
+                        {% endif %}
+                        <td>&nbsp;{{row.validTimestamp}}</td>
+                        <td style="text-align: center;">{% if 'customProductMessage' in row %} row.customProductMessage{% endif %}</td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    {% endif %}
+    {% if 'ProductCompanionInventoryArray' in data
+        and 'ProductCompanionInventory' in data.ProductCompanionInventoryArray
+        and data.ProductCompanionInventoryArra.ProductCompanionInventory %}
+        {% set brand, productNo, color, size, entryType = (0,0,0,0,0) %}
+        {% set checkRow = data.ProductCompanionInventoryArra.ProductCompanionInventory[0] %}
+        <hr>
+        <h3>Companion Items available</h3>
+        <table id="resultsTable" class="table table-condensed table-bordered table-hover gradienttable">
+            <thead>
+                <tr>
+                        {% if 'brand' in checkRow and checkRow['brand'] %}
+                        {% set brand = "1" %}
+                        <th class="center">Brand</th>'
+                    {% endif %}
+                    {% if 'partID' in checkRow and checkRow['partID'] %}
+                        {% set productNo = "1" %}
+                        <th>Part ID</th>
+                    {% endif %}
+                    <th class="center">Description</th>
+                    <th class="center">Quantity</th>
+                    {% if 'attributeColor' in checkRow and checkRow['attributeColor'] %}
+                        {% set color = "1" %}
+                        <th class="center">Color</th>
+                    {% endif %}
+                    {% if 'attributeSize' in checkRow and checkRow['attributeSize'] %}
+                        {% set size = "1" %}
+                        <th class="center">Size</th>
+                    {% endif %}
+                    <th class="center">Extra Attr</th>
+                    {% if 'entryType' in checkRow and checkRow['entryType'] %}
+                        {% set entryType = "1" %}
+                        <th class="hidden-xs center">Entry Type</th>
+                    {% endif %}
+                    <th class="hidden-xs center">Timestamp</th>
+                    <th class="hidden-xs center">Msg?</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {% for row in data.ProductCompanionInventoryArra.ProductCompanionInventory %}
+                    <tr class="{{ loop.cycle('odd', 'even') }}">
+                        {% if brand %}
+                        <td>&nbsp;{{row.brand}}&nbsp;</td>
+                        {% endif %}
+                        {% if productNo %}
+                        <td>{{row.partID}}&nbsp;</td>
+                        {% endif %}
+                        <td>&nbsp;{{row.partDescription}}&nbsp;</td>
+                        <td style="text-align: right;">{{row.quantityAvailable}}&nbsp;</td>
+                        {% if color %}
+                        <td>&nbsp;{{row.attributeColor}}&nbsp;</td>
+                        {% endif %}
+                        {% if size %}
+                        <td style="text-align: center;">{{row.attributeSize}}</td>
+                        {% endif %}
+                        <td style="text-align: right;">
+                        {% if 'AttributeFlexArray' in row and 'AttributeFlex' in row.AttributeFlexArray %}
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for extra in row.AttributeFlexArray.AttributeFlex %}
+                                    <tr>
+                                        <td>ID: {{extra.id}} </td>
+                                        <td>Name: {{extra.name}} </td>
+                                        <td>Value: {{extra.value}} </td>
+                                    </tr>
+                                    {%endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                        </td>
+                        {% if entryType %}
+                        <td style="text-align: right;">{{row.entryType}}</td>
+                        {% endif %}
+                        <td>&nbsp;{{row.validTimestamp}}</td>
+                        <td style="text-align: center;">{% if 'customProductMessage' in row %} row.customProductMessage{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+    {%endif %}

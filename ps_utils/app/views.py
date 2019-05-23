@@ -14,6 +14,7 @@ from flask_appbuilder import ModelView, ModelRestApi, SimpleFormView, BaseView, 
 from .models import Company
 from . import appbuilder, db
 from .forms import InventoryForm
+from .widgets import InventoryResultsTable
 # only needed if importing passwords from previous db
 import MySQLdb
 from . import app
@@ -186,7 +187,7 @@ class Inventory(SimpleFormView):
             id = request.args.get('field1', 126)
             prodID = request.args.get('field2', 8268)
             return self.render_template(
-                    'inventoryRequestForm.html', companies = c, title=form_title, id=int(id),
+                    'inventory/requestForm.html', companies = c, title=form_title, id=int(id),
                     prodID=prodID, form=self.form, message = "Form was submitted"
                     )
         else:
@@ -212,7 +213,8 @@ class Inventory(SimpleFormView):
                 data = sobject_to_dict(data)
                 data['vendorID'] = c.id
                 data['vendorName'] = c.company_name
-                return self.render_template('inventoryFiltersRequestForm.html', data=data, form=self.form)
+                data['returnType'] = request.form['field4']
+                return self.render_template('inventory/filtersRequestForm.html', data=data, form=self.form)
             else:
                 if  request.form['field4'] == 'json':
                     data = sobject_to_json(data)
@@ -226,9 +228,16 @@ class Inventory(SimpleFormView):
                     checkRow = None
                 else:
                     checkRow = data['ProductVariationInventoryArray']['ProductVariationInventory'][0]
-                return self.render_template(
-                    'inventoryRequest.html', data=data, checkRow=checkRow, productID=request.form['field2']
-                    )
+                if request.form['field4'] == 'table': # return html for table only
+                    return self.render_template(
+                        'inventory/resultsTable.html', data=data, checkRow=checkRow,
+                        productID=request.form['field2'], table=True
+                        )
+                else:
+                    return self.render_template(
+                        'inventory/results.html', data=data, checkRow=checkRow,
+                        productID=request.form['field2'], table=False
+                        )
 
     def inventoryCallv1(self,c):
         """ used with version 1.0.0 and 1.2.1 """

@@ -1,11 +1,13 @@
-{% extends "appbuilder/base.html" %}
+{% if not table %}
+    {% extends "appbuilder/base.html" %}
+{% endif %}
 {% block content %}
     <button><a href="/inventory/index?field1={{request.form['field1']}}">New Request</a></button>
-    <h1>prouctID {{productID}}</h1>
     {% if data['errorMessage'] %}
     {{data['errorMessage']}}
     {% else %}
         <table class="table-bordered table-striped table-responsive" width="100%">
+            <caption>prouctID {{productID}}</caption>
             <thead>
                 <tr>
                 <!-- found Brand and partID to be optional in returns -->
@@ -157,4 +159,5 @@
                 {% endfor %}
             </tbody>
     {%endif %}
+
 {% endblock %}
