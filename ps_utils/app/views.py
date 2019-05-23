@@ -14,7 +14,6 @@ from flask_appbuilder import ModelView, ModelRestApi, SimpleFormView, BaseView, 
 from .models import Company
 from . import appbuilder, db
 from .forms import InventoryForm
-from .widgets import InventoryResultsTable
 # only needed if importing passwords from previous db
 import MySQLdb
 from . import app
