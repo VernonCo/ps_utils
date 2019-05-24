@@ -72,7 +72,7 @@ def getDoctor( code, version, url=False):
     if code == 'INVC':
         service =  'Invoice'
     if url:
-        return 'file:///{}/static/wsdl/{}/{}/{}.wsdl'.format(os.getenv('SERVER_PATH'), service,version,service)
+        return 'file:///{}/app/static/wsdl/{}/{}/{}.wsdl'.format(os.getenv('SERVER_PATH'), service,version,service)
     imp = Import('http://schemas.xmlsoap.org/soap/encoding/')
     imp.filter.add(request.url_root + '/static/wsdl/{}/{}/'.format(service, version))
     d = ImportDoctor(imp)
