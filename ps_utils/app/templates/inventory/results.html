@@ -1,13 +1,77 @@
 {% if not table %}
     {% extends "appbuilder/base.html" %}
 {% endif %}
+{% import 'appbuilder/general/lib.html' as lib %}
+{% block head_css %}
+{{ super() }}
+
+<link type="text/css" href="{{url_for('static',filename='datatables/datatables.min.css')}}" rel="stylesheet">
+<style>
+    .panel-primary .panel-heading, .panel-success .panel-heading, .panel-warning .panel-heading,
+    .panel-danger .panel-heading, .panel-info .panel-heading, .panel-primary .panel-title,
+    .panel-success .panel-title, .panel-warning .panel-title, .panel-danger .panel-title,
+    .panel-info .panel-title {
+        color: #0f87ec;
+        }
+</style>
+
+{% endblock %}
 {% block content %}
-    <button><a href="/inventory/index?field1={{request.form['field1']}}">New Request</a></button>
-    {% if data['errorMessage'] %}
-    {{data['errorMessage']}}
-    {% else %}
-        <table class="table-bordered table-striped table-responsive" width="100%">
-            <caption>prouctID {{productID}}</caption>
+
+    <div class="panel panel-primary">
+        {% call lib.accordion_tag('requestForm',"Inventory Request Form", False) %}
+        <form  action="" method="POST" class="form-inline">
+            <div class="form-group">
+                <label for="field1">Supplier
+                        <strong style="color: red">*</strong></label>
+                <select id="field1" name="field1" required="">
+                    <option value=""> -- Select One -- </option>
+                    {% for c in companies %}
+                        {% if data['vendorID'] == c.id %}
+                            <option value="{{c.id}}" selected >{{c}}</option>
+                        {% else %}
+                            <option value="{{c.id}}" >{{c}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="field2" control-label="">Product SKU
+                    <strong style="color: red">*</strong></label>
+                <input type="text" name="field2">
+            </div>
+            <div class="form-group">
+                <label for="field3" control-label="">Service
+                    <strong style="color: red">*</strong></label>
+                    <select id="field3" name="field3" required="">
+                        <option value="">-- Select One --</option>
+                        <option value="getFilterValues">Get Filters</option>
+                        <option value="getInventoryLevels" selected>Get Results</option>
+                    </select>
+            </div>
+            <div class="form-group">
+                <label for="field4" control-label="">Return Type
+                    <strong style="color: red">*</strong></label>
+                    <select id="field4" name="field4" required="">
+                        <option value="">-- Select One --</option>
+                        <option value="json">Return As JSON</option>
+                        <option value="table">Return As Results Table</option>
+                        <option value="page" selected>Display in app</option>
+                    </select>
+            </div>
+            <div class="well well-sm">
+                <button type="submit" class="btn  btn-sm btn-primary">Submit
+                    <i class="fa fa-save"></i></button>
+            </div>
+        </form>
+        {% endcall %}
+        {% call lib.accordion_tag('productTable',data['vendorName'] + "Listings for Product ID #" +productID, True) %}
+        {% if data['errorMessage'] %}
+            <div>
+                <h3>{{data['errorMessage']}}</h3>
+            </div>
+        {% else %}
+        <table id="resultsTable1" class="order-column table-striped" width="100%">
             <thead>
                 <tr>
                 <!-- found Brand and partID to be optional in returns -->
@@ -74,21 +138,22 @@
                         <td style="text-align: right;">{{row.entryType}}</td>
                         {% endif %}
                         <td>&nbsp;{{row.validTimestamp}}</td>
-                        <td style="text-align: center;">{% if 'customProductMessage' in row %} row.customProductMessage{% endif %}</td>
+                        <td style="text-align: center;">{% if 'customProductMessage' in row %} {{row.customProductMessage}} {% endif %}</td>
                     </tr>
                 {% endfor %}
 
             </tbody>
         </table>
-    {% endif %}
+        {% endif %}
+        {% endcall %}
     {% if 'ProductCompanionInventoryArray' in data
         and 'ProductCompanionInventory' in data.ProductCompanionInventoryArray
         and data.ProductCompanionInventoryArra.ProductCompanionInventory %}
         {% set brand, productNo, color, size, entryType = (0,0,0,0,0) %}
         {% set checkRow = data.ProductCompanionInventoryArra.ProductCompanionInventory[0] %}
-        <hr>
-        <h3>Companion Items available</h3>
-        <table id="resultsTable" class="table table-condensed table-bordered table-hover gradienttable">
+
+        {% call lib.accordion_tag('companionTable',"Companion Products", True) %}
+        <table id="resultsTable2" class="table table-condensed table-bordered table-hover gradienttable">
             <thead>
                 <tr>
                         {% if 'brand' in checkRow and checkRow['brand'] %}
@@ -158,6 +223,18 @@
                     </tr>
                 {% endfor %}
             </tbody>
+        </table>
+        {% endcall %}
     {%endif %}
+</div>
 
+{% endblock %}
+{% block tail %}
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='datatables/datatables.min.js')}}"></script>
+<script>
+    $(document).ready( function () {
+    $('#resultsTable1').DataTable( );
+    $('#resultsTable2').DataTable();
+} );
+</script>
 {% endblock %}

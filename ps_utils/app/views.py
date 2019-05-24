@@ -182,7 +182,7 @@ class Inventory(SimpleFormView):
         """
         form_title = "Inventory Request Form"
         if request.method == 'GET':
-            c = db.session.query(Company).all()
+            c = db.session.query(Company).filter(Company.inventory_url != None).all()
             id = request.args.get('field1', 126)
             prodID = request.args.get('field2', 8268)
             return self.render_template(
@@ -220,9 +220,12 @@ class Inventory(SimpleFormView):
                     return data, 200,  {'Content-Type':'applicaion/json'}
                 #redirct to results page
                 data=sobject_to_dict(data, json_serialize=True)
+                data['vendorID'] = c.id
+                data['vendorName'] = c.company_name
+                data['returnType'] = request.form['field4']
                 # assert False
                 if 'SoapFault' in data:
-                    data['errorMessage'] == data['SoapFault']
+                    data['errorMessage'] = data['SoapFault']
                 if 'errorMessage' in data and data['errorMessage']:
                     checkRow = None
                 else:
@@ -235,7 +238,8 @@ class Inventory(SimpleFormView):
                 else:
                     return self.render_template(
                         'inventory/results.html', data=data, checkRow=checkRow,
-                        productID=request.form['field2'], table=False
+                        companies=db.session.query(Company).all(),
+                        productID=request.form['field2'], table=False,
                         )
 
     def inventoryCallv1(self,c):

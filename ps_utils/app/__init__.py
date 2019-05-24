@@ -11,7 +11,7 @@ from flask_appbuilder import AppBuilder, SQLA
 logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 logging.getLogger().setLevel(logging.DEBUG)
 
-app = Flask(__name__)
+app = Flask(__name__,static_url_path='/app/static')
 app.config.from_object(os.getenv("CONFIG_FILE"))
 AppBuilder.app_name = 'PS Utils'
 db = SQLA(app)
