@@ -15,10 +15,10 @@
         {% else %}
         <div id="Home" class="tab-pane active">
             <form id="model_form" action="" method="post" enctype="multipart/form-data" _lpchecked="1">
-                <input type="hidden" id="field1" name="field1" value="{{data['vendorID']}}">
-                <input type="hidden" id="field2" name="field2" value="{{data['productID']}}">
-                <input type="hidden" id="field3" name="field3" required="" value="getInventoryLevels">
-                <input type="hidden" id="field4" name="field4" required="" value="{{data['returnType']}}">
+                <input type="hidden" id="companyID" name="companyID" value="{{data['vendorID']}}">
+                <input type="hidden" id="productID" name="productID" value="{{data['productID']}}">
+                <input type="hidden" id="serviceType" name="serviceType" required="" value="getInventoryLevels">
+                <input type="hidden" id="returnType" name="returnType" required="" value="{{data['returnType']}}">
                 {{ form.csrf_token }}
                 <div class="table-responsive">
                     <table class="table table-bordered">
@@ -92,7 +92,7 @@
                 </div>
                 <div class="well well-sm">
                     <button type="submit" class="btn  btn-sm btn-primary">Submit<i class="fa fa-save"></i></button>
-                    <a href="/inventory/index/?field1={{data['vendorID']}}&field2={{data['productID']}}" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip" title="" data-original-title="Back">
+                    <a href="/inventory/index/?companyID={{data['vendorID']}}&productID={{data['productID']}}" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip" title="" data-original-title="Back">
                         <i class="fa fa-arrow-left"></i>
                     </a>
                 </div>

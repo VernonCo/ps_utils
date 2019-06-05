@@ -1,6 +1,6 @@
 # PS Utilities
 - Can update a db with a list of companies and their working endpoints (/update).
-- Returns json or table html for ajax requests  ie field4=json or field4=table
+- Returns json or table html for ajax requests  ie returnType=json or returnType=table
 - can use a plugin to update your ERP order status
 - has forms for manual use
 ## to setup the database to test or run on production, it needs to be accessible to the local run (see # create db and admin user) or follow steps for docker-compose
@@ -95,6 +95,9 @@ OLD_DB_PORT=yourhostport
 ```
 
 ## requests conditional sequence
-- 1st call using local wsdl and inject location
-- else on error: call using remote wsdl
-- else on error: call using remote wsdl and inject location
+- 1st call using local wsdl and inject location -- quicker retrieving local wsdl, consistent, and standard
+- else on error: call using remote wsdl -- some do not work with the standard wsdl
+- else on error: call using remote wsdl and inject location -- some have the wrong location (ie localhost) in their wsdl
+
+## Inventory versions
+Currently only verion 1.2.1 works with filters and gives a clean data set for the form selects on filters

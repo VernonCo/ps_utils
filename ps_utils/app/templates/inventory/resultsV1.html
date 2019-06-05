@@ -22,9 +22,9 @@
         {% call lib.accordion_tag('requestForm',"Inventory Request Form", False) %}
         <form  action="" method="POST" class="form-inline">
             <div class="form-group">
-                <label for="field1">Supplier
+                <label for="companyID">Supplier
                         <strong style="color: red">*</strong></label>
-                <select id="field1" name="field1" required="">
+                <select id="companyID" name="companyID" required="">
                     <option value=""> -- Select One -- </option>
                     {% for c in companies %}
                         {% if data['vendorID'] == c.id %}
@@ -36,23 +36,23 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="field2" control-label="">Product SKU
+                <label for="productID" control-label="">Product SKU
                     <strong style="color: red">*</strong></label>
-                <input type="text" name="field2">
+                <input type="text" name="productID">
             </div>
             <div class="form-group">
-                <label for="field3" control-label="">Service
+                <label for="serviceType" control-label="">Service
                     <strong style="color: red">*</strong></label>
-                    <select id="field3" name="field3" required="">
+                    <select id="serviceType" name="serviceType" required="">
                         <option value="">-- Select One --</option>
                         <option value="getFilterValues">Get Filters</option>
                         <option value="getInventoryLevels" selected>Get Results</option>
                     </select>
             </div>
             <div class="form-group">
-                <label for="field4" control-label="">Return Type
+                <label for="returnType" control-label="">Return Type
                     <strong style="color: red">*</strong></label>
-                    <select id="field4" name="field4" required="">
+                    <select id="returnType" name="returnType" required="">
                         <option value="">-- Select One --</option>
                         <option value="json">Return As JSON</option>
                         <option value="table">Return As Results Table</option>

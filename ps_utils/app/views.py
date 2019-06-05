@@ -2,8 +2,6 @@
 import requests, json, os, re, logging
 from urllib.parse import urlparse
 from suds.client import Client
-from suds.xsd.doctor import Import, ImportDoctor
-from suds.sudsobject import asdict
 from zeep import Client as zClient
 # logging.getLogger('suds.wsdl').setLevel(logging.DEBUG)
 # logging.getLogger('suds.client').setLevel(logging.DEBUG)
@@ -12,8 +10,10 @@ from flask_babel import lazy_gettext as _
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder import ModelView, ModelRestApi, SimpleFormView, BaseView, expose, has_access
 from .models import Company
+from .inventory import Inventory
+from .orderstatus import OrderStatus
+from .soap_utils import  getDoctor
 from . import appbuilder, db
-from .forms import InventoryForm
 # only needed if importing passwords from previous db
 import MySQLdb
 from . import app
@@ -52,251 +52,7 @@ PRODUCTION = app.config.get('PRODUCTION')
 """
     Application wide 404 error handler
 """
-def getDoctor( code, version, url=False):
-    """ return service type for code """
-        # set schema doctor to fix missing schemas
-    if code == 'INV':
-        service =  'InventoryService'
-    if code == 'MED':
-        service =  'MediaService'
-    if code == 'ONS':
-        service =  'OrderShipmentNotificationService'
-    if code == 'ODRSTAT':
-        service =  'OrderStatusService'
-    if code == 'Product':
-        service =  'ProductDataService'
-    if code == 'PPC':
-        service =  'PricingAndConfiguration'
-    if code == 'PO':
-        service =  'PO'
-    if code == 'INVC':
-        service =  'Invoice'
-    if url:
-        return 'file:///{}/app/static/wsdl/{}/{}/{}.wsdl'.format(os.getenv('SERVER_PATH'), service,version,service)
-    imp = Import('http://schemas.xmlsoap.org/soap/encoding/')
-    imp.filter.add(request.url_root + '/static/wsdl/{}/{}/'.format(service, version))
-    d = ImportDoctor(imp)
-    return d
 
-
-def basic_sobject_to_dict(obj):
-    """Converts suds object to dict very quickly.
-    Does not serialize date time or normalize key case.
-    :param obj: suds object
-    :return: dict object
-    """
-    if not hasattr(obj, '__keylist__'):
-        return obj
-    data = {}
-    fields = obj.__keylist__
-    for field in fields:
-        val = getattr(obj, field)
-        if isinstance(val, list):
-            data[field] = []
-            for item in val:
-                data[field].append(basic_sobject_to_dict(item))
-        else:
-            data[field] = basic_sobject_to_dict(val)
-    return data
-
-
-def sobject_to_dict(obj, key_to_lower=False, json_serialize=False):
-    """
-    Converts a suds object to a dict.
-    :param json_serialize: If set, changes date and time types to iso string.
-    :param key_to_lower: If set, changes index key name to lower case.
-    :param obj: suds object
-    :return: dict object
-    """
-    import datetime
-
-    if not hasattr(obj, '__keylist__'):
-        if json_serialize and isinstance(obj, (datetime.datetime, datetime.time, datetime.date)):
-            return obj.isoformat()
-        else:
-            return obj
-    data = {}
-    fields = obj.__keylist__
-    for field in fields:
-        val = getattr(obj, field)
-        if key_to_lower:
-            field = field.lower()
-        if isinstance(val, list):
-            data[field] = []
-            for item in val:
-                data[field].append(sobject_to_dict(item, json_serialize=json_serialize))
-        else:
-            data[field] = sobject_to_dict(val, json_serialize=json_serialize)
-    return data
-
-
-def sobject_to_json(obj, key_to_lower=False):
-    """
-    Converts a suds object to json.
-    :param obj: suds object
-    :param key_to_lower: If set, changes index key name to lower case.
-    :return: json object
-    """
-    import json
-    data = sobject_to_dict(obj, key_to_lower=key_to_lower, json_serialize=True)
-    return json.dumps(data)
-
-class Companies(ModelView):
-    datamodel = SQLAInterface(Company)
-    list_columns = ['company_name', 'erp_id']
-
-appbuilder.add_view( Companies, "List Companies", icon="fa-list", category="Companies", category_icon='fa-database')
-
-class Inventory(SimpleFormView):
-    default_view = 'index'
-    form = InventoryForm
-    def check4InventoryFiltersV1(self, client, kw):
-        """ check for filters to set on soap call on version 1.0.0 and 1.2.1"""
-        if 'color' in request.form:
-            filterColorArray = client.factory.create('FilterColorArray')
-            filterColorArray.filterColor = request.form.getlist('color')
-            kw['FilterColorArray'] = filterColorArray
-        if 'size' in request.form:
-            filterSizeArray = client.factory.create('FilterSizeArray')
-            filterSizeArray.filterSize = request.form.getlist('size')
-            kw['FilterSizeArray'] = filterSizeArray
-        if 'misc' in request.form:
-            filterMiscArray = client.factory.create('FilterSelectionArray')
-            filterMiscArray.filterSelection = request.form.getlist('misc')
-            kw['FilterSelectionArray'] = filterMiscArray
-        return kw
-
-    @expose('/index/', methods=['GET', 'POST'])
-    def index(self, **kw):
-        """
-        form and display for inventory requests
-
-        field1 = companyID
-        field2 = productID
-        field3 = service method
-        field4 = return type json or html
-        [options]
-            color = color filter
-            size = size filter
-            misc = generic filter
-        """
-        form_title = "Inventory Request Form"
-        if request.method == 'GET':
-            c = db.session.query(Company).filter(Company.inventory_url != None).all()
-            id = request.args.get('field1', 126)
-            prodID = request.args.get('field2', 8268)
-            return self.render_template(
-                    'inventory/requestForm.html', companies = c, title=form_title, id=int(id),
-                    prodID=prodID, form=self.form, message = "Form was submitted"
-                    )
-        else:
-            data = 'Unable to get Response'
-            c = db.session.query(Company).get(int(request.form['field1']))
-            # get the local wsdl and inject the endpoint
-            # ...should almost always work if they follow the wsdl and give a valid endpoint to PS
-            if c.inventory_version[:1] == '1':
-                data = self.inventoryCallv1(c)
-            else:
-                data = self.inventoryCallv2(c)
-
-            if data == 'Unable to get Response':
-                if  request.form['field4'] == 'json':
-                    data = json.dumps(data)
-                    return data, 200,  {'Content-Type':'applicaion/json'}
-                flash('Submitted request to {}'.format(c), "info")
-                return data
-            elif request.form['field3'] == 'getFilterValues':
-                if 'SoapFault' in data:
-                    data['errorMessage'] = data['SoapFault']
-                #redirect to new form with filter options
-                data = sobject_to_dict(data)
-                data['vendorID'] = c.id
-                data['vendorName'] = c.company_name
-                data['returnType'] = request.form['field4']
-                return self.render_template('inventory/filtersRequestForm.html', data=data, form=self.form)
-            else:
-                if  request.form['field4'] == 'json':
-                    data = sobject_to_json(data)
-                    return data, 200,  {'Content-Type':'applicaion/json'}
-                #redirct to results page
-                data=sobject_to_dict(data, json_serialize=True)
-                data['vendorID'] = c.id
-                data['vendorName'] = c.company_name
-                data['returnType'] = request.form['field4']
-                # assert False
-                if 'SoapFault' in data:
-                    data['errorMessage'] = data['SoapFault']
-                if 'errorMessage' in data and data['errorMessage']:
-                    checkRow = None
-                else:
-                    checkRow = data['ProductVariationInventoryArray']['ProductVariationInventory'][0]
-                if request.form['field4'] == 'table': # return html for table only
-                    return self.render_template(
-                        'inventory/resultsTable.html', data=data, checkRow=checkRow,
-                        productID=request.form['field2'], table=True
-                        )
-                else:
-                    return self.render_template(
-                        'inventory/results.html', data=data, checkRow=checkRow,
-                        companies=db.session.query(Company).all(),
-                        productID=request.form['field2'], table=False,
-                        )
-
-    def inventoryCallv1(self,c):
-        """ used with version 1.0.0 and 1.2.1 """
-        local_wsdl = getDoctor('INV', c.inventory_version, url=True)
-        kw = dict(
-                password=c.password,
-                id=c.user_name,
-                productID=request.form['field2'],
-                productIDtype='Supplier',
-                wsVersion= c.inventory_version)
-        try:
-            client = Client(local_wsdl, location='{}'.format(c.inventory_url))
-            kw = self.check4InventoryFiltersV1(client, kw)
-
-            # call the method
-            func = getattr(client.service, request.form['field3'])
-            data = func(**kw)
-        except Exception as e:
-            if not PRODUCTION:
-                logging.error('Error on local wsdl and location: {}'.format(c.inventory_url))
-            logging.error(str(e))
-            # set up error message to be given if all tries fail. As this one should have worked, give this error
-            error_msg = {'SoapFault':str(e)}
-            try:
-                # use remote wsdl
-                # set schema doctor to fix missing schemas
-                d = getDoctor('INV', c.inventory_version)
-                client = Client(c.inventory_wsdl, doctor=d)
-                kw = self.check4InventoryFiltersV1(client, kw)
-
-                func = getattr(client.service, request.form['field3'])
-                data = func(**kw)
-            except Exception as e:
-                if not PRODUCTION:
-                    logging.error('Error on remote wsdl ')
-                logging.error(str(e))
-                try:
-                    # use remote wsdl but set location to endpoint
-                    # doctor to fix missing schemas
-                    d = getDoctor('INV', c.inventory_version)
-                    client = Client(c.inventory_wsdl, location='{}'.format(c.inventory_url), doctor=d)
-                    kw = self.check4InventoryFiltersV1(client, kw)
-
-                    func = getattr(client.service, request.form['field3'])
-                    data = func(**kw)
-                except Exception as e:
-                    if not PRODUCTION:
-                        logging.error('Error on remote wsdl and location: {}'.format(c.inventory_url))
-                    logging.error(str(e))
-                    data = error_msg
-        return data
-
-    def inventoryCallv2(self,c):
-        """ used with version 2.0.0 """
-        # TODO: finish code for version 2.0.0
-        return {"SoapFault": 'Version 2.0.0 is not available yet.'}
 
 appbuilder.add_view(
     Inventory,
@@ -307,6 +63,21 @@ appbuilder.add_view(
     category_icon='fa-wpforms'
 ) #  label=_("Inventory Request Form"),
 
+appbuilder.add_view(
+    OrderStatus,
+    "Status Request",
+    # href='/orderstatus/index/',
+    icon="fa-search",
+    category='Forms',
+    category_icon='fa-wpforms'
+) #  la
+
+class Companies(ModelView):
+    datamodel = SQLAInterface(Company)
+    list_columns = ['company_name', 'erp_id']
+
+appbuilder.add_view( Companies, "List Companies", icon="fa-list", category="Companies", category_icon='fa-database')
+
 
 class Utilities(BaseView):
 
@@ -315,20 +86,6 @@ class Utilities(BaseView):
     @expose('/index/')
     def index(self):
         return "Provides Utilities to for Promo Standards"
-
-    @expose('/inventoryRequest/')
-    def inventoryRequest(self):
-        # do something with param1
-        # and render template with param
-        param1 = 'Goodbye %s' % ('rtest')
-        return self.render_template('inventoryRequest.html', param1=param1)
-
-    @expose('/statusRequest/')
-    def statusRequest(self):
-        # do something with param1
-        # and render template with param
-        param1 = 'Goodbye %s' % ('rtest')
-        return param1
 
     @expose('/updateCompanies/')
     @has_access
@@ -405,10 +162,17 @@ class Utilities(BaseView):
                 good_url = self.tryUrl(row['URL'].strip(), wsdl_url, code, service_version)
                 if good_url:
                     has_url = True
+                    # will overwrite each with the latest version given
+                    # the endpoints service gives them in increasing order if multiple versions
                     if code == 'INV':
-                        c.inventory_url = row['URL']
-                        c.inventory_wsdl = good_url
-                        c.inventory_version = service_version
+                        if service_version[:1] == '1':
+                            c.inventory_url = row['URL']
+                            c.inventory_wsdl = good_url
+                            c.inventory_version = service_version
+                        else:
+                            c.inventory_urlV2 = row['URL']
+                            c.inventory_wsdlV2 = good_url
+                            c.inventory_versionV2 = service_version
                     if code == 'INVC':
                         c.invoice_url = row['URL']
                         c.invoice_wsdl = good_url
@@ -447,7 +211,8 @@ class Utilities(BaseView):
                 except Exception as e:
                     logging.error("Error {0}".format(getattr(e, 'message', repr(e))))
                     continue
-        return str(companies)
+        jsonStr = {"Companies":companies}
+        return str(jsonStr), 200,  {'Content-Type':'applicaion/json'}
 
     @expose('/updatePasswords/')
     @has_access

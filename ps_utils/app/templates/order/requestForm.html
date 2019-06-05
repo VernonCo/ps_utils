@@ -2,13 +2,14 @@
 {% block head_css %}
 {{ super() }}
 <style>
-    .alert-error {background-color: coral;font-size: large;}
+        .alert-error {background-color: coral;font-size: large;}
 </style>
 {% endblock %}
 {% block content %}
+
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h4 class="panel-title">Inventory Request Form</h4>
+        <h4 class="panel-title">{{form_title}}</h4>
     </div>
     <div id="Home" class="tab-pane active">
         <form id="model_form" action="" method="post" enctype="multipart/form-data">
@@ -39,39 +40,52 @@
                         </tr>
                         <tr>
                             <td class="col-lg-2">
-                                <label for="productID" control-label="">
-                                    Product SKU
+                                <label for="queryType" control-label="">
+                                    Query Type
                                     <strong style="color: red">*</strong>
                                 </label>
                             </td>
                             <td>
-                                <input class="form-control" id="productID" name="productID" placeholder="Product SKU"
-                                    required="" type="text" value="{{prodID}}">
-                                <span class="help-block">Enter the SKU for the Item you want to check for
-                                    inventory.</span>
+                                <select id="queryType" name="queryType" required="">
+                                    <option value="">-- Select One --</option>
+                                    <option value="1">PO Search</option>
+                                    <option value="2">SO Search</option>
+                                    <option value="3">Last Update Search</option>
+                                    <option value="4">All Open Orders</option>
+                                </select>
+                                <span class="help-block">Enter the desired Query Type.</span>
                             </td>
                         </tr>
-                        <tr>
+                        <tr id="refNumTR">
                             <td class="col-lg-2">
-                                <label for="serviceType" control-label="">
-                                    Service
-                                    <strong style="color: red">*</strong>
+                                <label for="refNum" control-label="">
+                                    Reference Number
                                 </label>
                             </td>
                             <td>
-                                <select id="serviceType" name="serviceType" required="">
-                                    <option value="">-- Select One --</option>
-                                    <option value="getFilterValues">Get Filters</option>
-                                    <option value="getInventoryLevels" selected>Get Results</option>
-                                </select>
-                                <span class="help-block">Enter the desired service call.</span>
+                                <input class="form-control" id="refNum" name="refNum" placeholder="PO or SO Reference Number"
+                                    required="" type="text" value="{{refNum}}">
+                                <span class="help-block">Enter the PO or SO Reference Number you want to check for status.</span>
+                            </td>
+                        </tr>
+                        <tr id="refDateTR">
+                            <td class="col-lg-2">
+                                <label for="refDate" control-label="">
+                                    Begin Date
+                                </label>
+                            </td>
+                            <td>
+                                 <div class="input-group date appbuilder_date" id="datepicker">
+                                    <span class="input-group-addon"><i class="fa fa-calendar cursor-hand"></i></span>
+                                    <input class="form-control" data-format="yyyy-MM-dd" id="refDate" name="refDate" placeholder="YYYY/MM/DD"
+                                        type="text" value="{{refDate}}">
+                                <span class="help-block">Enter the beginning date from which you want to check for status.</span>
                             </td>
                         </tr>
                         <tr>
                             <td class="col-lg-2">
                                 <label for="returnType" control-label="">
                                     Return Type
-                                    <strong style="color: red">*</strong>
                                 </label>
                             </td>
                             <td>
@@ -95,5 +109,31 @@
         </form>
     </div>
 </div>
+{% endblock %}
 
+
+{% block tail %}
+<script>
+    $(document).ready( function () {
+        $('#refNumTR').hide();
+                $('#refDateTR').hide();
+        $('#queryType').change(function(){
+            var opt = $(this).val();
+            if (opt <= 2 ){
+                $('#refNumTR').show();
+                $('#refNum').attr('required', true);
+                $('#refDateTR').hide();
+                $('#refDate').attr('required', false);
+            }else if (opt == 3){
+                $('#refNumTR').hide();
+                $('#refNum').attr('required', false);
+                $('#refDateTR').show();
+                $('#refDate').attr('required', true);
+            }else{
+                $('#refNumTR').hide();
+                $('#refDateTR').hide();
+            }
+    } );
+} );
+</script>
 {% endblock %}

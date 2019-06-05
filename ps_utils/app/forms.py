@@ -1,6 +1,6 @@
-from flask_appbuilder.fieldwidgets import BS3TextFieldWidget
+from flask_appbuilder.fieldwidgets import BS3TextFieldWidget, DatePickerWidget
 from flask_appbuilder.forms import DynamicForm
-from wtforms import StringField, SelectField, SubmitField
+from wtforms import StringField, SelectField, SubmitField, DateField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired
 from . import db
@@ -23,20 +23,49 @@ def companyList(service):
 class InventoryForm(DynamicForm):
     # get companies for dropdown
 
-    field1 = QuerySelectField(
+    companyID = QuerySelectField(
         u"Supplier", get_label=u'company_name', query_factory=companyList( "Inventory" ), validators=[DataRequired("Please Select Supplier.")]
     )
-    field2 = StringField(
+    productID = StringField(
         ("Product SKU"),
         description=("Enter the SKU for the Item you want to check for inventory."),
         validators=[DataRequired("Please enter SKU.")],
         widget=BS3TextFieldWidget()
     )
-    field3 = SelectField(
+    serviceType = SelectField(
         ("Service"), choices=[('','-- Select One --'),('getFilterValues', 'Get Filters'),('getInventoryLevels', 'Get Results')], validators=[DataRequired("Please select service.")],
         description=("Enter the desired service call."),
     )
-    field4 = SelectField(
+    returnType = SelectField(
+        ("Return Type"), choices=[('','-- Select One --'),('json', 'Return As JSON'),('page', 'Return As Table')],
+        validators=[DataRequired("Please select return type.")]
+    )
+
+
+
+class OrderStatusForm(DynamicForm):
+    # get companies for dropdown
+
+    companyID = QuerySelectField(
+        u"Supplier", get_label=u'company_name', query_factory=companyList( "Order" ), validators=[DataRequired("Please Select Supplier.")]
+    )
+    queryType = SelectField(
+        ("Query Type"),
+        choices=[('','-- Select One --'),('1', 'PO Search'),('2','SO Search'), ('3', 'Last Update Search'),('4','All Open Orders')],
+        validators=[DataRequired("Please select Query Type.")],
+        description=("Enter the desired filter. PO->Customer#, SO->Vendor#"),
+    )
+    refNum = StringField(
+        ("Reference Number"),
+        description=("Enter the PO or SO # to search for order status."),
+        widget=BS3TextFieldWidget()
+    )
+    refDate = DateField(
+        ("Begin Date"),
+        description=("Enter the PO or SO # to search for order status."),
+        widget=DatePickerWidget()
+    )
+    returnType = SelectField(
         ("Return Type"), choices=[('','-- Select One --'),('json', 'Return As JSON'),('page', 'Return As Table')],
         validators=[DataRequired("Please select return type.")]
     )

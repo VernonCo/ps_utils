@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"            
+            targetNamespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/"
+            elementFormDefault="qualified">
+  <xsd:element name="Reply">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="productID" type="xsd:string"/>
+        <xsd:element name="ProductVariationInventoryArray">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="ProductVariationInventory" maxOccurs="unbounded">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="partID" type="xsd:string"/>
+                    <xsd:element name="partDescription" type="xsd:string"/>
+                    <xsd:element name="partBrand" type="xsd:string"/>
+                    <xsd:element name="priceVariance" type="xsd:string"/>
+                    <xsd:element name="quantityAvailable" type="xsd:string"/>
+                    <xsd:element name="attributeColor" type="xsd:string"/>
+                    <xsd:element name="attributeSize" type="xsd:string"/>
+                    <xsd:element name="AttributeFlexArray">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="AttributeFlex" maxOccurs="unbounded">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="id" type="xsd:string"/>
+                                <xsd:element name="name" type="xsd:string"/>
+                                <xsd:element name="value" type="xsd:string"/>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="customProductMessage" type="xsd:string"/>
+                    <xsd:element name="entryType" type="xsd:string"/>
+                    <xsd:element name="validTimestamp" type="xsd:dateTime"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="ProductCompanionInventoryArray">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="ProductCompanionInventory" maxOccurs="unbounded">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="partID" type="xsd:string"/>
+                    <xsd:element name="partDescription" type="xsd:string"/>
+                    <xsd:element name="partBrand" type="xsd:string"/>
+                    <xsd:element name="price" type="xsd:string"/>
+                    <xsd:element name="quantityAvailable" type="xsd:string"/>
+                    <xsd:element name="attributeColor" type="xsd:string"/>
+                    <xsd:element name="attributeSize" type="xsd:string"/>
+                    <xsd:element name="AttributeFlexArray">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="AttributeFlex" maxOccurs="unbounded">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="id" type="xsd:string"/>
+                                <xsd:element name="name" type="xsd:string"/>
+                                <xsd:element name="value" type="xsd:string"/>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="customProductMessage" type="xsd:string"/>
+                    <xsd:element name="entryType" type="xsd:string"/>
+                    <xsd:element name="validTimestamp" type="xsd:dateTime"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="errorMessage" type="xsd:string"/>
+        <xsd:element name="CustomMessageArray">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="customMessage" maxOccurs="unbounded" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

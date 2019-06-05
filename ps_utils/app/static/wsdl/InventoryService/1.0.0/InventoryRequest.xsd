@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"            
+            targetNamespace="http://www.promostandards.org/WSDL/InventoryService/1.0.0/"
+            elementFormDefault="qualified">
+  <xsd:element name="Request">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="wsVersion" type="xsd:string"/>
+        <xsd:element name="id" type="xsd:string"/>
+        <xsd:element name="password" type="xsd:string"/>
+        <xsd:element name="productID" type="xsd:string"/>
+        <xsd:element name="productIDtype" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
