@@ -145,7 +145,6 @@ class Inventory(SimpleFormView):
             data = func(**kw)
         except Exception as e:
             logging.error('WSDL Error on local wsdl and location {}: {}'.format(c.inventory_url,str(e)))
-            assert False
             # set up error message to be given if all tries fail. As this one should have worked, give this error
             error_msg = {'SoapFault': 'Soap Fault Error(1): ' +str(e)}
             try:
