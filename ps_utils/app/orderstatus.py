@@ -42,8 +42,10 @@ class OrderStatus(SimpleFormView):
                     )
         # else if requesting json
         if  request.form['returnType'] == 'json':
-            data = sobject_to_json(data)
-            return data, 200,  {'Content-Type':'applicaion/json'}
+        # TODO: will be removing this after html is complete, meanwhile return json of data
+            pass
+        data = sobject_to_json(data)
+        return data, 200,  {'Content-Type':'applicaion/json'}
         # else redirct to results page
         data=sobject_to_dict(data, json_serialize=True)
         data['vendorID'] = c.id
@@ -51,7 +53,6 @@ class OrderStatus(SimpleFormView):
         data['returnType'] = request.form['returnType']
         data['refNum'] = request.form['refNum']
         data['refDate'] = request.form['refDate']
-        assert False
         if 'SoapFault' in data:
             data['errorMessage'] = data['SoapFault']
         if 'errorMessage' in data and data['errorMessage']:
