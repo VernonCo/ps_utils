@@ -193,9 +193,22 @@ class Inventory(SimpleFormView):
                 checkRow = None
             else:
                 if service_version == 'V1':
-                    checkRow = results['ProductVariationInventoryArray']['ProductVariationInventory'][0]
+                    try:
+                        checkRow = results['ProductVariationInventoryArray']['ProductVariationInventory'][0]
+                    except:
+                        checkRow = None
+                        result['errorMessage'] = "Response structure error"
+                        if not PRODUCTION:
+                            result['errorMessage'] += ": " +str(result)
                 else:
-                    checkRow = results['Inventory']['PartInventoryArray']['PartInventory'][0]
+                    try:
+                        checkRow = results['Inventory']['PartInventoryArray']['PartInventory'][0]
+                    except:
+                        checkRow = None
+                        result['errorMessage'] = "Response structure error"
+                        if not PRODUCTION:
+                            result['errorMessage'] += ": " +str(result)
+
             table = False
             template = 'inventory/results{}.html'.format(service_version)
             if request.form['returnType'] == 'table': # return html for table only

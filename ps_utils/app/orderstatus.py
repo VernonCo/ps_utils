@@ -77,11 +77,17 @@ class OrderStatus(SimpleFormView):
         result['refNum'] = request.form['refNum']
         result['refDate'] = request.form['refDate']
         if 'SoapFault' in result:
-            data['errorMessage'] = result['SoapFault']
+            result['errorMessage'] = result['SoapFault']
         if 'errorMessage' in result and result['errorMessage']:
             checkRow = None
         else:
-            checkRow = result['OrderStatusArray']['OrderStatus'][0]
+            try:
+                checkRow = result['OrderStatusArray']['OrderStatus'][0]
+            except:
+                checkRow = None
+                result['errorMessage'] = "Response structure error"
+                if not PRODUCTION:
+                    result['errorMessage'] += ": " +str(result)
         table = False
         template = 'order/results.html'
         if request.form['returnType'] == 'table': # return html for table only
@@ -109,7 +115,6 @@ class OrderStatus(SimpleFormView):
             kw['statusTimeStamp']=request.form['refDate']
         if 'refNum' in request.form and request.form['refNum']:
             kw['referenceNumber']=request.form['refNum']
-
         try:
             client = Client(local_wsdl, location=c.order_url, doctor=d)
             # call the method
@@ -121,17 +126,17 @@ class OrderStatus(SimpleFormView):
             error_msg = {'SoapFault': 'Error(1): ' +str(e)}
             try:
                 # use remote wsdl
-                client = Client(c.inventory_wsdl, doctor=d)
+                client = Client(c.order_wsdl, doctor=d)
                 func = getattr(client.service, serviceType)
                 data = func(**kw)
             except Exception as e:
-                msg = 'Soap Fault Error(2) on remote wsdl: {}'.format(str(e))
+                msg = 'Soap Fault Error(2) on remote wsdl location {}: {}'.format(c.order_wsdl,str(e))
                 if not PRODUCTION:
                     error_msg['SoapFault'] += '<br>' + msg
                 logging.error(msg)
                 try:
                     # use remote wsdl but set location to endpoint
-                    client = Client(c.inventory_wsdl, location='{}'.format(c.order_url), doctor=d)
+                    client = Client(c.order_wsdl, location='{}'.format(c.order_url), doctor=d)
                     func = getattr(client.service, serviceType)
                     data = func(**kw)
                 except Exception as e:
