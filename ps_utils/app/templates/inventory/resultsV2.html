@@ -1,0 +1,197 @@
+
+{% import 'appbuilder/general/lib.html' as lib %}
+
+{% if not table %}
+    {% extends "appbuilder/base.html" %}
+    {% block head_css %}
+    {{ super() }}
+
+    <link type="text/css" href="{{url_for('static',filename='datatables/datatables.min.css')}}" rel="stylesheet">
+    <style>
+        .panel-primary .panel-heading, .panel-success .panel-heading, .panel-warning .panel-heading,
+        .panel-danger .panel-heading, .panel-info .panel-heading, .panel-primary .panel-title,
+        .panel-success .panel-title, .panel-warning .panel-title, .panel-danger .panel-title,
+        .panel-info .panel-title {
+            color: #0f87ec;
+            }
+    </style>
+
+    {% endblock %}
+{% endif %}
+
+{% block content %}
+
+    <div class="panel panel-primary">
+        {% if not table %}
+            {% call lib.accordion_tag('requestForm',"Inventory Request Form", False) %}
+            <form  action="" method="POST" class="form-inline">
+                <div class="form-group">
+                    <label for="companyID">Supplier
+                            <strong style="color: red">*</strong></label>
+                    <select id="companyID" name="companyID" required="">
+                        <option value=""> -- Select One -- </option>
+                        {% for c in companies %}
+                            {% if data['vendorID'] == c.id %}
+                                <option value="{{c.id}}" selected >{{c}}</option>
+                            {% else %}
+                                <option value="{{c.id}}" >{{c}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productID" control-label="">Product SKU
+                        <strong style="color: red">*</strong></label>
+                    <input type="text" name="productID">
+                </div>
+                <div class="form-group">
+                    <label for="serviceType" control-label="">Service
+                        <strong style="color: red">*</strong></label>
+                        <select id="serviceType" name="serviceType" required="">
+                            <option value="">-- Select One --</option>
+                            <option value="getFilterValues">Get Filters</option>
+                            <option value="getInventoryLevels" selected>Get Results</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="returnType" control-label="">Return Type
+                        <strong style="color: red">*</strong></label>
+                        <select id="returnType" name="returnType" required="">
+                            <option value="">-- Select One --</option>
+                            <option value="json">Return As JSON</option>
+                            <option value="table">Return As Results Table</option>
+                            <option value="page" selected>Display in app</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="serviceVersion">Service Version<strong style="color: red">*</strong></label>
+                    <select id="serviceVersion" name="serviceVersion" required="">
+                        <option value="V1" selected>1.x.x</option>
+                        <option value="V2">2.x.x</option>
+                    </select>
+                </div>
+                <div class="well well-sm">
+                    <button type="submit" class="btn  btn-sm btn-primary">Submit
+                        <i class="fa fa-save"></i></button>
+                </div>
+            </form>
+            {% endcall %}
+        {%endif %}
+        {% call lib.accordion_tag('productTable',data['vendorName'] + "Listings for Product ID #" +productID, True) %}
+        {% if data['errorMessage'] %}
+            <div>
+                <h3>{{data['errorMessage']}}</h3>
+            </div>
+        {% else %}
+        <table id="resultsTable1" class="order-column table-striped" width="100%">
+            <thead>
+                <tr>
+                <!-- found Brand and partID to be optional in returns -->
+                    <th>Part ID</th>
+                    <th class="center">Main Part</th>
+                    {% if 'partDescription' in checkRow and checkRow.partDescription %}
+                        {% set partDescription = "1" %}
+                    <th class="center">Description</th>
+                    {% endif %}
+                    {% if 'quantityAvailable' in checkRow and checkRow.quantityAvailable %}
+                        {% set quantityAvailable = "1" %}
+                    <th class="center">Quantity UOM</th>
+                    {% endif %}
+                    {% if 'partColor' in checkRow and checkRow.partColor %}
+                        {% set color = "1" %}
+                        <th class="center">Color</th>
+                    {% endif %}
+                    {% if 'labelSize' in checkRow and checkRow.labelSize %}
+                        {% set size = "1" %}
+                        <th class="center">Size</th>
+                    {% endif %}
+                    {% if 'attributeSelection' in checkRow and checkRow.attributeSelection %}
+                        {% set attributeSelection = "1" %}
+                        <th class="center">Extra Attr.</th>
+                    {% endif %}
+                    <th class="hidden-xs center">Manfg. on Demand</th>
+                    <th class="hidden-xs center">Buy to Order</th>
+                    {% if 'replenishmentLeadTime' in checkRow and checkRow.replenishmentLeadTime %}
+                        {% set replenishmentLeadTime = "1" %}
+                    <th class="hidden-xs center">Lead Time</th>
+                    {% endif %}
+                    {% if 'InventoryLocationArray' in checkRow and checkRow.InventoryLocationArray and 'InventoryLocation' in checkRow.InventoryLocationArray %}
+                        {% set InventoryLocationArray = "1" %}
+                    <th class="hidden-xs center">Locations</th>
+                    {% endif %}
+                    {% if 'lastModified' in checkRow %}
+                        {% set lastModified = "1" %}
+                    <th class="hidden-xs center">Last Modified</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data['Inventory']['PartInventoryArray']['PartInventory'] %}
+                    <tr class="{{ loop.cycle('odd', 'even') }}">
+                        <td>{{row.partId}}&nbsp;</td>
+                        <td>&nbsp;{{row.mainPart}}&nbsp;</td>
+                        {% if partDescription %}
+                        <td>&nbsp;{{row.partDescription}}&nbsp;</td>
+                        {% endif %}
+                        <td style="text-align: right;">{{row.quantityAvailable.Quantity.value}}&nbsp;{{row.quantityAvailable.Quantity.uom}}&nbsp;</td>
+                        {% if color %}
+                        <td>&nbsp;{{row.partColor}}&nbsp;</td>
+                        {% endif %}
+                        {% if size %}
+                        <td style="text-align: center;">{{row.labelSize}}</td>
+                        {% endif %}
+                        {% if attributeSelection %}
+                        <td style="text-align: right;">{{row.attributeSelection}}</td>
+                        {% endif %}
+                        <td>{{row.manufacturedItem}}</td>
+                        <td style="text-align: right;">{{row.buyToOrder}}</td>
+                        {% if replenishmentLeadTime %}
+                        <td style="text-align: right;">{{row.replenishmentLeadTime}}</td>
+                        {% endif %}
+                        {% if InventoryLocationArray %}
+                        <td style="text-align: right;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for location in row.InventoryLocationArray.InventoryLocation %}
+                                    <tr>
+                                        <td>Location ID: {{location.inventoryLocationId}} </td>
+                                        {% if 'inventoryLocationName' in location %}
+                                        <td>Location Name: {{location.inventoryLocationName}} </td>
+                                        {% endif %}
+                                        <td>Postal Code: {{location.postalCode}} </td>
+                                        <td>Country: {{location.country}} </td>
+                                        {% if 'inventoryLocationQuantity' in location %}
+                                        <td>Quantity UOM: {{location.inventoryLocationQuantity.Quantity.value}} {{location.inventoryLocationQuantity.Quantity.uom}} </td>
+                                        {% endif %}
+                                        {% if 'FutureAvailabilityArray' in location and 'FutureAvailability' in location.FutureAvailabilityArray %}
+                                        <td>Future Avail:
+                                            {{location.inventoryLocationQuantity.Quantity.value}} {{location.inventoryLocationQuantity.Quantity.availableOn}} </td>
+                                        {% endif %}
+                                    </tr>
+                                    {%endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                        {% endif %}
+                        {% if lastModified %}
+                        <td>&nbsp;{{row.validTimestamp}}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+        {% endif %}
+        {% endcall %}
+</div>
+
+{% endblock %}
+{% block tail %}
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='datatables/datatables.min.js')}}"></script>
+<script>
+    $(document).ready( function () {
+    $('#resultsTable1').DataTable( );
+    $('#resultsTable2').DataTable();
+} );
+</script>
+{% endblock %}
