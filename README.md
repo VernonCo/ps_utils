@@ -3,12 +3,14 @@
 - Returns json or table html for ajax requests  ie returnType=json or returnType=table
 - can use a plugin to update your ERP order status
 - has forms for manual use
-## to setup the database to test or run on production, it needs to be accessible to the local run (see # create db and admin user) or follow steps for docker-compose
+- can import username/passwd from previous database
 
 ## clone repository
 `git clone https://github.com/VernonCo/ps_utils.git`
 
-##To run locally or use with vscode
+## Run locally or with docker-compose
+
+###To run locally and/or use with vscode
 first create venv
 `python3 -m venv venv`
 
@@ -25,8 +27,10 @@ pip install -r requirements.txt
 run locally on vscode using F5 and view at http://localhost:5000 or in terminal using venv:
 `python run.py`
 
+to setup the database to test or run on production, it needs to be accessible to the local run
 
-## to run docker container with [docker-compose](https://docs.docker.com/compose/install/)
+
+### to run docker container with [docker-compose](https://docs.docker.com/compose/install/)
 `docker-compose [-f dev-docker-compose.yml] up -d`
 
 if using [weavenet](https://www.weave.works/oss/net/) to provide secure WAN to databases etc.
@@ -94,7 +98,7 @@ OLD_DB_PORT=yourhostport
 
 ```
 
-## requests conditional sequence
+## Soap requests conditional sequence
 - 1st call using local wsdl and inject location -- quicker retrieving local wsdl, consistent, and standard
 - else on error: call using remote wsdl -- some do not work with the standard wsdl
 - else on error: call using remote wsdl and inject location -- some have the wrong location (ie localhost) in their wsdl

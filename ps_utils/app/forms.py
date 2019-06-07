@@ -40,6 +40,10 @@ class InventoryForm(DynamicForm):
         ("Return Type"), choices=[('','-- Select One --'),('json', 'Return As JSON'),('page', 'Return As Table')],
         validators=[DataRequired("Please select return type.")]
     )
+    serviceVersion = SelectField(
+        ("Service Version"), choices=[('V1', '1.x.x'),('V2', '2.X.x')], default='V1',
+        validators=[DataRequired("Please select service version. Defaults to 1.x.x")]
+    )
 
 
 
