@@ -87,7 +87,7 @@ class OrderStatus(SimpleFormView):
                 checkRow = None
                 result['errorMessage'] = "Response structure error"
                 if not PRODUCTION:
-                    result['errorMessage'] += ": " +str(result)
+                    result['errorMessage'] += ": " +str(sobject_to_dict(data, json_serialize=True))
         table = False
         template = 'order/results.html'
         if request.form['returnType'] == 'table': # return html for table only

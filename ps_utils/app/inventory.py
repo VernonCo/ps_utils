@@ -171,50 +171,50 @@ class Inventory(SimpleFormView):
 
             if request.form['serviceType'] == 'getFilterValues':
                 #redirect to new form with filter options
-                results = sobject_to_dict(data)
+                result = sobject_to_dict(data)
                 if service_version == 'V2':
                     # manipulate data into color, size and misc (partId) arrays
-                    results = self.filterDataV2(results)
-                results['vendorID'] = c.id
-                results['vendorName'] = c.company_name
-                results['returnType'] = request.form['returnType']
-                results['serviceVersion'] = request.form['serviceVersion']
+                    result = self.filterDataV2(result)
+                result['vendorID'] = c.id
+                result['vendorName'] = c.company_name
+                result['returnType'] = request.form['returnType']
+                result['serviceVersion'] = request.form['serviceVersion']
 
-                return self.render_template('inventory/filtersRequestFormV1.html', data=results, form=self.form)
+                return self.render_template('inventory/filtersRequestFormV1.html', data=result, form=self.form)
 
             # or finally redirct to results page
-            results=sobject_to_dict(data, json_serialize=True)
-            results['vendorID'] = c.id
-            results['vendorName'] = c.company_name
-            results['returnType'] = request.form['returnType']
-            if 'SoapFault' in results:
-                results['errorMessage'] = results['SoapFault']
-            if 'errorMessage' in results and results['errorMessage']:
+            result=sobject_to_dict(data, json_serialize=True)
+            result['vendorID'] = c.id
+            result['vendorName'] = c.company_name
+            result['returnType'] = request.form['returnType']
+            if 'SoapFault' in result:
+                result['errorMessage'] = result['SoapFault']
+            if 'errorMessage' in result and result['errorMessage']:
                 checkRow = None
             else:
                 if service_version == 'V1':
                     try:
-                        checkRow = results['ProductVariationInventoryArray']['ProductVariationInventory'][0]
+                        checkRow = result['ProductVariationInventoryArray']['ProductVariationInventory'][0]
                     except:
                         checkRow = None
                         result['errorMessage'] = "Response structure error"
                         if not PRODUCTION:
-                            result['errorMessage'] += ": " +str(result)
+                            result['errorMessage'] += ": " +str(sobject_to_dict(data, json_serialize=True))
                 else:
                     try:
-                        checkRow = results['Inventory']['PartInventoryArray']['PartInventory'][0]
+                        checkRow = result['Inventory']['PartInventoryArray']['PartInventory'][0]
                     except:
                         checkRow = None
                         result['errorMessage'] = "Response structure error"
                         if not PRODUCTION:
-                            result['errorMessage'] += ": " +str(result)
+                            result['errorMessage'] += ": " +str(sobject_to_dict(data, json_serialize=True))
 
             table = False
             template = 'inventory/results{}.html'.format(service_version)
             if request.form['returnType'] == 'table': # return html for table only
                 table=True
             return self.render_template(
-                template, data=results, checkRow=checkRow, companies=companies,
+                template, data=result, checkRow=checkRow, companies=companies,
                 productID=request.form['productID'], table=table
                 )
 
