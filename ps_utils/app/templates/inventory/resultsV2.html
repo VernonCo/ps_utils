@@ -77,7 +77,7 @@
             </form>
             {% endcall %}
         {%endif %}
-        {% call lib.accordion_tag('productTable',data['vendorName'] + "Listings for Product ID #" +productID, True) %}
+        {% call lib.accordion_tag('productTable',data['vendorName'] + " Listings for Product ID #" +productID, True) %}
         {% if data['errorMessage'] %}
             <div>
                 <h3>{{data['errorMessage']}}</h3>

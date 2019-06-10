@@ -1,2 +1,194 @@
-<h1>Under Construction</h1>
-{{data}}
+
+{% import 'appbuilder/general/lib.html' as lib %}
+
+{% if not table %}
+    {% extends "appbuilder/base.html" %}
+    {% block head_css %}
+    {{ super() }}
+
+    <link type="text/css" href="{{url_for('static',filename='datatables/datatables.min.css')}}" rel="stylesheet">
+    <style>
+        .panel-primary .panel-heading, .panel-success .panel-heading, .panel-warning .panel-heading,
+        .panel-danger .panel-heading, .panel-info .panel-heading, .panel-primary .panel-title,
+        .panel-success .panel-title, .panel-warning .panel-title, .panel-danger .panel-title,
+        .panel-info .panel-title {
+            color: #0f87ec;
+            }
+        th {text-align: center;}
+    </style>
+
+    {% endblock %}
+{% endif %}
+
+{% block content %}
+
+    <div class="panel panel-primary">
+        {% if not table %}
+            {% call lib.accordion_tag('requestForm',"Inventory Request Form", False) %}
+            <form  action="" method="POST" class="form-inline">
+                <div class="form-group">
+                    <label for="companyID">Supplier
+                            <strong style="color: red">*</strong></label>
+                    <select id="companyID" name="companyID" required="">
+                        <option value=""> -- Select One -- </option>
+                        {% for c in companies %}
+                            {% if data['vendorID'] == c.id %}
+                                <option value="{{c.id}}" selected >{{c}}</option>
+                            {% else %}
+                                <option value="{{c.id}}" >{{c}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="queryType" control-label="">
+                        Query Type
+                        <strong style="color: red">*</strong>
+                    </label>
+                    <select id="queryType" name="queryType" required="">
+                        <option value="">-- Select One --</option>
+                        <option value="1">PO Search</option>
+                        <option value="2">SO Search</option>
+                        <option value="3">Last Update Search</option>
+                        <option value="4">All Open Orders</option>
+                    </select>
+                </div>
+                <div class="form-group" id="refNumTR">
+                    <label for="refNum" control-label="">
+                        Reference Number
+                    </label>
+                    <input class="form-control" id="refNum" name="refNum" placeholder="PO or SO Reference Number"
+                        required="" type="text" value="{{data.refNum}}">
+                </div>
+                <div class="form-group" id="refDateTR">
+                    <label for="refNum" control-label="">
+                        Begin Date
+                    </label>
+                    <div class="input-group date appbuilder_date" id="datepicker">
+                        <span class="input-group-addon"><i class="fa fa-calendar cursor-hand"></i></span>
+                        <input class="form-control" data-format="yyyy-MM-dd" id="refDate" name="refDate" placeholder="YYYY/MM/DD"
+                            type="text" value="{{data.refDate}}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="returnType" control-label="">Return Type
+                        <strong style="color: red">*</strong></label>
+                        <select id="returnType" name="returnType" required="">
+                            <option value="">-- Select One --</option>
+                            <option value="json">Return As JSON</option>
+                            <option value="table">Return As Results Table</option>
+                            <option value="page" selected>Display in app</option>
+                        </select>
+                </div>
+                <div class="well well-sm">
+                    <button type="submit" class="btn  btn-sm btn-primary">Submit
+                        <i class="fa fa-save"></i></button>
+                </div>
+            </form>
+            {% endcall %}
+        {%endif %}
+        {% call lib.accordion_tag('orderTable',data['vendorName'] + " Order Status", True) %}
+        {% if data['errorMessage'] %}
+            <div>
+                <h3>{{data['errorMessage']}}</h3>
+            </div>
+        {% else %}
+        <table id="gvOrdersloop"  style="text-align: center;" class="display table-bordered" data-page-length="25" data-order="[[ 0, &quot;asc&quot; ]]" width="100%">
+            <thead><tr>
+                <th scope="col">PO#</th><th>Factory#</th>
+                <th scope="col">Status ID</th>
+                <th scope="col">Status Name</th>
+                <th scope="col">Expected Ship Date<br />
+                                Expected Delivery Date<br />
+                                Valid Timestamp</th>
+                <th scope="col">RSP REQ'D</th>
+                <th scope="col">Contact</th>
+                <th scope="col">Ship Status</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for order in data.OrderStatusArray.OrderStatus %}
+                {% for row in order.OrderStatusDetailArray.OrderStatusDetail %}
+                    <tr class="{{ loop.cycle('odd', 'even') }}">
+                        <td>&nbsp;{{order.purchaseOrderNumber}}&nbsp;</td>
+                        <td>&nbsp;{{row.factoryOrderNumber}}&nbsp;</td>
+                        <td>{{row.statusID}}&nbsp;</td>
+                        <td
+                            {% if row.statusName=='Canceled' %} style="color:crimson;"
+                            {% elif row.statusName=='Complete' %} style="color:green;"
+                            {% else %} style="color:darkorange;"
+                            {% endif %}
+                           >
+                            &nbsp;{{row.statusName}}&nbsp;</td>
+                        <td>
+                            {% if 'expectedShipDate' in row %}
+                                SD: {{row.expectedShipDate}}
+                            {% endif %}
+                            <br />
+                            {% if 'expectedDeliveryDate' in row %}
+                                DD: {{row.expectedDeliveryDate}}
+                            {% endif %}
+                            <br />
+                            VT: {{row.validTimestamp}}
+                            </td>
+                        <td {% if row.responseRequired %} style="color: crimson;" {% endif %} >
+                            {{row.responseRequired}}</td>
+                        <td>
+                            {% if 'ResponseToArray' in row and 'name' in row.ResponseToArray.RespondTo[0] %}
+                                {{row.ResponseToArray.RespondTo[0].name}}<br/>
+                            {% endif %}
+                            {% if 'ResponseToArray' in row and 'emailAddress' in row.ResponseToArray.RespondTo[0] %}
+                                {{row.ResponseToArray.RespondTo[0].emailAddress}}<br/>
+                            {% endif %}
+                            {% if 'ResponseToArray' in row and 'phoneNumber' in row.ResponseToArray.RespondTo[0] %}
+                                {{row.ResponseToArray.RespondTo[0].phoneNumber}}
+                            {% endif %}
+                            </td>
+                        <td>
+                            {% if row.statusID=="80" or row.statusID=="75" %}
+                            <form action="/shipment/index" method="POST">
+                                <input type="hidden" name="companyID" value="{{c.id}}">
+                                <input name="refNum" type="hidden" value="{{row.factoryOrderNumber}}">
+                                <input type="hidden" name="queryType" value="2">
+                                <input type="submit" value="Check">
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% endfor %}
+
+            </tbody>
+        </table>
+        {% endif %}
+        {% endcall %}
+</div>
+
+{% endblock %}
+{% block tail %}
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='datatables/datatables.min.js')}}"></script>
+<script>
+    $(document).ready( function () {
+    $('#resultsTable1').DataTable( );
+    $('#resultsTable2').DataTable();
+    $('#refNumTR').hide();
+    $('#refDateTR').hide();
+    $('#queryType').change(function(){
+        var opt = $(this).val();
+        if (opt <= 2 ){
+            $('#refNumTR').show();
+            $('#refNum').attr('required', true);
+            $('#refDateTR').hide();
+            $('#refDate').attr('required', false);
+        }else if (opt == 3){
+            $('#refNumTR').hide();
+            $('#refNum').attr('required', false);
+            $('#refDateTR').show();
+            $('#refDate').attr('required', true);
+        }else{
+            $('#refNumTR').hide();
+            $('#refDateTR').hide();
+        }
+    } );
+} );
+</script>
+{% endblock %}

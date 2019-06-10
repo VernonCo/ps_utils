@@ -180,7 +180,7 @@ class Inventory(SimpleFormView):
                 result['returnType'] = request.form['returnType']
                 result['serviceVersion'] = request.form['serviceVersion']
 
-                return self.render_template('inventory/filtersRequestFormV1.html', data=result, form=self.form)
+                return self.render_template('inventory/filtersRequestForm.html', data=result, form=self.form)
 
             # or finally redirct to results page
             result=sobject_to_dict(data, json_serialize=True)

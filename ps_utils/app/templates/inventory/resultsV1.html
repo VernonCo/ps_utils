@@ -77,41 +77,41 @@
             </form>
             {% endcall %}
         {%endif %}
-        {% call lib.accordion_tag('productTable',data['vendorName'] + "Listings for Product ID #" +productID, True) %}
+        {% call lib.accordion_tag('productTable',data['vendorName'] + " Listings for Product ID #" +productID, True) %}
         {% if data['errorMessage'] %}
             <div>
                 <h3>{{data['errorMessage']}}</h3>
             </div>
         {% else %}
-        <table id="resultsTable1" class="order-column table-striped" width="100%">
+        <table id="resultsTable1" class="order-column table-striped center" width="100%">
             <thead>
                 <tr>
                 <!-- found Brand and partID to be optional in returns -->
                     {% if 'brand' in checkRow and checkRow['brand'] %}
                         {% set brand = "1" %}
-                        <th class="center">Brand</th>'
+                        <th>Brand</th>'
                     {% endif %}
                     {% if 'partID' in checkRow and checkRow['partID'] %}
                         {% set productNo = "1" %}
                         <th>Part ID</th>
                     {% endif %}
-                    <th class="center">Description</th>
-                    <th class="center">Quantity</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
                     {% if 'attributeColor' in checkRow and checkRow['attributeColor'] %}
                         {% set color = "1" %}
-                        <th class="center">Color</th>
+                        <th>Color</th>
                     {% endif %}
                     {% if 'attributeSize' in checkRow and checkRow['attributeSize'] %}
                         {% set size = "1" %}
-                        <th class="center">Size</th>
+                        <th>Size</th>
                     {% endif %}
-                    <th class="center">Extra Attr</th>
+                    <th>Extra Attr</th>
                     {% if 'entryType' in checkRow and checkRow['entryType'] %}
                         {% set entryType = "1" %}
                         <th class="hidden-xs center">Entry Type</th>
                     {% endif %}
-                    <th class="hidden-xs center">Timestamp</th>
-                    <th class="hidden-xs center">Msg?</th>
+                    <th class="hidden-xs">Timestamp</th>
+                    <th class="hidden-xs">Msg?</th>
                 </tr>
             </thead>
             <tbody>
@@ -129,7 +129,7 @@
                         <td>&nbsp;{{row.attributeColor}}&nbsp;</td>
                         {% endif %}
                         {% if size %}
-                        <td style="text-align: center;">{{row.attributeSize}}</td>
+                        <td class="center">{{row.attributeSize}}</td>
                         {% endif %}
                         <td style="text-align: right;">
                         {% if 'AttributeFlexArray' in row and 'AttributeFlex' in row.AttributeFlexArray %}
@@ -150,7 +150,7 @@
                         <td style="text-align: right;">{{row.entryType}}</td>
                         {% endif %}
                         <td>&nbsp;{{row.validTimestamp}}</td>
-                        <td style="text-align: center;">{% if 'customProductMessage' in row %} {{row.customProductMessage}} {% endif %}</td>
+                        <td class="center">{% if 'customProductMessage' in row %} {{row.customProductMessage}} {% endif %}</td>
                     </tr>
                 {% endfor %}
 
@@ -189,10 +189,10 @@
                     <th class="center">Extra Attr</th>
                     {% if 'entryType' in checkRow and checkRow['entryType'] %}
                         {% set entryType = "1" %}
-                        <th class="hidden-xs center">Entry Type</th>
+                        <th class="hidden-xs">Entry Type</th>
                     {% endif %}
-                    <th class="hidden-xs center">Timestamp</th>
-                    <th class="hidden-xs center">Msg?</th>
+                    <th class="hidden-xs">Timestamp</th>
+                    <th class="hidden-xs">Msg?</th>
                 </tr>
             </thead>
             <tbody>
