@@ -103,5 +103,3 @@ OLD_DB_PORT=yourhostport
 - else on error: call using remote wsdl -- some do not work with the standard wsdl
 - else on error: call using remote wsdl and inject location -- some have the wrong location (ie localhost) in their wsdl
 
-## Inventory versions
-Currently only verion 1.2.1 works with filters and gives a clean data set for the form selects on filters
