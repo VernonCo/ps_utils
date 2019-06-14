@@ -49,43 +49,46 @@ class ShippingStatus(SimpleFormView):
                     <td>{}</td><td>{}</td><td>'.format(row['salesOrderNumber'], row['complete'])
                 temp['salesOrder'] += '<div id="accordion">'
                 trackingCounter = 0
-                for location in row['ShipmentLocationArray']['ShipmentLocation']:
-                    temp['salesOrder'] += '<h3>{}</h3><div><table class="table-bordered striped"><thead><tr> \
-                        <th>Ship From</th><th>Ship To</th><th>Dest. Type</th> \
-                        <th>Package Details</th></tr></thead><tbody><tr><td><table cellpadding="5" class="table-striped">'\
-                        .format(location['ShipFromAddress']['address1'])
-                    for k,v in location['ShipFromAddress'].items():
-                        if v and v !='.':
-                            temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
-                    temp['salesOrder'] += '</table></td><td><table class="table-striped">'
-                    for k,v in location['ShipToAddress'].items():
-                        if v and v !='.':
-                            temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
-                    temp['salesOrder'] += '</table></td><td>'
-                    temp['salesOrder'] += '{}</td><td><div class="tracking">'.format(location['shipmentDestinationType'])
-                    trackingCounter += 1
-                    packageCounter = 0
-                    for package in location['PackageArray']['Package']:
-                        temp['salesOrder'] += '<h3>TRN: {}</h3><div><table class="table-striped">'.format(package['trackingNumber'])
-                        for k,v in package.items():
-                            if v and k != 'ItemArray':
+                if 'ShipmentLocation' in row['ShipmentLocationArray']:
+                    for location in row['ShipmentLocationArray']['ShipmentLocation']:
+                        temp['salesOrder'] += '<h3>{}</h3><div><table class="table-bordered striped"><thead><tr> \
+                            <th>Ship From</th><th>Ship To</th><th>Dest. Type</th> \
+                            <th>Package Details</th></tr></thead><tbody><tr><td><table cellpadding="5" class="table-striped">'\
+                            .format(location['ShipFromAddress']['address1'])
+                        for k,v in location['ShipFromAddress'].items():
+                            if v and v !='.':
                                 temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
-                        if package['ItemArray']['Item']:
-                            temp['salesOrder'] += '<tr><td colspan="2"><div class="packages">'.format(packageCounter)
-                            packageCounter += 1
-                            itemCounter = 1  # used for heading only
-                            for item in package['ItemArray']['Item']:
-                                temp['salesOrder'] += '<h3>Package #{}</h3><div><table class="table-striped" style="width:100%">'.format(itemCounter)
-                                itemCounter += 1
-                                for k,v in item.items():
-                                    if v and v != '.':
+                        temp['salesOrder'] += '</table></td><td><table class="table-striped">'
+                        for k,v in location['ShipToAddress'].items():
+                            if v and v !='.':
+                                temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
+                        temp['salesOrder'] += '</table></td><td>'
+                        temp['salesOrder'] += '{}</td><td><div class="tracking">'.format(location['shipmentDestinationType'])
+                        trackingCounter += 1
+                        packageCounter = 0
+                        if 'Package' in location['PackageArray']:
+                            for package in location['PackageArray']['Package']:
+                                temp['salesOrder'] += '<h3>TRN: {}</h3><div><table class="table-striped">'.format(package['trackingNumber'])
+                                for k,v in package.items():
+                                    if v and k != 'ItemArray':
                                         temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
-                                temp['salesOrder'] += '</table></div>'
-                        temp['salesOrder'] += '</div></td></tr></table></div>'
-                        if package['trackingNumber']:
-                            trk = Tracking_No(package['trackingNumber'], carrier=package['carrier'])
-                            temp['tracking'].append(trk.link())
-                temp['salesOrder'] += '</div></tr></tbody></table>'
+                                if package['ItemArray']['Item']:
+                                    temp['salesOrder'] += '<tr><td colspan="2"><div class="packages">'.format(packageCounter)
+                                    packageCounter += 1
+                                    itemCounter = 1  # used for heading only
+                                    for item in package['ItemArray']['Item']:
+                                        temp['salesOrder'] += '<h3>Package #{}</h3><div><table class="table-striped" style="width:100%">'.format(itemCounter)
+                                        itemCounter += 1
+                                        for k,v in item.items():
+                                            if v and v != '.':
+                                                temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
+                                        temp['salesOrder'] += '</table></div>'
+                                temp['salesOrder'] += '</div></td></tr></table></div>'
+                                if package['trackingNumber']: # elliminates placebo
+                                    trk = Tracking_No(package['trackingNumber'], carrier=package['carrier'])
+                                    if trk.valid():
+                                        temp['tracking'].append(trk.link())
+                    temp['salesOrder'] += '</div></tr></tbody></table>'
             temp['packageCounter'] = packageCounter
             temp['trackingCounter'] = trackingCounter
             temp['tracking'] = ', '.join(temp['tracking'])

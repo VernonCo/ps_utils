@@ -54,31 +54,48 @@ class Tracking_No():
             check if is a tracking number self.trk_no
             returns tracking no or null
         """
+        valid = False
         if self.UPS_match():
             # covers UPS
-            return self.trk_no
+            valid = True
         elif self.FED_match():
             # covers USPS, and FEDEX
-            return self.trk_no
+            valid = True
         elif self.USPS_match():
             #covers some flavors of USPS
-            return self.trk_no
-        else:
-            return None
+            valid = True
+        return valid
 
     def UPS_match(self):
-        return re.match("\b(1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3} ?[0-9A-Z]|[\dT]\d\d\d ?\d\d\d\d ?\d\d\d)\b", self.trk_no)
+        ups_pattern = [
+            '^(1Z)[0-9A-Z]{16}$',
+            '^(T)+[0-9A-Z]{10}$',
+            '^[0-9]{9}$',
+            '^[0-9]{26}$'
+        ]
+        ups= "(" + ")|(".join(ups_pattern) + ")"
+        if re.match(ups, self.trk_no) != None:
+            return True
 
     def FED_match(self):
-        if re.match("(\b\d{22}\b)|(\b\d{20}\b)|(\b\d{15}\b)|(\b\d{12}\b)", self.trk_no) \
-            or re.match("(\b96\d{20}\b)|(\b\d{15}\b)|(\b\d{12}\b)", self.trk_no) \
-            or re.match("^[0-9]{15} | ^[0-9]{12}", self.trk_no) \
-            or re.match("\b((98\d\d\d\d\d?\d\d\d\d|98\d\d) ?\d\d\d\d ?\d\d\d\d( ?\d\d\d)?)\b", self.trk_no):
+        fedex_pattern = [
+            '^[0-9]{20}$',
+            '^[0-9]{15}$',
+            '^[0-9]{12}$',
+            '^[0-9]{22}$'
+        ]
+        fedex = "(" + ")|(".join(fedex_pattern) + ")"
+        if re.match(fedex, self.trk_no) != None:
             return True
-        else: return False
 
     def USPS_match(self):
-        if re.match("\b[A-Z]{2}\d{9}[A-Z]{2}\b", self.trk_no) \
-            or re.match("^[0-9]{22} | ^[0-9]{20} | ^[A-Z]{2} ?\d\d\d ?\d\d\d ?\d\d\d ?US", self.trk_no):
+        usps_pattern = [
+            '^(94|93|92|94|95)[0-9]{20}$',
+            '^(94|93|92|94|95)[0-9]{22}$',
+            '^(70|14|23|03)[0-9]{14}$',
+            '^(M0|82)[0-9]{8}$',
+            '^([A-Z]{2})[0-9]{9}([A-Z]{2})$'
+        ]
+        usps = "(" + ")|(".join(usps_pattern) + ")"
+        if re.match(usps, self.trk_no) != None:
             return True
-        else: return False

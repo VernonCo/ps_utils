@@ -26,9 +26,9 @@
         .right{text-align: right;}
         .ui-icon {display:inline-block;}
         .bold{font-weight: bold;}
-        .ui-state-default{background: #468DD4 !important;}
-        .ui-state-active{background: #1F67AD !important;}
-        .ui-state-hover{background:#78B9FA !important;}
+        .ui-state-default{background: #468DD4 !important;color: white !important;}
+        .ui-state-active{background: #1F67AD !important;color: white !important;}
+        .ui-state-hover{background:#78B9FA !important;color: white !important;}
     </style>
 
     {% endblock %}
@@ -170,6 +170,10 @@
        });
        // Add event listener for opening and closing details
         $('#resultsTable1 tbody').on('click', 'td.details-control', function () {
+            $('#resultsTable1 > tbody > tr').each(function (i){
+                var row = table.row( i );
+                row.child.hide();
+            })
             var tr = $(this).closest('tr');
             var row = table.row( tr );
 
