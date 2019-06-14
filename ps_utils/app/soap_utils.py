@@ -1,9 +1,30 @@
 """
     utilities for processing soap requests
 """
-import os
+import os, logging
 from suds.xsd.doctor import Import, ImportDoctor
+from suds.plugin import DocumentPlugin, MessagePlugin
 from flask import request
+
+def basic_sobject_to_dict(obj):
+    """Converts suds object to dict very quickly.
+    Does not serialize date time or normalize key case.
+    :param obj: suds object
+    :return: dict object
+    """
+    if not hasattr(obj, '__keylist__'):
+        return obj
+    data = {}
+    fields = obj.__keylist__
+    for field in fields:
+        val = getattr(obj, field)
+        if isinstance(val, list):
+            data[field] = []
+            for item in val:
+                data[field].append(basic_sobject_to_dict(item))
+        else:
+            data[field] = basic_sobject_to_dict(val)
+    return data
 
 def getDoctor( code, version, url=False):
     """ return service type for code """
@@ -31,27 +52,17 @@ def getDoctor( code, version, url=False):
     d = ImportDoctor(imp)
     return d
 
-
-def basic_sobject_to_dict(obj):
-    """Converts suds object to dict very quickly.
-    Does not serialize date time or normalize key case.
-    :param obj: suds object
-    :return: dict object
-    """
-    if not hasattr(obj, '__keylist__'):
-        return obj
-    data = {}
-    fields = obj.__keylist__
-    for field in fields:
-        val = getattr(obj, field)
-        if isinstance(val, list):
-            data[field] = []
-            for item in val:
-                data[field].append(basic_sobject_to_dict(item))
-        else:
-            data[field] = basic_sobject_to_dict(val)
-    return data
-
+def fixShippingWSDL():
+    # path = request.url_root + '/static/wsdl/'
+    imp = Import('http://schemas.xmlsoap.org/soap/encoding/')
+    imp.filter.add('xmlns:ns1','http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/')
+        # ,path + 'OrderStatusService/1.0.0/' )
+    imp.filter.add('xmlns:ns2',' http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/')
+        # ,path + 'OrderShipmentNotificationService/1.0.0' )
+    imp.filter.add('xmlns:ns3','http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/SharedObjects/')
+        # ,path + 'OrderShipmentNotificationService/1.0.0/SharedObjects.xsd' )
+    d = ImportDoctor(imp)
+    return d
 
 def sobject_to_dict(obj, key_to_lower=False, json_serialize=False):
     """
@@ -93,3 +104,29 @@ def sobject_to_json(obj, key_to_lower=False):
     import json
     data = sobject_to_dict(obj, key_to_lower=key_to_lower, json_serialize=True)
     return json.dumps(data)
+
+class RawXML():
+    """used to create the xml sent to the service"""
+    def __init__(self, **kw):
+        xml_version = '<?xml version="1.0" encoding="UTF-8"?>'+"\n"
+        envelope = \
+        """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        """
+        for ns in kw['namespaces']:
+            for k,v in ns.items():
+                envelope += ' xmlns:{}="{}"'.format(k,v) + "\n"
+        envelope += '>'
+        body = "<soapenv:Header/>\n<soapenv:Body>\n"
+        for ns,service in kw['body'].items():
+            body += '<{}:{}>'.format(ns,service)
+        for field in kw['fields']:
+            ns,name,value = field
+            body += '<{}:{}>{}</{}:{}>'.format(ns,name,value,ns,name)
+        for ns,service in kw['body'].items():
+            body += '</{}:{}>'.format(ns,service)
+        body += "\n</soapenv:Body>\n</soapenv:Envelope>"
+        logging.info("newbody: " + body)
+        self.msg = str.encode('{}{}{}'.format(xml_version, envelope, body))
+
+    def xml(self):
+        return self.msg

@@ -11,7 +11,8 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder import ModelView, ModelRestApi, SimpleFormView, BaseView, expose, has_access
 from .models import Company
 from .inventory import Inventory
-from .orderstatus import OrderStatus
+from .order_status import OrderStatus
+from .shipping_status import ShippingStatus
 from .soap_utils import  getDoctor
 from . import appbuilder, db
 # only needed if importing passwords from previous db
@@ -65,13 +66,21 @@ appbuilder.add_view(
 
 appbuilder.add_view(
     OrderStatus,
-    "Status Request",
-    # href='/orderstatus/index/',
+    "Order Status Request",
+    href='/orderstatus/index/',
     icon="fa-search",
     category='Forms',
     category_icon='fa-wpforms'
-) #  la
+)
 
+appbuilder.add_view(
+    ShippingStatus,
+    "Shipment Status Request",
+    href='/shippingstatus/index/',
+    icon="fa-search",
+    category='Forms',
+    category_icon='fa-wpforms'
+)
 class Companies(ModelView):
     datamodel = SQLAInterface(Company)
     list_columns = ['company_name', 'erp_id']
@@ -260,7 +269,7 @@ class Utilities(BaseView):
         if not d: return
         try:
             # FIRST -- try the provided url
-            client = Client(URL, doctor=d)
+            client = Client(URL, plugins=[d])
             print(client.__str__())
             if 'Methods' not in client.__str__():
                 # need to try this on first call, self loops have this as False and will return empty

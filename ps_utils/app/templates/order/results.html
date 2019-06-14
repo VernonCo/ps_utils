@@ -145,10 +145,12 @@
                             </td>
                         <td>
                             {% if row.statusID=="80" or row.statusID=="75" %}
-                            <form action="/shipment/index" method="POST">
+                            <form action="/shippingstatus/index/" method="POST">
                                 <input type="hidden" name="companyID" value="{{c.id}}">
                                 <input name="refNum" type="hidden" value="{{row.factoryOrderNumber}}">
+                                <input name="refDate" type="hidden" value="">
                                 <input type="hidden" name="queryType" value="2">
+                                <input type="hidden" name="returnType" value="3">
                                 <input type="submit" value="Check">
                             </form>
                             {% endif %}

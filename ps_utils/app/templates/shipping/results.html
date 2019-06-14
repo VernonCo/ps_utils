@@ -1,0 +1,212 @@
+
+{% import 'appbuilder/general/lib.html' as lib %}
+
+{% if not table %}
+    {% extends "appbuilder/base.html" %}
+    {% block head_css %}
+    {{ super() }}
+    <link type="text/css" href="{{url_for('static',filename='DataTables-1.10.18/css/jquery.dataTables.min.css')}}" rel="stylesheet">
+    <link type="text/css" href="{{url_for('static',filename='jquery-ui-1.12.1/jquery-ui.theme.min.css')}}" rel="stylesheet">
+    <style>
+        .panel-primary .panel-heading, .panel-success .panel-heading, .panel-warning .panel-heading,
+        .panel-danger .panel-heading, .panel-info .panel-heading, .panel-primary .panel-title,
+        .panel-success .panel-title, .panel-warning .panel-title, .panel-danger .panel-title,
+        .panel-info .panel-title {
+            color: #0f87ec;
+            }
+        th {text-align: center;}
+        .details-control {
+            background:url('{{url_for("static",filename="images/question.png")}}');
+            background-size: 18px 18px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        #resultsTable1 td {vertical-align:top;}
+        .left{text-align: left;}
+        .right{text-align: right;}
+        .ui-icon {display:inline-block;}
+        .bold{font-weight: bold;}
+        .ui-state-default{background: #468DD4 !important;}
+        .ui-state-active{background: #1F67AD !important;}
+        .ui-state-hover{background:#78B9FA !important;}
+    </style>
+
+    {% endblock %}
+{% endif %}
+
+{% block content %}
+
+    <div class="panel panel-primary">
+        {% if not table %}
+            {% call lib.accordion_tag('requestForm',"Shipping Status Request Form", False) %}
+            <form  action="" method="POST" class="form-inline">
+                <div class="form-group">
+                    <label for="companyID">Supplier
+                            <strong style="color: red">*</strong></label>
+                    <select id="companyID" name="companyID" required="">
+                        <option value=""> -- Select One -- </option>
+                        {% for c in companies %}
+                            {% if formValues['vendorID'] == c.id %}
+                                <option value="{{c.id}}" selected >{{c}}</option>
+                            {% else %}
+                                <option value="{{c.id}}" >{{c}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="queryType" control-label="">
+                        Query Type
+                        <strong style="color: red">*</strong>
+                    </label>
+                    <select id="queryType" name="queryType" required="">
+                        <option value="">-- Select One --</option>
+                        <option value="1">PO Search</option>
+                        <option value="2">SO Search</option>
+                        <option value="3">Last Update Search</option>
+                    </select>
+                </div>
+                <div class="form-group" id="refNumTR">
+                    <label for="refNum" control-label="">
+                        Reference Number
+                    </label>
+                    <input class="form-control" id="refNum" name="refNum" placeholder="PO or SO Reference Number"
+                        required="" type="text" value="{{formValues.refNum}}">
+                </div>
+                <div class="form-group" id="refDateTR">
+                    <label for="refNum" control-label="">
+                        Begin Date
+                    </label>
+                    <div class="input-group date appbuilder_date" id="datepicker">
+                        <span class="input-group-addon"><i class="fa fa-calendar cursor-hand"></i></span>
+                        <input class="form-control" data-format="yyyy-MM-dd" id="refDate" name="refDate" placeholder="YYYY/MM/DD"
+                            type="text" value="{{formValues.refDate}}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="returnType" control-label="">Return Type
+                        <strong style="color: red">*</strong></label>
+                        <select id="returnType" name="returnType" required="">
+                            <option value="">-- Select One --</option>
+                            <option value="json">Return As JSON</option>
+                            <option value="table">Return As Results Table</option>
+                            <option value="page" selected>Display in app</option>
+                        </select>
+                </div>
+                <div class="well well-sm">
+                    <button type="submit" class="btn  btn-sm btn-primary">Submit
+                        <i class="fa fa-save"></i></button>
+                </div>
+            </form>
+            {% endcall %}
+        {%endif %}
+        {% call lib.accordion_tag('orderTable', formValues['vendorName'] + " Shipping Status", True) %}
+            <!-- found some non-compliant vendors using code=0 and description=SUCCESS -->
+            {% if error['errorMessage'] %}
+                <div>
+                    <h3>{{error['errorMessage']}}</h3>
+                </div>
+            {% endif %}
+
+            <table id="resultsTable1"  style="text-align: center;" class="display table-bordered" data-page-length="25" data-order="[[ 0, &quot;asc&quot; ]]" width="100%">
+                <thead><tr>
+                    <th>Factory #</th>
+                    <th scope="col">Complete?</th>
+                    <th scope="col">Tracking</th>
+                    <th></th>
+                </tr>
+                </thead>
+            </table>
+        {% endcall %}
+</div>
+
+{% endblock %}
+{% block tail %}
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='jquery-ui-1.12.1/jquery-ui.min.js')}}"></script>
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='DataTables-1.10.18/js/jquery.dataTables.min.js')}}"></script>
+<script>
+    var data = {{ tableSet|safe }};
+    function format ( d ) {
+        // `d` is the original data object for the row
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+            '<tr>'+
+                '<td>'+d.salesOrder+'</td>'+
+            '</tr>'+
+        '</table>';
+    }
+    $(document).ready( function () {
+        $('#refNumTR').hide();
+        $('#refDateTR').hide();
+        $('#queryType').change(function(){
+            var opt = $(this).val();
+            if (opt <= 2 ){
+                $('#refNumTR').show();
+                $('#refNum').attr('required', true);
+                $('#refDateTR').hide();
+                $('#refDate').attr('required', false);
+            }else if (opt == 3){
+                $('#refNumTR').hide();
+                $('#refNum').attr('required', false);
+                $('#refDateTR').show();
+                $('#refDate').attr('required', true);
+            }else{
+                $('#refNumTR').hide();
+                $('#refDateTR').hide();
+            }
+        });
+       var table = $('#resultsTable1').DataTable({
+           "data": data,
+           "columns": [
+                { "data": "PO" },
+                { "data": "complete" },
+                { "data": "tracking" },
+                {
+                    "className":      'details-control',
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ''
+                }
+           ],
+           "order": [[1, 'asc']]
+       });
+       // Add event listener for opening and closing details
+        $('#resultsTable1 tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row( tr );
+
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+
+                $('.packages').accordion("destroy");
+                $('.tracking').accordion("destroy");
+                $( "#accordion" ).accordion("destroy");
+            }
+            else {
+                // Open this row
+                row.child( format(row.data()) ).show();
+                tr.addClass('shown');
+
+                $( "#accordion" ).accordion({
+                    collapsible : true,
+                    active: 'none',
+                    heightStyle: "content"
+                });
+                $('.tracking').accordion({
+                    collapsible : true,
+                    create: function( event, ui ){
+                    },
+                    active: 'none',
+                    heightStyle: "content"
+                    });
+
+                $('.packages').accordion({
+                        collapsible : true,
+                        active: 'none',
+                        heightStyle: "content"
+                    });
+            }
+        });
+    });
+</script>
+{% endblock %}

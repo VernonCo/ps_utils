@@ -3,7 +3,7 @@
 - Returns json or table html for ajax requests  ie returnType=json or returnType=table
 - can use a plugin to update your ERP order status
 - has forms for manual use
-- can import username/passwd from previous database
+- can import username/passwd service authentications from previous database
 
 ## clone repository
 `git clone https://github.com/VernonCo/ps_utils.git`

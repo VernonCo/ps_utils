@@ -222,8 +222,6 @@ class Inventory(SimpleFormView):
         """ used with version 1.0.0 and 1.2.1 """
         data = 'Unable to get Response'
         local_wsdl = getDoctor('INV', c.inventory_version, url=True)
-        # set schema doctor to fix missing schemas
-        d = getDoctor('INV', c.inventory_version)
         kw = dict(
             id=c.user_name,
             productID=request.form['productID'],
@@ -232,7 +230,7 @@ class Inventory(SimpleFormView):
         if c.password:
             kw['password'] =c.password
         try:
-            client = Client(local_wsdl, location='{}'.format(c.inventory_url), doctor=d)
+            client = Client(local_wsdl, location='{}'.format(c.inventory_url))
             # must create filters after each client request
             kw = self.check4InventoryFiltersV1(client, kw, filters)
 
@@ -243,9 +241,11 @@ class Inventory(SimpleFormView):
             logging.error('WSDL Error on local wsdl and location {}: {}'.format(c.inventory_url,str(e)))
             # set up error message to be given if all tries fail. As this one should have worked, give this error
             error_msg = {'SoapFault': 'Soap Fault Error(1): ' +str(e)}
+            # set schema doctor to fix missing schemas
+            d = getDoctor('INV', c.inventory_version)
             try:
                 # use remote wsdl
-                client = Client(c.inventory_wsdl, doctor=d)
+                client = Client(c.inventory_wsdl, plugins=[d])
                 kw = self.check4InventoryFiltersV1(client, kw, filters)
 
                 func = getattr(client.service, request.form['serviceType'])
@@ -257,7 +257,7 @@ class Inventory(SimpleFormView):
                 logging.error(msg)
                 try:
                     # use remote wsdl but set location to endpoint
-                    client = Client(c.inventory_wsdl, location='{}'.format(c.inventory_url), doctor=d)
+                    client = Client(c.inventory_wsdl, location='{}'.format(c.inventory_url), plugins=[d])
                     kw = self.check4InventoryFiltersV1(client, kw, filters)
 
                     func = getattr(client.service, request.form['serviceType'])
@@ -277,8 +277,6 @@ class Inventory(SimpleFormView):
         """ used with version 2.0.0 """
         data = 'Unable to get Response'
         local_wsdl = getDoctor('INV', c.inventory_versionV2, url=True)
-        # set schema doctor to fix missing schemas
-        d = getDoctor('INV', c.inventory_versionV2)
         kw = dict(
             id=c.user_name,
             productId=request.form['productID'],
@@ -286,7 +284,7 @@ class Inventory(SimpleFormView):
         if c.password:
             kw['password'] =c.password
         try:
-            client = Client(local_wsdl, location='{}'.format(c.inventory_urlV2), doctor=d)
+            client = Client(local_wsdl, location='{}'.format(c.inventory_urlV2))
             # must create filters after each client request
             kw = self.check4InventoryFiltersV2(client, kw, filters)
             # call the method
@@ -296,9 +294,11 @@ class Inventory(SimpleFormView):
             logging.error('WSDL Error on local wsdl and location {}: {}'.format(c.inventory_urlV2,str(e)))
             # set up error message to be given if all tries fail. As this one should have worked, give this error
             error_msg = {'SoapFault': 'Soap Fault Error(1): ' +str(e)}
+            # set schema doctor to fix missing schemas
+            d = getDoctor('INV', c.inventory_versionV2)
             try:
                 # use remote wsdl
-                client = Client(c.inventory_wsdl, doctor=d)
+                client = Client(c.inventory_wsdl, plugins=[d])
                 kw = self.check4InventoryFiltersV2(client, kw, filters)
 
                 func = getattr(client.service, serviceMethod)
@@ -310,7 +310,7 @@ class Inventory(SimpleFormView):
                 logging.error(msg)
                 try:
                     # use remote wsdl but set location to endpoint
-                    client = Client(c.inventory_wsdl, location='{}'.format(c.inventory_urlV2), doctor=d)
+                    client = Client(c.inventory_wsdl, location='{}'.format(c.inventory_urlV2), plugins=[d])
                     kw = self.check4InventoryFiltersV2(client, kw, filters)
 
                     func = getattr(client.service, serviceMethod)
