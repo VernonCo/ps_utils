@@ -84,7 +84,7 @@ class Inventory(SimpleFormView):
         companyID = int(request.values.get('companyID', 0))
         if companyID:
             c = db.session.query(Company).get(companyID)
-            if c.inventory_versionV2:
+            if c.inventory_urlV2:
                 data['version'] = '2'
         return json.dumps(data), 200,  {'Content-Type':'applicaion/json'}
 
@@ -135,12 +135,14 @@ class Inventory(SimpleFormView):
                 if not c.inventory_urlV2:
                     flash('Version 2 not available for this supplier', 'error')
                     errorFlag = True
+                    data = 'Unable to get Response'
                 else:
                     data = self.inventoryCallV2(c, filters, serviceMethod)
             else:
                 if not c.inventory_url:
                     flash('Version 1 not available for this supplier', 'error')
                     errorFlag = True
+                    data = 'Unable to get Response'
                 else:
                     data = self.inventoryCallV1(c, filters, serviceMethod)
 
