@@ -93,15 +93,16 @@
                             </td>
                             <td>
                                 <select id="serviceVersion" name="serviceVersion" required="">
-                                    <option value="V1" selected>1.x.x</option>
+                                    <option value="" selected> -- Select -- </option>
+                                    <option value="V1">1.x.x</option>
                                     <option value="V2">2.x.x</option>
                                 </select>
-                                <span class="help-block"></span>
+                                <span class="help-block">Auto selects latest version for selected Company.  Version 2 provides inventory by location.</span>
                             </td>
                         </tr>
                     </tbody>
                     </table>
-               </div>
+                </div>
             </div>
             <div class="well well-sm">
                     <button type="submit" class="btn  btn-sm btn-primary">Submit
@@ -110,5 +111,9 @@
         </form>
     </div>
 </div>
+
+{% endblock %}
+{% block tail %}
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='js/getVersion.js')}}"></script>
 
 {% endblock %}

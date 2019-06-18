@@ -48,9 +48,20 @@ flask fab create-admin
 ### on container
 ```
 docker exec -it ps_utils[_dev] bash
+export FLASK_APP="run:app"
 flask fab create-admin
 ```
-
+## Add available views to users
+Make the app available to operators by either putting on limited network or adding users
+### Behind limited network
+- Click on Security > List Roles >  edit icon for Public
+- Add 'can list on Companies', 'can show on Companies'
+- Add for any services open to network : 'can this form get on '..., 'can this form post on'..., 'menu access on'...
+### Create users
+- Create roles under Security > List Roles
+- Create users and assign roles under Security > List Users
+### Active Directory
+It is also possible to change the authentication to use LDAP and create roles in line with your AD groups
 
 ## if using vscode...set interpeter the one with the path to the venv
 ctl+shft+p
@@ -102,4 +113,3 @@ OLD_DB_PORT=yourhostport
 - 1st call using local wsdl and inject location -- quicker retrieving local wsdl, consistent, and standard
 - else on error: call using remote wsdl -- some do not work with the standard wsdl
 - else on error: call using remote wsdl and inject location -- some have the wrong location (ie localhost) in their wsdl
-

@@ -24,7 +24,8 @@ class InventoryForm(DynamicForm):
     # get companies for dropdown
 
     companyID = QuerySelectField(
-        u"Supplier", get_label=u'company_name', query_factory=companyList( "Inventory" ), validators=[DataRequired("Please Select Supplier.")]
+        u"Supplier", get_label=u'company_name', query_factory=companyList( "Inventory" ),
+        validators=[DataRequired("Please Select Supplier.")]
     )
     productID = StringField(
         ("Product SKU"),
@@ -33,16 +34,18 @@ class InventoryForm(DynamicForm):
         widget=BS3TextFieldWidget()
     )
     serviceType = SelectField(
-        ("Service"), choices=[('','-- Select One --'),('getFilterValues', 'Get Filters'),('getInventoryLevels', 'Get Results')], validators=[DataRequired("Please select service.")],
+        ("Service"), choices=[('','-- Select One --'),('getFilterValues', 'Get Filters'),('getInventoryLevels', 'Get Results')],
         description=("Enter the desired service call."),
+        validators=[DataRequired("Please select service.")]
     )
     returnType = SelectField(
         ("Return Type"), choices=[('','-- Select One --'),('json', 'Return As JSON'),('page', 'Return As Table')],
         validators=[DataRequired("Please select return type.")]
     )
     serviceVersion = SelectField(
-        ("Service Version"), choices=[('V1', '1.x.x'),('V2', '2.X.x')], default='V1',
-        validators=[DataRequired("Please select service version. Defaults to 1.x.x")]
+        ("Service Version"), choices=[('V1', '1.x.x'),('V2', '2.X.x')],
+        description=("Auto selects latest version for selected Company."),
+        validators=[DataRequired("Please select service version.")]
     )
 
 

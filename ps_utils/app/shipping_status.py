@@ -73,7 +73,7 @@ class ShippingStatus(SimpleFormView):
                                     if v and k != 'ItemArray':
                                         temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
                                 if package['ItemArray']['Item']:
-                                    temp['salesOrder'] += '<tr><td colspan="2"><div class="packages">'.format(packageCounter)
+                                    temp['salesOrder'] += '<tr><td colspan="2"><div class="packages">'
                                     packageCounter += 1
                                     itemCounter = 1  # used for heading only
                                     for item in package['ItemArray']['Item']:

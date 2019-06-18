@@ -65,6 +65,12 @@ appbuilder.add_view(
 ) #  label=_("Inventory Request Form"),
 
 appbuilder.add_view(
+    Inventory,
+    "Get Inventory Version",
+    href='/inventory/getVersion/'
+)
+
+appbuilder.add_view(
     OrderStatus,
     "Order Status Request",
     href='/orderstatus/index/',

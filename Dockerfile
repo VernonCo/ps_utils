@@ -26,7 +26,7 @@ COPY nginx.conf /etc/nginx
 
 COPY ./ps_utils /app
 
-WORKDIR /app/
+WORKDIR /app
 
 ENV PYTHONPATH=/app
 

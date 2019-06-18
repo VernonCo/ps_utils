@@ -77,6 +77,16 @@ class Inventory(SimpleFormView):
             pass # is empty
         return data
 
+    @expose('/getVersion/', methods=['POST'])
+    def getVersion(self, **kw):
+        """ get latest inventory service version used by company """
+        data = {"version":'1'}
+        companyID = int(request.values.get('companyID', 0))
+        if companyID:
+            c = db.session.query(Company).get(companyID)
+            if c.inventory_versionV2:
+                data['version'] = '2'
+        return json.dumps(data), 200,  {'Content-Type':'applicaion/json'}
 
     @expose('/index/', methods=['GET', 'POST'])
     def index(self, **kw):
@@ -214,7 +224,7 @@ class Inventory(SimpleFormView):
             if request.form['returnType'] == 'table': # return html for table only
                 table=True
             return self.render_template(
-                template, data=result, checkRow=checkRow, companies=companies,
+                template, data=result, checkRow=checkRow, companies=companies, form=self.form,
                 productID=request.form['productID'], table=table
                 )
 
