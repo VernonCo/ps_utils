@@ -63,7 +63,8 @@ class ShippingStatus(SimpleFormView):
                             if v and v !='.':
                                 temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
                         temp['salesOrder'] += '</table></td><td>'
-                        temp['salesOrder'] += '{}</td><td><div class="tracking">'.format(location['shipmentDestinationType'])
+                        shipmentDestinationType = location['shipmentDestinationType'] if 'shipmentDestinationType' in location else ''
+                        temp['salesOrder'] += '{}</td><td><div class="tracking">'.format(shipmentDestinationType)
                         trackingCounter += 1
                         packageCounter = 0
                         if 'Package' in location['PackageArray']:
@@ -210,6 +211,7 @@ class ShippingStatus(SimpleFormView):
             logging.error('WSDL Error on local wsdl and location {}: {}'.format(c.shipping_url,str(e)))
             # set up error message to be given if all tries fail. As this one should have worked, give this error
             error_msg = {'SoapFault': 'Error(1): ' +str(e)}
+            assert False
             d = getDoctor('OSN', c.shipping_version)
             try:
                 # use remote wsdl

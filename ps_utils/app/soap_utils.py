@@ -119,9 +119,18 @@ class RawXML():
         body = "<soapenv:Header/>\n<soapenv:Body>\n"
         for ns,service in kw['body'].items():
             body += '<{}:{}>'.format(ns,service)
+        body4 = ''
         for field in kw['fields']:
             ns,name,value = field
-            body += '<{}:{}>{}</{}:{}>'.format(ns,name,value,ns,name)
+            if name == 'wsVersion':
+                body1 = '<{}:{}>{}</{}:{}>'.format(ns,name,value,ns,name)
+            elif name == 'id':
+                body2 = '<{}:{}>{}</{}:{}>'.format(ns,name,value,ns,name)
+            elif name == 'password':
+                body3 = '<{}:{}>{}</{}:{}>'.format(ns,name,value,ns,name)
+            else:
+                body4 += '<{}:{}>{}</{}:{}>'.format(ns,name,value,ns,name)
+        body += body1 + body2 + body3 + body4
         for ns,service in kw['body'].items():
             body += '</{}:{}>'.format(ns,service)
         body += "\n</soapenv:Body>\n</soapenv:Envelope>"
