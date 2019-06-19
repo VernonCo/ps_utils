@@ -92,7 +92,7 @@ class OrderStatus(SimpleFormView):
 
         return self.render_template(
             'order/results.html', data=result, checkRow=checkRow, c=c,
-            companies=companies, table=table
+            form_title=form_title, companies=companies, table=table
             )
 
     def orderCall(self,c, serviceType):
