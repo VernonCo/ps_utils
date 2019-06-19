@@ -164,7 +164,7 @@ class ShippingStatus(SimpleFormView):
         if checkRow:
             tableSet = self.createTableSet(result)
         return self.render_template(
-            'shipping/results.html', checkRow=checkRow, c=c, tableSet=tableSet,
+            'shipping/results.html', checkRow=checkRow, c=c, tableSet=tableSet, form_title=form_title,
             companies=companies, table=table, error=error, formValues=formValues
             )
 

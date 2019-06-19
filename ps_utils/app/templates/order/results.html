@@ -25,7 +25,7 @@
 
     <div class="panel panel-primary">
         {% if not table %}
-            {% call lib.accordion_tag('requestForm',"Inventory Request Form", False) %}
+            {% call lib.accordion_tag('requestForm',form_title, False) %}
             <form  action="" method="POST" class="form-inline">
                 <div class="form-group">
                     <label for="companyID">Supplier

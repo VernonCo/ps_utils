@@ -227,7 +227,7 @@ class Inventory(SimpleFormView):
                 table=True
             return self.render_template(
                 template, data=result, checkRow=checkRow, companies=companies, form=self.form,
-                productID=request.form['productID'], table=table
+                productID=request.form['productID'], table=table, form_title=form_title
                 )
 
     def inventoryCallV1(self,c, filters, serviceMethod):
