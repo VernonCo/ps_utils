@@ -42,28 +42,34 @@ class OrderStatus(SimpleFormView):
                     form_title=form_title, form=self.form, message = "Form was submitted", data=False
                     )
         # else deal with post
+        errorFlag = False
+        htmlCode = 200
         c = db.session.query(Company).get(int(request.form['companyID']))
         data = self.orderCall(c, 'getOrderStatusDetails')
 
-        # else if requesting json
+        # if error return to request form
+
+        # if error return to request form
+        if data == 'Unable to get Response':
+            flash('Error: {}'.format(data), 'error')
+            errorFlag = True
+            htmlCode = 500
+        elif 'SoapFault' in data:
+            # safe html from exceptions
+            flash(Markup('{}'.format(data['SoapFault'])), 'error')
+            errorFlag = True
+            htmlCode = 500
+        elif 'errorMessage' in data and data.errorMessage:
+            # unsafe html...errorMessage from suppliers
+            flash('Error Message: {} from {}'.format(data.errorMessage, c), 'error')
+            errorFlag = True
+
+        # if requesting json
         if  request.form['returnType'] == 'json':
             data = sobject_to_json(data)
-            return data, 200,  {'Content-Type':'applicaion/json'}
-        # if error return to request form
-        if data == 'Unable to get Response' \
-            or 'SoapFault' in data \
-            or 'errorMessage' in data and data['errorMessage']:
+            return data, htmlCode,  {'Content-Type':'applicaion/json'}
 
-            # setup flash message for error
-            if 'SoapFault' in data:
-                # safe html from exceptions
-                flash(Markup('{}'.format(data['SoapFault'])), 'error')
-            elif 'errorMessage' in data and data['errorMessage']:
-                # unsafe html...errorMessage from suppliers
-                flash('Error Message: {} from {}'.format(data['errorMessage'],c), 'error')
-            else:
-                flash('Error: {}'.format(data), 'error')
-
+        if errorFlag:
             id = request.values.get('companyID', 126)
             return self.render_template( 'order/requestForm.html', companies=companies, id=int(id),
                     form_title=form_title, form=self.form, message = "Form was submitted"

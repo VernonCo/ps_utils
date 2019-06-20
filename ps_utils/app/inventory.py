@@ -116,119 +116,125 @@ class Inventory(SimpleFormView):
                     'inventory/requestForm.html', companies=companies, title=form_title, id=int(id),
                     prodID=prodID, form=self.form, message = "Form was submitted", data=False
                     )
-        else:
-            errorFlag = False
-            # get request variables
-            c = db.session.query(Company).get(int(request.form['companyID']))
-            filters = {}
-            if 'color' in request.values:
-                filters['color'] = request.values.getlist('color')
-            if 'size' in request.values:
-                filters['size'] = request.values.getlist('size')
-            if 'misc' in request.values:
-                filters['misc'] = request.values.getlist('misc')
-            serviceMethod = request.form['serviceType']
-            service_version = request.form['serviceVersion']
+        # else deal with post
+        errorFlag = False
+        htmlCode = 200
+        # get request variables
+        c = db.session.query(Company).get(int(request.form['companyID']))
+        filters = {}
+        if 'color' in request.values:
+            filters['color'] = request.values.getlist('color')
+        if 'size' in request.values:
+            filters['size'] = request.values.getlist('size')
+        if 'misc' in request.values:
+            filters['misc'] = request.values.getlist('misc')
+        serviceMethod = request.form['serviceType']
+        service_version = request.form['serviceVersion']
 
-            # make the soap request
-            if service_version == 'V2':
-                if not c.inventory_urlV2:
-                    flash('Version 2 not available for this supplier', 'error')
-                    errorFlag = True
-                    data = 'Unable to get Response'
-                else:
-                    data = self.inventoryCallV2(c, filters, serviceMethod)
+        # make the soap request
+        if service_version == 'V2':
+            if not c.inventory_urlV2:
+                flash('Version 2 not available for this supplier', 'error')
+                errorFlag = True
+                data = 'Unable to get Response'
             else:
-                if not c.inventory_url:
-                    flash('Version 1 not available for this supplier', 'error')
-                    errorFlag = True
-                    data = 'Unable to get Response'
-                else:
-                    data = self.inventoryCallV1(c, filters, serviceMethod)
-
-            if  request.form['returnType'] == 'json':
-                data = sobject_to_json(data)
-                return data, 200,  {'Content-Type':'applicaion/json'}
-
-            # if error return to request form
-            if data == 'Unable to get Response':
-                flash('Error: {}'.format(data), 'error')
+                data = self.inventoryCallV2(c, filters, serviceMethod)
+        else:
+            if not c.inventory_url:
+                flash('Version 1 not available for this supplier', 'error')
                 errorFlag = True
-            elif 'SoapFault' in data:
-                # safe html from exceptions
-                flash(Markup('{}'.format(data['SoapFault'])), 'error')
+                data = 'Unable to get Response'
+            else:
+                data = self.inventoryCallV1(c, filters, serviceMethod)
+
+
+        # if error return to request form
+        if data == 'Unable to get Response':
+            flash('Error: {}'.format(data), 'error')
+            errorFlag = True
+            htmlCode = 500
+        elif 'SoapFault' in data:
+            # safe html from exceptions
+            flash(Markup('{}'.format(data['SoapFault'])), 'error')
+            errorFlag = True
+            htmlCode = 500
+        elif 'errorMessage' in data and data.errorMessage:
+            # unsafe html...errorMessage from suppliers
+            flash('Error Message: {} from {}'.format(data.errorMessage, c), 'error')
+            errorFlag = True
+        try:
+            if data['ServiceMessageArray']['ServiceMessage'][0]['description']:
+                # unsafe html...Message from suppliers
+                msg = ''
+                for row in data['ServiceMessageArray']['ServiceMessage']:
+                    msg += row['description'] + "\n"
+                flash(msg)
                 errorFlag = True
-            elif 'errorMessage' in data and data['errorMessage']:
-                # unsafe html...errorMessage from suppliers V1
-                flash('Error Message: {} from {}'.format(data['errorMessage'],c), 'error')
-                errorFlag = True
-            try:
-                if data['ServiceMessageArray']['ServiceMessage'][0]['description']:
-                    # unsafe html...errorMessage from suppliers
-                    msg = ''
-                    for row in data['ServiceMessageArray']['ServiceMessage']:
-                        msg += row['description'] + "\n"
-                    flash(msg)
-                    errorFlag = True
-            except:
-                pass # on missing index
-            if errorFlag:
-                return self.render_template(
-                        'inventory/requestForm.html', companies=companies, title=form_title,
-                        id=int(request.form['companyID']),
-                        prodID=request.form['productID'],
-                        form=self.form, message = "Form was submitted"
-                        )
+        except:
+            pass # on missing index
+
+        # if requesting json
+        if  request.form['returnType'] == 'json':
+            data = sobject_to_json(data)
+            return data, htmlCode,  {'Content-Type':'applicaion/json'}
+
+        if errorFlag:
+            return self.render_template(
+                    'inventory/requestForm.html', companies=companies, title=form_title,
+                    id=int(request.form['companyID']),
+                    prodID=request.form['productID'],
+                    form=self.form, message = "Form was submitted"
+                    )
 
 
-            if request.form['serviceType'] == 'getFilterValues':
-                #redirect to new form with filter options
-                result = sobject_to_dict(data)
-                if service_version == 'V2':
-                    # manipulate data into color, size and misc (partId) arrays
-                    result = self.filterDataV2(result)
-                result['vendorID'] = c.id
-                result['vendorName'] = c.company_name
-                result['returnType'] = request.form['returnType']
-                result['serviceVersion'] = request.form['serviceVersion']
-
-                return self.render_template('inventory/filtersRequestForm.html', data=result, form=self.form)
-
-            # or finally redirct to results page
-            result=sobject_to_dict(data, json_serialize=True)
+        if request.form['serviceType'] == 'getFilterValues':
+            #redirect to new form with filter options
+            result = sobject_to_dict(data)
+            if service_version == 'V2':
+                # manipulate data into color, size and misc (partId) arrays
+                result = self.filterDataV2(result)
             result['vendorID'] = c.id
             result['vendorName'] = c.company_name
             result['returnType'] = request.form['returnType']
-            if 'SoapFault' in result:
-                result['errorMessage'] = result['SoapFault']
-            if 'errorMessage' in result and result['errorMessage']:
-                checkRow = None
-            else:
-                if service_version == 'V1':
-                    try:
-                        checkRow = result['ProductVariationInventoryArray']['ProductVariationInventory'][0]
-                    except:
-                        checkRow = None
-                        result['errorMessage'] = "Response structure error"
-                        if not PRODUCTION:
-                            result['errorMessage'] += ": " +str(sobject_to_dict(data, json_serialize=True))
-                else:
-                    try:
-                        checkRow = result['Inventory']['PartInventoryArray']['PartInventory'][0]
-                    except:
-                        checkRow = None
-                        result['errorMessage'] = "Response structure error"
-                        if not PRODUCTION:
-                            result['errorMessage'] += ": " +str(sobject_to_dict(data, json_serialize=True))
+            result['serviceVersion'] = request.form['serviceVersion']
 
-            table = False
-            template = 'inventory/results{}.html'.format(service_version)
-            if request.form['returnType'] == 'table': # return html for table only
-                table=True
-            return self.render_template(
-                template, data=result, checkRow=checkRow, companies=companies, form=self.form,
-                productID=request.form['productID'], table=table, form_title=form_title
-                )
+            return self.render_template('inventory/filtersRequestForm.html', data=result, form=self.form)
+
+        # or finally redirct to results page
+        result=sobject_to_dict(data, json_serialize=True)
+        result['vendorID'] = c.id
+        result['vendorName'] = c.company_name
+        result['returnType'] = request.form['returnType']
+        if 'SoapFault' in result:
+            result['errorMessage'] = result['SoapFault']
+        if 'errorMessage' in result and result['errorMessage']:
+            checkRow = None
+        else:
+            if service_version == 'V1':
+                try:
+                    checkRow = result['ProductVariationInventoryArray']['ProductVariationInventory'][0]
+                except:
+                    checkRow = None
+                    result['errorMessage'] = "Response structure error"
+                    if not PRODUCTION:
+                        result['errorMessage'] += ": " +str(sobject_to_dict(data, json_serialize=True))
+            else:
+                try:
+                    checkRow = result['Inventory']['PartInventoryArray']['PartInventory'][0]
+                except:
+                    checkRow = None
+                    result['errorMessage'] = "Response structure error"
+                    if not PRODUCTION:
+                        result['errorMessage'] += ": " +str(sobject_to_dict(data, json_serialize=True))
+
+        table = False
+        template = 'inventory/results{}.html'.format(service_version)
+        if request.form['returnType'] == 'table': # return html for table only
+            table=True
+        return self.render_template(
+            template, data=result, checkRow=checkRow, companies=companies, form=self.form,
+            productID=request.form['productID'], table=table, form_title=form_title
+            )
 
     def inventoryCallV1(self,c, filters, serviceMethod):
         """ used with version 1.0.0 and 1.2.1 """

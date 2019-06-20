@@ -110,29 +110,32 @@ class ShippingStatus(SimpleFormView):
                     form_title=form_title, form=self.form, message = "Form was submitted", data=False
                     )
         # else deal with post
+        errorFlag = False
+        htmlCode = 200
         c = db.session.query(Company).get(int(request.form['companyID']))
         data = self.shippingCall(c, 'getOrderShipmentNotification')
 
-        # else if requesting json
+        # if error return to request form
+        if data == 'Unable to get Response':
+            flash('Error: {}'.format(data), 'error')
+            errorFlag = True
+            htmlCode = 500
+        elif 'SoapFault' in data:
+            # safe html from exceptions
+            flash(Markup('{}'.format(data['SoapFault'])), 'error')
+            errorFlag = True
+            htmlCode = 500
+        elif 'errorMessage' in data and data.errorMessage.code > 9:
+            # found some non-compliant vendors returning code=0 and description=SUCCESS
+            flash('Error Message: {} from {}'.format(data.errorMessage.description, c), 'error')
+            errorFlag = True
+
+        # if requesting json
         if  request.form['returnType'] == 'json':
             data = sobject_to_json(data)
-            return data, 200,  {'Content-Type':'applicaion/json'}
-        # if error return to request form
-        if data == 'Unable to get Response' \
-            or 'SoapFault' in data \
-            or 'errorMessage' in data and data.errorMessage.code > 9:
-            # found some non-compliant vendors returning code=0 and description=SUCCESS
+            return data, htmlCode,  {'Content-Type':'applicaion/json'}
 
-            # setup flash message for error
-            if 'SoapFault' in data:
-                # safe html from exceptions
-                flash(Markup('{}'.format(data['SoapFault'])), 'error')
-            elif 'errorMessage' in data and data['errorMessage']:
-                # unsafe html...errorMessage from suppliers
-                flash('Error Message: {} from {}'.format(data['errorMessage'],c), 'error')
-            else:
-                flash('Error: {}'.format(data), 'error')
-
+        if errorFlag:
             id = request.values.get('companyID', 126)
             return self.render_template( 'shipping/requestForm.html', companies=companies, id=int(id),
                     form_title=form_title, form=self.form, message = "Form was submitted"
@@ -211,7 +214,6 @@ class ShippingStatus(SimpleFormView):
             logging.error('WSDL Error on local wsdl and location {}: {}'.format(c.shipping_url,str(e)))
             # set up error message to be given if all tries fail. As this one should have worked, give this error
             error_msg = {'SoapFault': 'Error(1): ' +str(e)}
-            assert False
             d = getDoctor('OSN', c.shipping_version)
             try:
                 # use remote wsdl
