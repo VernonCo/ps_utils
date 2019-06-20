@@ -4,7 +4,6 @@ from flask import request, flash
 from suds.client import Client
 from .models import Company
 from . import appbuilder, db
-from .forms import OrderStatusForm
 from .soap_utils import sobject_to_dict, sobject_to_json, basic_sobject_to_dict, getDoctor, RawXML
 from .tracking_util import Tracking_No
 from . import app
@@ -31,7 +30,6 @@ class ShippingStatus(SimpleFormView):
             or external ajax request using content-type application/x-www-form-urlencoded
     """
     default_view = 'index'
-    form = OrderStatusForm
 
     def createTableSet(self, result):
         """ creates a table set from result for datatable to display with nested package child row """

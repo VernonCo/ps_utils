@@ -13,7 +13,7 @@
     </div>
     <div id="Home" class="tab-pane active">
         <form id="model_form" action="" method="post" enctype="multipart/form-data">
-            {{ form.csrf_token }}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <tbody>
@@ -25,18 +25,8 @@
                                 </label>
                             </td>
                             <td>
-                                <select id="companyID" name="companyID" required="">
-                                    <option value=""> -- Select One -- </option>
-                                    {% for c in companies %}
-                                        {% if id == c.id %}
-                                            <option value="{{c.id}}" selected >{{c}}</option>
-                                        {% else %}
-                                            <option value="{{c.id}}" >{{c}}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                                <span class="help-block"></span>
-                            </td>
+                                {% include 'companySelect.html' %}
+                                <span class="help-block"></span>                            </td>
                         </tr>
                         <tr>
                             <td class="col-lg-2">
@@ -88,13 +78,7 @@
                                 </label>
                             </td>
                             <td>
-                                <select id="returnType" name="returnType" required="">
-                                    <option value="">-- Select One --</option>
-                                    <option value="json">Return As JSON</option>
-                                    <option value="table">Return As Results Table</option>
-                                    <option value="page" selected>Display in app</option>
-                                </select>
-                                <span class="help-block"></span>
+                                {% include 'returnTypeSelect.html' %}
                             </td>
                         </tr>
                     </tbody>

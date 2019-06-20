@@ -2,6 +2,7 @@ import logging
 import os
 
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 from flask_appbuilder import AppBuilder, SQLA
 
 """
@@ -16,6 +17,7 @@ app.config.from_object(os.getenv("CONFIG_FILE"))
 AppBuilder.app_name = 'PS Utils'
 db = SQLA(app)
 appbuilder = AppBuilder(app, db.session)
+csrf = CSRFProtect(app)
 
 
 """

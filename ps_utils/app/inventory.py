@@ -5,7 +5,6 @@ from flask import request, flash
 from suds.client import Client
 from .models import Company
 from . import appbuilder, db
-from .forms import InventoryForm
 from .soap_utils import sobject_to_dict, sobject_to_json, basic_sobject_to_dict, getDoctor
 from . import app
 from jinja2 import Markup
@@ -15,7 +14,6 @@ PRODUCTION = app.config.get('PRODUCTION')
 
 class Inventory(SimpleFormView):
     default_view = 'index'
-    form = InventoryForm
 
     def check4InventoryFiltersV1(self, client, kw, filters):
         """ check for filters to set on soap call on version 1.0.0 and 1.2.1"""
@@ -81,7 +79,9 @@ class Inventory(SimpleFormView):
     def getVersion(self, **kw):
         """ get latest inventory service version used by company """
         data = {"version":'1'}
-        companyID = int(request.values.get('companyID', 0))
+        companyID = request.values.get('companyID', 0)
+        if companyID != 0:
+            companyID = int(companyID)
         if companyID:
             c = db.session.query(Company).get(companyID)
             if c.inventory_urlV2:
@@ -180,7 +180,7 @@ class Inventory(SimpleFormView):
 
         if errorFlag:
             return self.render_template(
-                    'inventory/requestForm.html', companies=companies, title=form_title,
+                    'inventory/requestForm.html', companies=companies, form_title=form_title,
                     id=int(request.form['companyID']),
                     prodID=request.form['productID'],
                     form=self.form, message = "Form was submitted"

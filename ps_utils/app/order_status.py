@@ -4,7 +4,6 @@ from flask import request, flash
 from suds.client import Client
 from .models import Company
 from . import appbuilder, db
-from .forms import OrderStatusForm
 from .soap_utils import sobject_to_dict, sobject_to_json, basic_sobject_to_dict, getDoctor
 from . import app
 from jinja2 import Markup
@@ -29,7 +28,6 @@ class OrderStatus(SimpleFormView):
             or external ajax request using content-type application/x-www-form-urlencoded
     """
     default_view = 'index'
-    form = OrderStatusForm
 
     @expose('/index/', methods=['GET', 'POST'])
     def index(self, **kw):
