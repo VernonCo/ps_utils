@@ -28,7 +28,7 @@
             {% include 'inventory/form-inline.html' %}
             {% endcall %}
         {%endif %}
-        {% call lib.accordion_tag('productTable',data['vendorName'] + " Listings for Product ID #" +productID, True) %}
+        {% call lib.accordion_tag('productTable',data['vendorName'] + " Listings for Product ID #" + prodID, True) %}
         {% if data['errorMessage'] %}
             <div>
                 <h3>{{data['errorMessage']}}</h3>
@@ -79,44 +79,44 @@
             <tbody>
                 {% for row in data['Inventory']['PartInventoryArray']['PartInventory'] %}
                     <tr class="{{ loop.cycle('odd', 'even') }}">
-                        <td>{{row.partId}}&nbsp;</td>
-                        <td>&nbsp;{{row.mainPart}}&nbsp;</td>
+                        <td>{{row['partId']}}&nbsp;</td>
+                        <td>&nbsp;{{row['mainPart']}}&nbsp;</td>
                         {% if partDescription %}
-                        <td>&nbsp;{{row.partDescription}}&nbsp;</td>
+                        <td>&nbsp;{{row['partDescription']}}&nbsp;</td>
                         {% endif %}
-                        <td style="text-align: right;">{{row.quantityAvailable.Quantity.value}}&nbsp;{{row.quantityAvailable.Quantity.uom}}&nbsp;</td>
+                        <td style="text-align: right;">{{row['quantityAvailable']['Quantity']['value']}}&nbsp;{{row['quantityAvailable']['Quantity']['uom']}}&nbsp;</td>
                         {% if color %}
-                        <td>&nbsp;{{row.partColor}}&nbsp;</td>
+                        <td>&nbsp;{{row['partColor']}}&nbsp;</td>
                         {% endif %}
                         {% if size %}
-                        <td style="text-align: center;">{{row.labelSize}}</td>
+                        <td style="text-align: center;">{{row['labelSize']}}</td>
                         {% endif %}
                         {% if attributeSelection %}
-                        <td style="text-align: right;">{{row.attributeSelection}}</td>
+                        <td style="text-align: right;">{{row['attributeSelection']}}</td>
                         {% endif %}
                         <td>{{row.manufacturedItem}}</td>
-                        <td style="text-align: right;">{{row.buyToOrder}}</td>
+                        <td style="text-align: right;">{{row['buyToOrder']}}</td>
                         {% if replenishmentLeadTime %}
-                        <td style="text-align: right;">{{row.replenishmentLeadTime}}</td>
+                        <td style="text-align: right;">{{row['replenishmentLeadTime']}}</td>
                         {% endif %}
                         {% if InventoryLocationArray %}
                         <td style="text-align: right;">
                             <table class="table table-bordered">
                                 <tbody>
-                                    {% for location in row.InventoryLocationArray.InventoryLocation %}
+                                    {% for location in row['InventoryLocationArray']['InventoryLocation'] %}
                                     <tr>
-                                        <td>Location ID: {{location.inventoryLocationId}} </td>
+                                        <td>Location ID: {{location['inventoryLocationId']}} </td>
                                         {% if 'inventoryLocationName' in location %}
-                                        <td>Location Name: {{location.inventoryLocationName}} </td>
+                                        <td>Location Name: {{location['inventoryLocationName']}} </td>
                                         {% endif %}
-                                        <td>Postal Code: {{location.postalCode}} </td>
-                                        <td>Country: {{location.country}} </td>
-                                        {% if 'inventoryLocationQuantity' in location %}
-                                        <td>Quantity UOM: {{location.inventoryLocationQuantity.Quantity.value}} {{location.inventoryLocationQuantity.Quantity.uom}} </td>
+                                        <td>Postal Code: {{location['postalCode']}} </td>
+                                        <td>Country: {{location['country']}} </td>
+                                        {% if 'inventoryLocationQuantity' in location %}s
+                                        <td>Quantity UOM: {{location['inventoryLocationQuantity']['Quantity']['value']}} {{location['inventoryLocationQuantity']['Quantity']['uom']}} </td>
                                         {% endif %}
-                                        {% if 'FutureAvailabilityArray' in location and 'FutureAvailability' in location.FutureAvailabilityArray %}
+                                        {% if 'FutureAvailabilityArray' in location and 'FutureAvailability' in location['FutureAvailabilityArray'] %}
                                         <td>Future Avail:
-                                            {{location.inventoryLocationQuantity.Quantity.value}} {{location.inventoryLocationQuantity.Quantity.availableOn}} </td>
+                                            {{location['inventoryLocationQuantity']['Quantity']['value']}} {{location['inventoryLocationQuantity']['Quantity']['availableOn']}} </td>
                                         {% endif %}
                                     </tr>
                                     {%endfor %}
@@ -125,7 +125,7 @@
                         </td>
                         {% endif %}
                         {% if lastModified %}
-                        <td>&nbsp;{{row.validTimestamp}}</td>
+                        <td>&nbsp;{{row['validTimestamp']}}</td>
                         {% endif %}
                     </tr>
                 {% endfor %}

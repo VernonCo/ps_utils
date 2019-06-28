@@ -27,6 +27,7 @@
         {% if not table %}
             {% call lib.accordion_tag('requestForm',form_title, False) %}
             <form  action="" method="POST" class="form-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
                     <label for="companyID">Supplier
                             <strong style="color: red">*</strong></label>

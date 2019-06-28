@@ -28,7 +28,7 @@
             {% include 'inventory/form-inline.html' %}
             {% endcall %}
         {%endif %}
-        {% call lib.accordion_tag('productTable',data['vendorName'] + " Listings for Product ID #" +productID, True) %}
+        {% call lib.accordion_tag('productTable',data['vendorName'] + " Listings for Product ID #" + prodID, True) %}
         {% if data['errorMessage'] %}
             <div>
                 <h3>{{data['errorMessage']}}</h3>

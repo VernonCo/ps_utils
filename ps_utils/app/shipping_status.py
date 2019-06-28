@@ -1,15 +1,13 @@
 import json, logging
-from flask_appbuilder import ModelView, ModelRestApi, SimpleFormView, BaseView, expose, has_access
+from flask_appbuilder import SimpleFormView, expose, has_access
 from flask import request, flash
-from suds.client import Client
 from .models import Company
 from . import appbuilder, db
-from .soap_utils import sobject_to_dict, sobject_to_json, basic_sobject_to_dict, getDoctor, RawXML
+from .soap_utils import SoapClient, SoapRequest
 from .tracking_util import Tracking_No
 from . import app
 from jinja2 import Markup
 from sqlalchemy import or_, and_
-from suds.xsd.doctor import Import, ImportDoctor
 
 PRODUCTION = app.config.get('PRODUCTION')
 
@@ -19,12 +17,12 @@ class ShippingStatus(SimpleFormView):
             or external ajax request using content-type application/x-www-form-urlencoded
 
         params:
-        companyID = PS companyID
-        queryType = query search type: 1=PO#,2=SO#,3=from date,4=all open orders
-        returnType = return type json or html
-        [options depend on queryType]
-        refNum for PO or SO#
-        refDate for from Date
+            companyID = PS companyID
+            queryType = query search type: 1=PO#,2=SO#,3=from date
+            returnType = return type json or html
+            [options depend on queryType]
+                refNum for PO or SO#
+                refDate for from Date
 
         use request.form or request.values(for default values):  to be able to get either form post
             or external ajax request using content-type application/x-www-form-urlencoded
@@ -65,13 +63,13 @@ class ShippingStatus(SimpleFormView):
                         temp['salesOrder'] += '{}</td><td><div class="tracking">'.format(shipmentDestinationType)
                         trackingCounter += 1
                         packageCounter = 0
-                        if 'Package' in location['PackageArray']:
+                        if 'PackageArray' in location and 'Package' in location['PackageArray']:
                             for package in location['PackageArray']['Package']:
                                 temp['salesOrder'] += '<h3>TRN: {}</h3><div><table class="table-striped">'.format(package['trackingNumber'])
                                 for k,v in package.items():
                                     if v and k != 'ItemArray':
                                         temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
-                                if package['ItemArray']['Item']:
+                                if 'ItemArray' in package and package['ItemArray']['Item']:
                                     temp['salesOrder'] += '<tr><td colspan="2"><div class="packages">'
                                     packageCounter += 1
                                     itemCounter = 1  # used for heading only
@@ -83,19 +81,23 @@ class ShippingStatus(SimpleFormView):
                                                 temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
                                         temp['salesOrder'] += '</table></div>'
                                 temp['salesOrder'] += '</div></td></tr></table></div>'
-                                if package['trackingNumber']: # elliminates placebo
-                                    trk = Tracking_No(package['trackingNumber'], carrier=package['carrier'])
-                                    if trk.valid():
-                                        temp['tracking'].append(trk.link())
+                                if package['trackingNumber']:
+                                    trkingNos = package['trackingNumber'].split(',')
+                                    carrier = ''
+                                    if 'carrier' in package:
+                                        carrier = package['carrier']
+                                    for trackno in trkingNos:
+                                        trackno = trackno.strip()
+                                        trk = Tracking_No(trackno, carrier=carrier)
+                                        # elliminates placebo
+                                        if trk.valid():
+                                            temp['tracking'].append(trk.link())
                     temp['salesOrder'] += '</div></tr></tbody></table>'
             temp['packageCounter'] = packageCounter
             temp['trackingCounter'] = trackingCounter
             temp['tracking'] = ', '.join(temp['tracking'])
             data.append(temp)
         return json.dumps(data)
-
-
-
 
     @expose('/index/', methods=['GET', 'POST'])
     def index(self, **kw):
@@ -111,9 +113,46 @@ class ShippingStatus(SimpleFormView):
         errorFlag = False
         htmlCode = 200
         c = db.session.query(Company).get(int(request.form['companyID']))
-        data = self.shippingCall(c, 'getOrderShipmentNotification')
+        kw = dict(
+            wsVersion= c.shipping_version,
+            password=c.password,
+            id=c.user_name,
+            queryType=request.form['queryType']
+            )
+        values = {
+            'namespaces': {'ns':"http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/",
+                'shar':"http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/SharedObjects/"
+            },
+            'method': {'ns':'GetOrderShipmentNotificationRequest'},
+            'fields': [('shar','wsVersion', kw['wsVersion']),('shar','id', kw['id']),('shar','password', kw['password']),
+                ('ns','queryType', kw['queryType'])
+            ],
+        'Filter': False
+        }
+
+        if 'refDate' in request.form and request.form['refDate']:
+            kw['shipmentDateTimeStamp']=request.form['refDate']
+            values['fields'].append(('ns','shipmentDateTimeStamp',request.form['refDate']))
+        if 'refNum' in request.form and request.form['refNum']:
+            kw['referenceNumber']=request.form['refNum']
+            values['fields'].append(('ns','referenceNumber', request.form['refNum']))
+        # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
+        # try:
+        #     client = SoapRequest(serviceUrl=c.shipping_url, serviceMethod='GetOrderShipmentNotification',
+        #                         serviceResponse='GetOrderShipmentNotificationResponse', values=values)
+        #     data = client.sendRequest()
+        # except:
+        #     assert False
+        # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+
+        client = SoapClient(serviceMethod='getOrderShipmentNotification', serviceUrl=c.shipping_url, serviceWSDL=c.shipping_wsdl, serviceCode='OSN',
+                serviceVersion=c.shipping_version, filters=False, values=values, **kw)
+        data = client.serviceCall()
 
         # if error return to request form
+        if data == {}:
+            flash('Error: data not found for request', 'error')
+            errorFlag = True
         if data == 'Unable to get Response':
             flash('Error: {}'.format(data), 'error')
             errorFlag = True
@@ -130,7 +169,7 @@ class ShippingStatus(SimpleFormView):
 
         # if requesting json
         if  request.form['returnType'] == 'json':
-            data = sobject_to_json(data)
+            data = client.sobject_to_json()
             return data, htmlCode,  {'Content-Type':'applicaion/json'}
 
         if errorFlag:
@@ -140,7 +179,7 @@ class ShippingStatus(SimpleFormView):
                     )
 
         # else redirct to results page
-        result = sobject_to_dict(data, json_serialize=True)
+        result = client.sobject_to_dict(json_serialize=True)
         formValues = error = {}
         error['errorMessage'] = ''
         formValues['vendorID'] = c.id
@@ -159,7 +198,7 @@ class ShippingStatus(SimpleFormView):
             if not error['errorMessage']:
                 error['errorMessage'] = "Response structure error"
             if not PRODUCTION:
-                error['errorMessage'] += ": " +str(sobject_to_dict(data, json_serialize=True))
+                error['errorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
         table = True if request.form['returnType'] == 'table' else False
         tableSet = {}
         if checkRow:
@@ -168,74 +207,6 @@ class ShippingStatus(SimpleFormView):
             'shipping/results.html', checkRow=checkRow, c=c, tableSet=tableSet, form_title=form_title,
             companies=companies, table=table, error=error, formValues=formValues
             )
-
-    def shippingCall(self,c, serviceType):
-        """ call the order status service """
-        data = 'Unable to get Response'
-        # get the local wsdl and inject the endpoint
-        # ...should almost always work if they follow the wsdl and give a valid endpoint to PS
-        local_wsdl = getDoctor('OSN', c.shipping_version, url=True)
-        kw = dict(
-                password=c.password,
-                id=c.user_name,
-                queryType=request.form['queryType'],
-                wsVersion= c.shipping_version)
-        raw = dict(
-            namespaces=[
-                dict(ns="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/"),
-                dict(shar="http://www.promostandards.org/WSDL/OrderShipmentNotificationService/1.0.0/SharedObjects/")
-            ],
-            body=dict(ns='GetOrderShipmentNotificationRequest'),
-            fields=[['shar','id',kw['id']],['shar','password',kw['password']],['shar','wsVersion',kw['wsVersion']],
-            ['ns','queryType',kw['queryType']]
-            ]
-        )
-        if 'refDate' in request.form and request.form['refDate']:
-            kw['shipmentDateTimeStamp']=request.form['refDate']
-            raw['fields'].append(['ns','shipmentDateTimeStamp',request.form['refDate']])
-        if 'refNum' in request.form and request.form['refNum']:
-            kw['referenceNumber']=request.form['refNum']
-            raw['fields'].append(['ns','referenceNumber',request.form['refNum']])
-        ### suds3-py has trouble parsing this wsdl which has orderstatus in it but not used
-        #   and multiple nested namespaces that are not quite consistant (ie. service xsd has shared objects
-        #   as ns3, but sharedobjects.xsd has it as ns2
-        # So creating the xml (provided by SoapUI) to inject and send
-        rh = RawXML(**raw)
-        message = rh.xml()
-        try:
-            client = Client(local_wsdl, location=c.shipping_url)
-            client.set_options(cache=None)
-            # call the method
-            func = getattr(client.service, serviceType)
-            data = func(__inject={'msg':message})
-        except Exception as e:
-            logging.error('WSDL Error on local wsdl and location {}: {}'.format(c.shipping_url,str(e)))
-            # set up error message to be given if all tries fail. As this one should have worked, give this error
-            error_msg = {'SoapFault': 'Error(1): ' +str(e)}
-            d = getDoctor('OSN', c.shipping_version)
-            try:
-                # use remote wsdl
-                client = Client(c.shipping_wsdl, plugins=[d])
-                func = getattr(client.service, serviceType)
-                data = func(**kw)
-            except Exception as e:
-                msg = 'Soap Fault Error(2) on remote wsdl location {}: {}'.format(c.shipping_wsdl,str(e))
-                if not PRODUCTION:
-                    error_msg['SoapFault'] += '<br>' + msg
-                logging.error(msg)
-                try:
-                    # use remote wsdl but set location to endpoint
-                    client = Client(c.shipping_wsdl, location='{}'.format(c.shipping_url), plugins=[d])
-                    func = getattr(client.service, serviceType)
-                    data = func(**kw)
-                except Exception as e:
-                    msg = 'Soap Fault Error(3) on remote wsdl and location {}: {}'.format(c.shipping_url,str(e))
-                    if not PRODUCTION:
-                        error_msg['SoapFault'] += '<br>' + msg
-                    logging.error(str(e))
-                    data = error_msg
-
-        return data
 
     def shippingCompanies(self):
         """ return available inventory companies"""

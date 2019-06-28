@@ -1,10 +1,10 @@
 import json, logging
-from flask_appbuilder import ModelView, ModelRestApi, SimpleFormView, BaseView, expose, has_access
+from flask_appbuilder import SimpleFormView, expose, has_access
 from flask import request, flash
 from suds.client import Client
 from .models import Company
 from . import appbuilder, db
-from .soap_utils import sobject_to_dict, sobject_to_json, basic_sobject_to_dict, getDoctor
+from .soap_utils import SoapClient
 from . import app
 from jinja2 import Markup
 from sqlalchemy import or_, and_
@@ -17,12 +17,12 @@ class OrderStatus(SimpleFormView):
             or external ajax request using content-type application/x-www-form-urlencoded
 
         params:
-        companyID = PS companyID
-        queryType = query search type: 1=PO#,2=SO#,3=from date,4=all open orders
-        returnType = return type json or html
-        [options depend on queryType]
-        refNum for PO or SO#
-        refDate for from Date
+            companyID = PS companyID
+            queryType = query search type: 1=PO#,2=SO#,3=from date,4=all open orders
+            returnType = return type json or html
+            [options depend on queryType]
+                refNum for PO or SO#
+                refDate for from Date
 
         use request.form or request.values(for default values):  to be able to get either form post
             or external ajax request using content-type application/x-www-form-urlencoded
@@ -43,9 +43,37 @@ class OrderStatus(SimpleFormView):
         errorFlag = False
         htmlCode = 200
         c = db.session.query(Company).get(int(request.form['companyID']))
-        data = self.orderCall(c, 'getOrderStatusDetails')
-
-        # if error return to request form
+        kw = dict(
+                wsVersion=c.order_version,
+                password=c.password,
+                id=c.user_name,
+                queryType=request.form['queryType'])
+        values = {
+            'namespaces': {'ns':"http://www.promostandards.org/WSDL/OrderStatusService/1.0.0/"},
+            'method': {'ns':'GetOrderStatusDetailsRequest'},
+            'fields': [('ns','wsVersion', kw['wsVersion']),('ns','id', kw['id']),('ns','password', kw['password']),
+                ('ns','queryType', kw['queryType'])
+            ],
+        'Filter': False
+        }
+        if 'refDate' in request.form and request.form['refDate']:
+            kw['statusTimeStamp']=request.form['refDate']
+            values['fields'].append(('ns','statusTimeStamp',request.form['refDate']))
+        if 'refNum' in request.form and request.form['refNum']:
+            kw['referenceNumber']=request.form['refNum']
+            values['fields'].append(('ns','referenceNumber',request.form['refNum']))
+        # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
+        # try:
+        #     serviceResponse = 'GetOrderStatusDetailsResponse'
+        #     client = SoapRequest(serviceUrl=c.order_url, serviceMethod='getOrderStatusDetails',
+        #                         serviceResponse=serviceResponse, values=values)
+        #     data = client.sendRequest()
+        # except:
+        #     assert False
+        # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+        client = SoapClient(serviceMethod='getOrderStatusDetails', serviceUrl=c.order_url, serviceWSDL=c.order_wsdl, serviceCode='ORDSTAT',
+                serviceVersion=c.order_version, filters=False, values=False, **kw)
+        data = client.serviceCall()
 
         # if error return to request form
         if data == 'Unable to get Response':
@@ -64,7 +92,7 @@ class OrderStatus(SimpleFormView):
 
         # if requesting json
         if  request.form['returnType'] == 'json':
-            data = sobject_to_json(data)
+            data = client.sobject_to_json()
             return data, htmlCode,  {'Content-Type':'applicaion/json'}
 
         if errorFlag:
@@ -74,7 +102,7 @@ class OrderStatus(SimpleFormView):
                     )
 
         # else redirct to results page
-        result = sobject_to_dict(data, json_serialize=True)
+        result = client.sobject_to_dict(json_serialize=True)
         result['vendorID'] = c.id
         result['vendorName'] = c.company_name
         result['returnType'] = request.form['returnType']
@@ -91,63 +119,13 @@ class OrderStatus(SimpleFormView):
                 checkRow = None
                 result['errorMessage'] = "Response structure error"
                 if not PRODUCTION:
-                    result['errorMessage'] += ": " +str(sobject_to_dict(data, json_serialize=True))
+                    result['errorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
         table = True if request.form['returnType'] == 'table' else False
 
         return self.render_template(
             'order/results.html', data=result, checkRow=checkRow, c=c,
             form_title=form_title, companies=companies, table=table
             )
-
-    def orderCall(self,c, serviceType):
-        """ call the order status service """
-        data = 'Unable to get Response'
-        # get the local wsdl and inject the endpoint
-        # ...should almost always work if they follow the wsdl and give a valid endpoint to PS
-        local_wsdl = getDoctor('ODRSTAT', c.order_version, url=True)
-        kw = dict(
-                password=c.password,
-                id=c.user_name,
-                queryType=request.form['queryType'],
-                wsVersion= c.order_version)
-        if 'refDate' in request.form and request.form['refDate']:
-            kw['statusTimeStamp']=request.form['refDate']
-        if 'refNum' in request.form and request.form['refNum']:
-            kw['referenceNumber']=request.form['refNum']
-        try:
-            client = Client(local_wsdl, location=c.order_url)
-            # call the method
-            func = getattr(client.service, serviceType)
-            data = func(**kw)
-        except Exception as e:
-            logging.error('WSDL Error on local wsdl and location {}: {}'.format(c.order_url,str(e)))
-            # set up error message to be given if all tries fail. As this one should have worked, give this error
-            error_msg = {'SoapFault': 'Error(1): ' +str(e)}
-            # set schema doctor to fix missing schemas
-            d = getDoctor('ODRSTAT', c.order_version)
-            try:
-                # use remote wsdl
-                client = Client(c.order_wsdl, plugins=[d])
-                func = getattr(client.service, serviceType)
-                data = func(**kw)
-            except Exception as e:
-                msg = 'Soap Fault Error(2) on remote wsdl location {}: {}'.format(c.order_wsdl,str(e))
-                if not PRODUCTION:
-                    error_msg['SoapFault'] += '<br>' + msg
-                logging.error(msg)
-                try:
-                    # use remote wsdl but set location to endpoint
-                    client = Client(c.order_wsdl, location='{}'.format(c.order_url), plugins=[d])
-                    func = getattr(client.service, serviceType)
-                    data = func(**kw)
-                except Exception as e:
-                    msg = 'Soap Fault Error(3) on remote wsdl and location {}: {}'.format(c.order_url,str(e))
-                    if not PRODUCTION:
-                        error_msg['SoapFault'] += '<br>' + msg
-                    logging.error(str(e))
-                    data = error_msg
-
-        return data
 
     def orderCompanies(self):
         """ return available inventory companies"""

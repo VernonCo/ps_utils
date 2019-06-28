@@ -8,12 +8,12 @@
         <div class="form-group">
             <label for="productID" control-label="">Product SKU
                 <strong style="color: red">*</strong></label>
-            <input type="text" name="productID">
+            <input type="text" name="productID" value="{{prodID}}">
         </div>
         <div class="form-group">
-            <label for="serviceType" control-label="">Service
+            <label for="serviceMethod" control-label="">Service
                 <strong style="color: red">*</strong></label>
-                <select id="serviceType" name="serviceType" required="">
+                <select id="serviceMethod" name="serviceMethod" required="">
                     <option value="">-- Select One --</option>
                     <option value="getFilterValues">Get Filters</option>
                     <option value="getInventoryLevels" selected>Get Results</option>

@@ -1,0 +1,10 @@
+<select id="companyID" name="companyID" required="">
+    <option value=""> -- Select One -- </option>
+    {% for c in companies %}
+        {% if id == c.id %}
+            <option value="{{c.id}}" selected >{{c}}</option>
+        {% else %}
+            <option value="{{c.id}}" >{{c}}</option>
+        {% endif %}
+    {% endfor %}
+</select>

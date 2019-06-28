@@ -7,8 +7,14 @@ class Tracking_No():
         FEDEX ="https://www.fedex.com/apps/fedextrack/?action=track&cntry_code=us_english&tracknumbers="
         USPS = "https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1="
 
-        carrier1 = carrier.lower()
-        shipmentMethod1 = shipmentMethod.lower()
+        if carrier:
+            carrier1 = carrier.lower()
+        else:
+            carrier1 = ''
+        if shipmentMethod:
+            shipmentMethod1 = shipmentMethod.lower()
+        else:
+            shipmentMethod1 = ''
 
         carrierdata=" (Not Specified)"
 

@@ -9,3 +9,4 @@ mysqlclient
 # zappa
 # used on developement
 pysnooper
+xmljson
