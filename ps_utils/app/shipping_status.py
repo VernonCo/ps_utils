@@ -137,21 +137,21 @@ class ShippingStatus(SimpleFormView):
             kw['referenceNumber']=request.form['refNum']
             values['fields'].append(('ns','referenceNumber', request.form['refNum']))
         # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
+        # in the debuger: use client.XML (what was sent) & client.response.text (returned response) & client.lastRequest for headers
         # try:
         #     client = SoapRequest(serviceUrl=c.shipping_url, serviceMethod='GetOrderShipmentNotification',
         #                         serviceResponse='GetOrderShipmentNotificationResponse', values=values)
         #     data = client.sendRequest()
         # except:
         #     assert False
-        # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+        # assert False
 
         client = SoapClient(serviceMethod='getOrderShipmentNotification', serviceUrl=c.shipping_url, serviceWSDL=c.shipping_wsdl, serviceCode='OSN',
                 serviceVersion=c.shipping_version, filters=False, values=values, **kw)
         data = client.serviceCall()
-
         # if error return to request form
-        if data == {}:
-            flash('Error: data not found for request', 'error')
+        if data == {} or ('errorMessage' not in data and 'OrderShipmentNotificationArray' not in data):
+            flash('Error: empty response returned for request', 'error')
             errorFlag = True
         if data == 'Unable to get Response':
             flash('Error: {}'.format(data), 'error')
@@ -180,29 +180,26 @@ class ShippingStatus(SimpleFormView):
 
         # else redirct to results page
         result = client.sobject_to_dict(json_serialize=True)
-        formValues = error = {}
+        formValues = error = tableSet = {}
+        table = True if request.form['returnType'] == 'table' else False
         error['errorMessage'] = ''
         formValues['vendorID'] = c.id
         formValues['vendorName'] = c.company_name
         formValues['returnType'] = request.form['returnType']
         formValues['refNum'] = request.form['refNum']
         formValues['refDate'] = request.form['refDate']
-        if 'SoapFault' in result:
-            error['errorMessage'] = result.SoapFault
-        if 'errorMessage' in result and result['errorMessage']['code'] > 9:
-            error['errorMessage'] = result.errorMessage.description
+
+        # found some returning OrderShipmentNotificationArray without OrderShipmentNotification
         try:
             checkRow = result['OrderShipmentNotificationArray']['OrderShipmentNotification'][0]
+            if checkRow:
+                tableSet = self.createTableSet(result)
         except:
             checkRow = None
-            if not error['errorMessage']:
-                error['errorMessage'] = "Empty Response"
+            error['errorMessage'] = "Error: unable to extract an OrderShipmentNotification. Expected notification or error message from Vendor"
             if not PRODUCTION:
-                error['errorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
-        table = True if request.form['returnType'] == 'table' else False
-        tableSet = {}
-        if checkRow:
-            tableSet = self.createTableSet(result)
+                error['errorMessage'] += ": " +str(result)
+
         return self.render_template(
             'shipping/results.html', checkRow=checkRow, c=c, tableSet=tableSet, form_title=form_title,
             companies=companies, table=table, error=error, formValues=formValues
