@@ -196,7 +196,7 @@ class ShippingStatus(SimpleFormView):
         except:
             checkRow = None
             if not error['errorMessage']:
-                error['errorMessage'] = "Response structure error"
+                error['errorMessage'] = "Empty Response"
             if not PRODUCTION:
                 error['errorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
         table = True if request.form['returnType'] == 'table' else False

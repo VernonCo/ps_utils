@@ -4,7 +4,7 @@ from flask import request, flash
 from suds.client import Client
 from .models import Company
 from . import appbuilder, db
-from .soap_utils import SoapClient
+from .soap_utils import SoapClient, SoapRequest
 from . import app
 from jinja2 import Markup
 from sqlalchemy import or_, and_
@@ -76,6 +76,10 @@ class OrderStatus(SimpleFormView):
         data = client.serviceCall()
 
         # if error return to request form
+        if not data:
+            #can return empty envelope with no errorMessage on this service
+            flash('Error: Empty response', 'error')
+            errorFlag = True
         if data == 'Unable to get Response':
             flash('Error: {}'.format(data), 'error')
             errorFlag = True
@@ -95,6 +99,20 @@ class OrderStatus(SimpleFormView):
             data = client.sobject_to_json()
             return data, htmlCode,  {'Content-Type':'applicaion/json'}
 
+        # finally check if a status returned if checking for specific order.
+        #    This service does not provide handling for order not found like code: 301 in OSN service
+        result = client.sobject_to_dict(json_serialize=True)
+        if request.form['refNum'] and 'errorMessage' not in result:
+            try:
+                status = result['OrderStatusArray']['OrderStatus'][0]['OrderStatusDetailArray']['OrderStatusDetail'][0]['statusID']
+                if not status.strip():
+                    flash('Error Message: Order not found for Reference Number', 'error')
+                    errorFlag = True
+            except:
+                flash('Error Message: Order not found for Reference Number', 'error')
+                result['errorMessage'] = 'Order not found for Reference Number'
+                errorFlag = True
+
         if errorFlag:
             id = request.values.get('companyID', 126)
             return self.render_template( 'order/requestForm.html', companies=companies, id=int(id),
@@ -102,7 +120,6 @@ class OrderStatus(SimpleFormView):
                     )
 
         # else redirct to results page
-        result = client.sobject_to_dict(json_serialize=True)
         result['vendorID'] = c.id
         result['vendorName'] = c.company_name
         result['returnType'] = request.form['returnType']
@@ -119,7 +136,9 @@ class OrderStatus(SimpleFormView):
                 checkRow = None
                 result['errorMessage'] = "Response structure error"
                 if not PRODUCTION:
+                    # assert False
                     result['errorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
+
         table = True if request.form['returnType'] == 'table' else False
 
         return self.render_template(
