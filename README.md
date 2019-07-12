@@ -19,7 +19,7 @@ first create venv
 activate venv
 `source venv/bin/activate`
 to deactivate:
-deactivate
+`deactivate`
 
 install requirements into virtualenv
 
@@ -66,13 +66,14 @@ Make the app available to operators by either putting on limited network or addi
     ### Create users
 -   Create roles under Security > List Roles
 -   Create users and assign roles under Security > List Users
-    ### Active Directory
-    It is also possible to change the authentication to use LDAP and create roles in line with your AD groups
 
-## if using vscode...set interpeter the one with the path to the venv
+### Active Directory
+It is also possible to change the authentication to use LDAP and create roles in line with your AD groups
 
-ctl+shft+p
-python:select interpeter
+## if using vscode...set interpeter to the one with the path to the venv
+
+    ctl+shft+p
+    python:select interpeter
 
 ### add pylint in venv terminal
 
@@ -80,8 +81,7 @@ python:select interpeter
 
 ### set path on vscode to run file locally (will need local database connection in config file)
 
-Click Debug > Open current configurations
-add following to end of configurations if not one created for 'Python: Flask'
+Click Debug > Open current configurations.  Add following to end of configurations if not one created for 'Python: Flask'
 
             ,{
                 "name": "Flask",
@@ -109,13 +109,17 @@ add following to end of configurations if not one created for 'Python: Flask'
     DB_PASS=yourpassword
     DB_HOST=yourhost
     DB_PORT=yourhostport
-    SERVER_PATH=/path to/ps_utils
-    CONFIG_FILE='config'   # or setup config-4passwords to move existing credentials
+    SERVER_PATH=/path to/ps_
+
+    CONFIG_FILE='config'   #
+    config-4passwords to move existing credentials
     #for passwords move
     OLD_DB_AUTH=youruser
     OLD_DB_PASS=yourpassword
+
     OLD_DB_HOST=yourhost
     OLD_DB_PORT=yourhostport
+
 
 ## Soap requests conditional sequence
 
