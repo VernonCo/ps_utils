@@ -1,11 +1,13 @@
 # PS Utilities
-- Can update a db with a list of companies and their working endpoints (/update).
-- Returns json or table html for ajax requests  ie returnType=json or returnType=table
-- can use a plugin to update your ERP order status
-- has forms for manual use
-- can import username/passwd service authentications from previous database
+
+-   Can update a db with a list of companies and their working endpoints (/update).
+-   Returns json or table html for ajax requests  ie returnType=json or returnType=table
+-   can use a plugin to update your ERP order status
+-   has forms for manual use
+-   can import username/passwd service authentications from previous database
 
 ## clone repository
+
 `git clone https://github.com/VernonCo/ps_utils.git`
 
 ## Run locally or with docker-compose
@@ -14,23 +16,23 @@
 first create venv
 `python3 -m venv venv`
 
-activeate venv
+activate venv
 `source venv/bin/activate`
 to deactivate:
 deactivate
 
 install requirements into virtualenv
-```
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-run locally on vscode using F5 and view at http://localhost:5000 or in terminal using venv:
+
+    pip install --upgrade pip
+    pip install -r requirements.txt
+
+run locally on vscode using F5 and view at <http://localhost:5000> or in terminal using venv:
 `python run.py`
 
 to setup the database to test or run on production, it needs to be accessible to the local run
 
-
 ### to run docker container with [docker-compose](https://docs.docker.com/compose/install/)
+
 `docker-compose [-f dev-docker-compose.yml] up -d`
 
 if using [weavenet](https://www.weave.works/oss/net/) to provide secure WAN to databases etc.
@@ -40,76 +42,83 @@ docker-compose files have the option of running the db as a container or comment
 
 ##create admin user to view additional tabs in web page
 in other words, this needs ran to access the utilities.
+
 ### local
-```
-export FLASK_APP="app:app"
-flask fab create-admin
-```
+
+    export FLASK_APP="app:app"
+    flask fab create-admin
+
 ### on container
-```
-docker exec -it ps_utils[_dev] bash
-export FLASK_APP="run:app"
-flask fab create-admin
-```
+
+    docker exec -it ps_utils[_dev] bash
+    export FLASK_APP="run:app"
+    flask fab create-admin
+
 ## Add available views to users
+
 Make the app available to operators by either putting on limited network or adding users
+
 ### Behind limited network
-- Click on Security > List Roles >  edit icon for Public
-- Add 'can list on Companies', 'can show on Companies'
-- Add for any services open to network : 'can this form get on '..., 'can this form post on'..., 'menu access on'...
-### Create users
-- Create roles under Security > List Roles
-- Create users and assign roles under Security > List Users
-### Active Directory
-It is also possible to change the authentication to use LDAP and create roles in line with your AD groups
+
+-   Click on Security > List Roles >  edit icon for Public
+-   Add 'can list on Companies', 'can show on Companies'
+-   Add for any services open to network : 'can this form get on '..., 'can this form post on'..., 'menu access on'...
+    ### Create users
+-   Create roles under Security > List Roles
+-   Create users and assign roles under Security > List Users
+    ### Active Directory
+    It is also possible to change the authentication to use LDAP and create roles in line with your AD groups
 
 ## if using vscode...set interpeter the one with the path to the venv
+
 ctl+shft+p
 python:select interpeter
+
 ### add pylint in venv terminal
+
 `pip install pylint`
 
 ### set path on vscode to run file locally (will need local database connection in config file)
-> Debug > Open current configurations
-add following to end of configurations if not one created for Python: Flask
-```
-        ,{
-            "name": "Flask",
-            "type": "python",
-            "request": "launch",
-            "stopOnEntry": false,
-            "program": "${workspaceFolder}/venv/bin/flask",
-            "envFile": "${workspaceFolder}/../.env",
-            "args": [
-                "run",
-                "--no-debugger",
-                "--no-reload"
-            ],
-            "debugOptions": [
-                "WaitOnAbnormalExit",
-                "WaitOnNormalExit",
-                "RedirectOutput"
-            ]
-        }
-```
-### add to ../.env to keep envirnoment variables out of your code
-```
-FLASK_APP=ps_utils/run.py
-DB_AUTH=youruser
-DB_PASS=yourpassword
-DB_HOST=yourhost
-DB_PORT=yourhostport
-SERVER_PATH=/path to/ps_utils
-CONFIG_FILE='config'   # or setup config-4passwords to move existing credentials
-#for passwords move
-OLD_DB_AUTH=youruser
-OLD_DB_PASS=yourpassword
-OLD_DB_HOST=yourhost
-OLD_DB_PORT=yourhostport
 
-```
+Click Debug > Open current configurations
+add following to end of configurations if not one created for 'Python: Flask'
+
+            ,{
+                "name": "Flask",
+                "type": "python",
+                "request": "launch",
+                "stopOnEntry": false,
+                "program": "${workspaceFolder}/venv/bin/flask",
+                "envFile": "${workspaceFolder}/../.env",
+                "args": [
+                    "run",
+                    "--no-debugger",
+                    "--no-reload"
+                ],
+                "debugOptions": [
+                    "WaitOnAbnormalExit",
+                    "WaitOnNormalExit",
+                    "RedirectOutput"
+                ]
+            }
+
+### add to ../.env to keep envirnoment variables out of your code
+
+    FLASK_APP=ps_utils/run.py
+    DB_AUTH=youruser
+    DB_PASS=yourpassword
+    DB_HOST=yourhost
+    DB_PORT=yourhostport
+    SERVER_PATH=/path to/ps_utils
+    CONFIG_FILE='config'   # or setup config-4passwords to move existing credentials
+    #for passwords move
+    OLD_DB_AUTH=youruser
+    OLD_DB_PASS=yourpassword
+    OLD_DB_HOST=yourhost
+    OLD_DB_PORT=yourhostport
 
 ## Soap requests conditional sequence
-- 1st call using local wsdl and inject location -- quicker retrieving local wsdl, consistent, and standard
-- else on error: call using remote wsdl -- some do not work with the standard wsdl
-- else on error: call using remote wsdl and inject location -- some have the wrong location (ie localhost) in their wsdl
+
+-   1st call using local wsdl and inject location -- quicker retrieving local wsdl, consistent, and standard
+-   else on error: call using remote wsdl -- some do not work with the standard wsdl
+-   else on error: call using remote wsdl and inject location -- some have the wrong location (ie localhost) in their wsdl

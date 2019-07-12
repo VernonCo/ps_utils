@@ -148,6 +148,7 @@
                         <td>
                             {% if row.statusID=="80" or row.statusID=="75" %}
                             <form action="/shippingstatus/index/" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <input type="hidden" name="companyID" value="{{c.id}}">
                                 <input name="refNum" type="hidden" value="{{row.factoryOrderNumber}}">
                                 <input name="refDate" type="hidden" value="">
