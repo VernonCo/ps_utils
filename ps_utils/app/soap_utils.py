@@ -8,7 +8,7 @@ from suds.plugin import DocumentPlugin, MessagePlugin
 from flask import request
 from urllib.parse import urlparse
 from xmljson import parker
-from xml.etree.ElementTree import fromstring
+from defusedxml.cElementTree import fromstring
 from json import dumps
 from . import app
 from .models import Company
@@ -218,10 +218,10 @@ class SoapRequest():
     def responseToData(self):
         """get the dict from the envelope.body.serviceResponse"""
 
+        # using defusedxml's fromstring to prevent xml vulnerabilities
         tempParker = parker.data(fromstring(self.response.text), preserve_root=True)
         temp = self.removeNamespacesFromKeys(tempParker)
         self.data = self.getServiceRequest(temp)
-        # assert False
 
     def sendRequest(self):
         """

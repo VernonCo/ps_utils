@@ -4,7 +4,6 @@ uWSGI
 flask-appbuilder
 boto3
 suds-py3
-zeep
 mysqlclient
 # zappa
 # used on developement

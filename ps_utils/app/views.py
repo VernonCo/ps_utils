@@ -1,7 +1,6 @@
 
 import  json, os, logging
 from suds.client import Client
-from zeep import Client as zClient
 # logging.getLogger('suds.wsdl').setLevel(logging.DEBUG)
 # logging.getLogger('suds.client').setLevel(logging.DEBUG)
 from flask import render_template, flash, request, jsonify, config
@@ -87,14 +86,6 @@ appbuilder.add_view(
     category_icon='fa-wpforms'
 )
 
-# appbuilder.add_view(
-#     PurchaseOrder,
-#     "Send PO",
-#     href='/purchaseOrder/index/',
-#     icon="fa-search",
-#     category='Forms',
-#     category_icon='fa-wpforms'
-# )
 
 @appbuilder.app.errorhandler(404)
 def page_not_found(e):
