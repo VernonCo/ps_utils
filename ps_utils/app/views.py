@@ -12,6 +12,7 @@ from .utilities import Utilities
 from .inventory import Inventory
 from .order_status import OrderStatus
 from .shipping_status import ShippingStatus
+from .purchase_order import JsonPO
 # from .purchasOrder import PurchaseOrder
 from .soap_utils import  SoapClient, tryUrl
 from . import appbuilder, db
@@ -86,6 +87,14 @@ appbuilder.add_view(
     category_icon='fa-wpforms'
 )
 
+appbuilder.add_view(
+    JsonPO,
+    "Send PO Post URL",
+    href='/jsonPO/index/',
+    icon="fa-search",
+    category='Forms',
+    category_icon='fa-wpforms'
+)
 
 @appbuilder.app.errorhandler(404)
 def page_not_found(e):

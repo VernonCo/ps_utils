@@ -1,5 +1,6 @@
 # meinheld
 # gunicorn
+requests
 uWSGI
 flask-appbuilder
 boto3

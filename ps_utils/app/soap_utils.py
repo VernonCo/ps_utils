@@ -308,7 +308,7 @@ class SoapClient():
         """
             make the service call using the index on the self.callArray
         """
-        response = {'SoapFault':'Unable to get Response'}
+        self.data = {'SoapFault':'Unable to get Response'}
         # index== 0: get the local wsdl and inject the endpoint
         # ...should almost always work if they follow the wsdl and give a valid endpoint to PS
         args = self.callArray[self.callIndex]
@@ -330,11 +330,11 @@ class SoapClient():
                 self.data = func(**kw)
             # check for error that could be caused by improper wsdl parsing so that it will try the next
             # call. Will raise exception to go on to next
-            self.check4Error(response)
+            self.check4Error(self.data)
             self.error_msg['SoapFault'] = False
             del client
         except Exception as e:
-            response = {'SoapFault': args['msg'] +str(e)}
+            self.cata = {'SoapFault': args['msg'] +str(e)}
             # assert False
             if self.callIndex == 1:
                 self.setErrorMsg(args['msg'],e)
@@ -347,7 +347,7 @@ class SoapClient():
                         client = Client(args['wsdl'], plugins=[args['doctor']])
                     func = getattr(client.service, self.serviceMethod)
                     self.data = func(**self.KW)
-                    self.check4Error(response)
+                    self.check4Error(self.data)
                     self.error_msg['SoapFault'] = False
                     del client
                 except Exception as e:
@@ -425,7 +425,6 @@ class SoapClient():
             self.XML +='</{}:{}>'.format(F['ns'],F['name'])
         elif 'value' in F:
             self.XML += '<{}:{}>{}</{}:{}>'.format(F['ns'],F['name'],F['value'],F['ns'],F['name'])
-
 
     def object_to_dict(self, obj, key_to_lower=False, json_serialize=False):
         """

@@ -1,0 +1,71 @@
+{
+    "companyID": 98,
+    "PO": {
+        "orderType": "Simple",
+        "orderNumber": 6100002,
+        "orderDate": "2019-01-01",
+        "totalAmount": 30.0010,
+        "paymentTerms": "NET15",
+        "rush": 0,
+        "currency": "USD",
+        "ShipmentArray": [
+             {"Shipment":{
+                "ShipTo": {
+                    "customerPickup": 0,
+                    "shipmentId": 1,
+                    "ContactDetails": {
+                        "attentionTo": "Test cust",
+                        "address1": "123 Some St.",
+                        "city": "Somewhere",
+                        "region": "AL",
+                        "postalCode": 99999,
+                        "country": "US",
+                        "comments": "this is a test"
+                    }
+                },
+                "packingListRequired": 0,
+                "blindShip": 1,
+                "allowConsolidation": 1,
+                "FreightDetails": {
+                    "carrier": "USPS",
+                    "service": "GROUND"
+                }
+            }}
+        ],
+        "LineItemArray": [
+            {"LineItem":{
+                "lineNumber": 1,
+                "description": "Frist line item",
+                "lineType": "New",
+                "Quantity": {
+                    "value": 10.0000,
+                    "uom": "CA"
+                },
+                "ToleranceDetails": {
+                    "tolerance": "AllowOverrunOrUnderrun"
+                },
+                "allowPartialShipments": 0,
+                "unitPrice": 1.0001,
+                "lineItemTotal": 10.0010,
+                "requestedShipDate": "2019-12-01"
+            }},
+            {"LineItem":{
+                "lineNumber": 2,
+                "description": "second line item",
+                "lineType": "New",
+                "Quantity": {
+                    "value": 10.0000,
+                    "uom": "BX"
+                },
+                "ToleranceDetails": {
+                    "tolerance": "AllowOverrunOrUnderrun"
+                },
+                "allowPartialShipments": 0,
+                "unitPrice": 2.0000,
+                "lineItemTotal": 20.0000,
+                "requestedShipDate": "2019-12-01"
+            }}
+        ],
+        "termsAndConditions": "lasjl; ou ljdfs;ojau sdfj  oj oj asjoufo aosfj olajo uaos asf oiasjvoasofsj  opjsdf fjsoj "
+    }
+}
