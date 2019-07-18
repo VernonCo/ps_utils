@@ -322,6 +322,11 @@ class SoapClient():
             func = getattr(client.service, self.serviceMethod)
             if self.XML and self.callIndex == 1:
                 # used for suppliers that reject the suds-py3 parsing of the wsdl. Tried on the first call
+                # the Dockerfile has a fix for suds-py, but anyone using this local instead of using the docker image
+                # will still have issues unless they add following lines to 171,172 in site-packages/suds/xsd/sxbase.py
+                # Meanwhile, waiting for fix pushed in suds-py3 for issue #41
+                    # if self.ref and self.ref in self.schema.elements.keys():
+                    #     ns = self.ref
                 self.data = func(__inject={'msg':self.XML})
             else:
                 kw = self.KW
@@ -483,7 +488,7 @@ class SoapClient():
         #TODO: figure out
         return False
 
-    def serviceCall(self, injectionCheck=False):
+    def serviceCall(self):
         """ call the order status service
             Suds-py3 struggles with a couple of services with shared objects. Some suppliers work with the
             parsed version of the wsdl.  Others require a strict interpretation and we inject it on the second

@@ -9,6 +9,11 @@
 -   While PO's may be entered manually in a form eventually, assuming that automated processes
 will be the main usage, and only have it working for a json POST to /jsonpo/index  - see exampleSimplePO.json
 
+The PO also only works with the docker image as it has a fix for suds-py3 included (Dockerfile line 24) - Waiting for fix to module - see https://github.com/cackharot/suds-py3/issues/41.  If you build the image your self, you must add the following lines to 171,172 in site-packages/suds/xsd/sxbase.py for it to correctly parse "ref:..." in the WSDLs
+
+    if self.ref and self.ref in self.schema.elements.keys():
+        ns = self.ref
+
 ## clone repository
 
 `git clone https://github.com/VernonCo/ps_utils.git`
