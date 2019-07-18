@@ -19,10 +19,17 @@ RUN DEBIAN_FRONTEND="noninteractive" \
 COPY ./entrypoint.sh /entrypoint.sh
 
 COPY ./start.sh  ./prestart.sh /
+
+#suds-py fix for ref in wsdls
+COPY ./venv/lib/python3.6/site-packages/suds/xsd/sxbase.py /usr/local/lib/python3.7/site-packages/suds/xsd/sxbase.py
+
+# allow execute
 RUN chmod +x /entrypoint.sh && chmod +x /start.sh
 
+# USER www-data
+
 # COPY ./gunicorn_conf.py /gunicorn_conf.py
-COPY nginx.conf /etc/nginx
+COPY ./nginx.conf /etc/nginx
 
 COPY ./ps_utils /app
 
@@ -32,7 +39,7 @@ ENV PYTHONPATH=/app
 
 EXPOSE 80
 
-ENTRYPOINT ["/entrypoint.sh"]
+# ENTRYPOINT ["/entrypoint.sh"]
 
 # Run the start script, it will check for an /app/prestart.sh script (e.g. for migrations)
 # And then will start Gunicorn with Meinheld

@@ -8,7 +8,7 @@ from suds.plugin import DocumentPlugin, MessagePlugin
 from flask import request
 from urllib.parse import urlparse
 from xmljson import parker
-from xml.etree.ElementTree import fromstring
+from defusedxml.cElementTree import fromstring
 from json import dumps
 from . import app
 from .models import Company
@@ -218,10 +218,10 @@ class SoapRequest():
     def responseToData(self):
         """get the dict from the envelope.body.serviceResponse"""
 
+        # using defusedxml's fromstring to prevent xml vulnerabilities
         tempParker = parker.data(fromstring(self.response.text), preserve_root=True)
         temp = self.removeNamespacesFromKeys(tempParker)
         self.data = self.getServiceRequest(temp)
-        # assert False
 
     def sendRequest(self):
         """
@@ -308,7 +308,7 @@ class SoapClient():
         """
             make the service call using the index on the self.callArray
         """
-        response = {'SoapFault':'Unable to get Response'}
+        self.data = {'SoapFault':'Unable to get Response'}
         # index== 0: get the local wsdl and inject the endpoint
         # ...should almost always work if they follow the wsdl and give a valid endpoint to PS
         args = self.callArray[self.callIndex]
@@ -322,6 +322,11 @@ class SoapClient():
             func = getattr(client.service, self.serviceMethod)
             if self.XML and self.callIndex == 1:
                 # used for suppliers that reject the suds-py3 parsing of the wsdl. Tried on the first call
+                # the Dockerfile has a fix for suds-py, but anyone using this local instead of using the docker image
+                # will still have issues unless they add following lines to 171,172 in site-packages/suds/xsd/sxbase.py
+                # Meanwhile, waiting for fix pushed in suds-py3 for issue #41
+                    # if self.ref and self.ref in self.schema.elements.keys():
+                    #     ns = self.ref
                 self.data = func(__inject={'msg':self.XML})
             else:
                 kw = self.KW
@@ -330,11 +335,11 @@ class SoapClient():
                 self.data = func(**kw)
             # check for error that could be caused by improper wsdl parsing so that it will try the next
             # call. Will raise exception to go on to next
-            self.check4Error(response)
+            self.check4Error(self.data)
             self.error_msg['SoapFault'] = False
             del client
         except Exception as e:
-            response = {'SoapFault': args['msg'] +str(e)}
+            self.cata = {'SoapFault': args['msg'] +str(e)}
             # assert False
             if self.callIndex == 1:
                 self.setErrorMsg(args['msg'],e)
@@ -347,7 +352,7 @@ class SoapClient():
                         client = Client(args['wsdl'], plugins=[args['doctor']])
                     func = getattr(client.service, self.serviceMethod)
                     self.data = func(**self.KW)
-                    self.check4Error(response)
+                    self.check4Error(self.data)
                     self.error_msg['SoapFault'] = False
                     del client
                 except Exception as e:
@@ -426,7 +431,6 @@ class SoapClient():
         elif 'value' in F:
             self.XML += '<{}:{}>{}</{}:{}>'.format(F['ns'],F['name'],F['value'],F['ns'],F['name'])
 
-
     def object_to_dict(self, obj, key_to_lower=False, json_serialize=False):
         """
         Converts an object to a dict.
@@ -484,7 +488,7 @@ class SoapClient():
         #TODO: figure out
         return False
 
-    def serviceCall(self, injectionCheck=False):
+    def serviceCall(self):
         """ call the order status service
             Suds-py3 struggles with a couple of services with shared objects. Some suppliers work with the
             parsed version of the wsdl.  Others require a strict interpretation and we inject it on the second
