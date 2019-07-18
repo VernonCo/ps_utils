@@ -5,6 +5,9 @@
 -   can use a plugin to update your ERP order status
 -   has forms for manual use
 -   can import username/passwd service authentications from previous database
+-   working services: INV, ORDSTAT, OSN, PO(json POST only)
+-   While PO's may be entered manually in a form eventually, assuming that automated processes
+will be the main usage, and only have it working for a json POST to /jsonpo/index  - see exampleSimplePO.json
 
 ## clone repository
 
