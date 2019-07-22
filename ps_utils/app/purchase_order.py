@@ -1,7 +1,7 @@
-import json, logging, copy, re, html
+import json, logging, html
 from flask_appbuilder import SimpleFormView, expose, has_access
 from flask_appbuilder.api import  safe
-from flask import request, flash, redirect, Response
+from flask import request, flash, Response
 from .models import Company
 from . import app, appbuilder, db, csrf
 from .soap_utils import SoapClient
@@ -12,18 +12,15 @@ from decimal import Decimal, Context, Inexact
 from datetime import datetime
 
 PRODUCTION = app.config.get('PRODUCTION')
-htmlCode = 200
+
 
 # validation functions
 def validDecimal_12_4(d):
     """validate that d is dec(12,4)"""
     FOURPLACES = Decimal(10) ** -4
-    try:
-        d.quantize(FOURPLACES, context=Context(traps=[Inexact]))
-        if d < Decimal("1000000000000"):
-            return True
-    except:
-        pass
+    d.quantize(FOURPLACES, context=Context(traps=[Inexact]))
+    if d < Decimal("1000000000000"):
+        return True
     return False
 
 def to_decimal_4(d):
@@ -82,7 +79,7 @@ class JsonPO(SimpleFormView):
         except Exception as e:
             data = {"ServiceMessageArray":[{"ServiceMessage": {"code": 999, "description": str(e)}}]}
             return data, 400,  {'Content-Type':'application/json'}
-        data = self.sendPO(c, **kw)
+        data, htmlCode = self.sendPO(c, **kw)
         return data, htmlCode,  {'Content-Type':'application/json'}
 
     @expose('/instructions/', methods=['GET'])
@@ -92,6 +89,7 @@ class JsonPO(SimpleFormView):
 
     def sendPO(self, company, **kw):
         """send the request.  Can be used by index or a plugin"""
+        htmlCode = 200
         client = SoapClient(serviceMethod='sendPO', serviceUrl=company.po_url, serviceWSDL=company.po_wsdl, serviceCode='PO',
                 serviceVersion=company.po_version, filters=False, values=False, **kw)
         client.serviceCall()
@@ -99,7 +97,7 @@ class JsonPO(SimpleFormView):
             htmlCode = 500
         # response = client.response
         # assert False
-        return client.sobject_to_json()
+        return [client.sobject_to_json(), htmlCode]
 
     @expose('/test/', methods=['GET'])
     def test(self):
@@ -127,7 +125,7 @@ class JsonPO(SimpleFormView):
         except Exception as e:
             data = {"ServiceMessageArray":[{"ServiceMessage": {"code": 999, "description": str(e)}}]}
             return data, 400,  {'Content-Type':'application/json'}
-        data = self.sendPO(c, **kw)
+        data, htmlCode = self.sendPO(c, **kw)
         return data, htmlCode,  {'Content-Type':'application/json'}
 
     @expose('/receiveTest/', methods=['GET','POST'])
@@ -142,6 +140,7 @@ class JsonPO(SimpleFormView):
         r.headers["Content-Type"] = "text/xml; charset=utf-8"
         return r
 
+    @classmethod
     def validatePO(self, **kw):
         """
         validate required fields are present and validate types
