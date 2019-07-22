@@ -71,6 +71,10 @@ class OrderStatus(SimpleFormView):
         # except:
         #     assert False
         # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+
+        # new fix in suds/xsd/sxbase.py takes care of the wsdl parsing issue and values only needed if using SoapRequest above
+        # However, leaving following line commented until fix is pushed to pypi
+        # values = False
         client = SoapClient(serviceMethod='getOrderStatusDetails', serviceUrl=c.order_url, serviceWSDL=c.order_wsdl, serviceCode='ORDSTAT',
                 serviceVersion=c.order_version, filters=False, values=False, **kw)
         data = client.serviceCall()

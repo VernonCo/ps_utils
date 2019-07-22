@@ -145,7 +145,10 @@ class ShippingStatus(SimpleFormView):
         # except:
         #     assert False
         # assert False
-        values = False  # checking if new fix in suds/xsd/sxbase.py takes care of the issue
+
+        # new fix in suds/xsd/sxbase.py takes care of the wsdl parsing issue and values only needed if using SoapRequest above
+        # However, leaving following line commented until fix is pushed to pypi
+        # values = False
         client = SoapClient(serviceMethod='getOrderShipmentNotification', serviceUrl=c.shipping_url, serviceWSDL=c.shipping_wsdl, serviceCode='OSN',
                 serviceVersion=c.shipping_version, filters=False, values=values, **kw)
         data = client.serviceCall()
