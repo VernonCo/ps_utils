@@ -146,6 +146,11 @@ class OrderStatus(SimpleFormView):
             form_title=form_title, companies=companies, table=table
             )
 
+    @expose('/instructions/', methods=['GET'])
+    def instructions(self):
+        """ diplay instructions for sending form_encoded POST to forms"""
+        return self.render_template( 'order/instructions.html')
+
     def orderCompanies(self):
         """ return available inventory companies"""
         return db.session.query(Company).filter(

@@ -60,6 +60,21 @@ AUTH_USER_REGISTRATION = True
 # The default user self registration role
 AUTH_USER_REGISTRATION_ROLE = "Public"
 
+# comment out to prevent Forms menu and endpoint access from being public or if making any changes in the DB after startup
+FAB_ROLES = {
+    "Public": [
+        ["Forms.*", "menu_access"],
+        ["Inventory.*", "can_get"],
+        ["Inventory.*", "can_post"],
+        ["OrderStatus.*", "can_get"],
+        ["OrderStatus.*", "can_post"],
+        ["ShippingStatus.*", "can_get"],
+        ["ShippingStatus.*", "can_post"],
+        ["JsonPO.*", "can_get"],
+        ["JsonPO.*", "can_post"]
+    ]
+}
+
 # When using LDAP Auth, setup the ldap server
 # AUTH_LDAP_SERVER = "ldap://ldapserver.new"
 

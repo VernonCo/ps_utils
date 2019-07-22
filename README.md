@@ -67,6 +67,8 @@ in other words, this needs ran to access the utilities.
 Make the app available to operators by either putting on limited network or adding users
 
 ### Behind limited network
+The config.py  (or config-rpasswords.py) have configuration to allow public access to the forms.
+If desiring granular control over access, comment out the FAB_ROLES, and use the security model.
 
 -   Click on Security > List Roles >  edit icon for Public
 -   Add 'can list on Companies', 'can show on Companies'

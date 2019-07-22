@@ -1,9 +1,9 @@
 {
-    "companyID": 98,
+    "companyID": 123,
     "PO": {
         "orderType": "Simple",
-        "orderNumber": 6100002,
-        "orderDate": "2019-01-01",
+        "orderNumber":"6100003",
+        "orderDate": "2019-01-01T00:00:00",
         "totalAmount": 30.0010,
         "paymentTerms": "NET15",
         "rush": 0,
@@ -18,7 +18,7 @@
                         "address1": "123 Some St.",
                         "city": "Somewhere",
                         "region": "AL",
-                        "postalCode": 99999,
+                        "postalCode": "99999",
                         "country": "US",
                         "comments": "this is a test"
                     }
@@ -47,7 +47,7 @@
                 "allowPartialShipments": 0,
                 "unitPrice": 1.0001,
                 "lineItemTotal": 10.0010,
-                "requestedShipDate": "2019-12-01"
+                "requestedShipDate": "2019-12-05T00:00:00"
             }},
             {"LineItem":{
                 "lineNumber": 2,
@@ -63,7 +63,7 @@
                 "allowPartialShipments": 0,
                 "unitPrice": 2.0000,
                 "lineItemTotal": 20.0000,
-                "requestedShipDate": "2019-12-01"
+                "requestedShipDate": "2019-12-05T00:00:00"
             }}
         ],
         "termsAndConditions": "lasjl; ou ljdfs;ojau sdfj  oj oj asjoufo aosfj olajo uaos asf oiasjvoasofsj  opjsdf fjsoj "

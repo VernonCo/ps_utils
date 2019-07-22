@@ -89,11 +89,20 @@ appbuilder.add_view(
 
 appbuilder.add_view(
     JsonPO,
-    "Send PO Post URL",
-    href='/jsonPO/index/',
-    icon="fa-search",
-    category='Forms',
-    category_icon='fa-wpforms'
+    "POST to forms",
+    href='/orderstatus/instructions/',
+    icon="fa-info",
+    category='Info',
+    category_icon='fa-info-circle'
+)
+
+appbuilder.add_view(
+    JsonPO,
+    "POST a PO",
+    href='/jsonpo/instructions/',
+    icon="fa-info",
+    category='Info',
+    category_icon='fa-info-circle'
 )
 
 @appbuilder.app.errorhandler(404)

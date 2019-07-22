@@ -145,7 +145,7 @@ class ShippingStatus(SimpleFormView):
         # except:
         #     assert False
         # assert False
-
+        values = False  # checking if new fix in suds/xsd/sxbase.py takes care of the issue
         client = SoapClient(serviceMethod='getOrderShipmentNotification', serviceUrl=c.shipping_url, serviceWSDL=c.shipping_wsdl, serviceCode='OSN',
                 serviceVersion=c.shipping_version, filters=False, values=values, **kw)
         data = client.serviceCall()

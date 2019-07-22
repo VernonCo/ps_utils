@@ -6,6 +6,7 @@ flask-appbuilder
 boto3
 suds-py3
 mysqlclient
+schema
 # zappa
 # used on developement
 pysnooper

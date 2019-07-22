@@ -67,6 +67,21 @@ AUTH_ROLE_ADMIN = 'Admin'
 # Uncomment to setup Public role name, no authentication needed
 AUTH_ROLE_PUBLIC = 'Public'
 
+# comment out to prevent Forms menu and endpoint access from being public or if making any changes in the DB after startup
+FAB_ROLES = {
+    "Public": [
+        ["Forms.*", "menu_access"],
+        ["Inventory.*", "can_get"],
+        ["Inventory.*", "can_post"],
+        ["OrderStatus.*", "can_get"],
+        ["OrderStatus.*", "can_post"],
+        ["ShippingStatus.*", "can_get"],
+        ["ShippingStatus.*", "can_post"],
+        ["JsonPO.*", "can_get"],
+        ["JsonPO.*", "can_post"]
+    ]
+}
+
 # Will allow user self registration
 AUTH_USER_REGISTRATION = True
 
