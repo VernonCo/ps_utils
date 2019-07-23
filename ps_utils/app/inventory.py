@@ -3,7 +3,7 @@ import copy
 from flask_appbuilder import SimpleFormView, expose
 from flask import request, flash
 from .models import Company
-from . import appbuilder, db
+from . import db
 from . import app
 from .soap_utils import SoapClient
 from jinja2 import Markup
@@ -11,48 +11,58 @@ from sqlalchemy import or_, and_
 
 PRODUCTION = app.config.get('PRODUCTION')
 
+def inventoryCompanies():
+    """ return available inventory companies"""
+    return db.session.query(Company).filter(
+            or_(
+                and_(Company.inventory_url != None, Company.user_name != None),
+                and_(Company.inventory_urlV2 != None, Company.user_name != None)
+            )
+        ).all()
+
+def filterDataV2(data):
+    """
+        manipulate data into color, size, and misc (partid) arrays so that the same filters form
+        can be used by V! and V2
+    """
+    temp = copy.deepcopy(data)
+    # PS documentation says object for FilterValues but getting array from some
+    try:
+        #only getting one in the list so really doesn't make sense to pass as list, but...
+        filterValues = temp['FilterValues'][0]
+    except Exception as e:
+        print(e)
+        filterValues = temp['FilterValues']
+    filterArray = filterValues['Filter']
+    tempObj = {"productID":filterValues['productId']}
+    try:
+        tempObj['FilterColorArray'] = {}
+        tempArray= []
+        for color in filterArray['PartColorArray']['partColor']:
+            tempArray.append(color)
+        tempObj['FilterColorArray']['filterColor'] = tempArray
+    except Exception as e: # fails on missing index
+        print(e)
+    try:
+        tempObj['FilterSizeArray'] = {}
+        tempArray= []
+        for label in filterArray['LabelSizeArray']['labelSize']:
+            tempArray.append(label)
+        tempObj['FilterSizeArray']['filterSize'] = tempArray
+    except Exception as e: # fails on missing index
+        print(e)
+    try:
+        tempObj['filterSelectionArray'] = {}
+        tempArray= []
+        for partId in filterArray['partIdArray']['partId']:
+            tempArray.append(partId)
+        tempObj['filterSelectionArray']['filterSelection'] = tempArray
+    except Exception as e: # fails on missing index
+        print(e)
+    return tempObj
+
 class Inventory(SimpleFormView):
     default_view = 'index'
-
-    def filterDataV2(self, data):
-        """
-            manipulate data into color, size, and misc (partid) arrays so that the same filters form
-            can be used by V! and V2
-        """
-        temp = copy.deepcopy(data)
-        # PS documentation says object for FilterValues but getting array from some
-        try:
-            #only getting one in the list so really doesn't make sense to pass as list, but...
-            filterValues = temp['FilterValues'][0]
-        except:
-            filterValues = temp['FilterValues']
-        filterArray = filterValues['Filter']
-        tempObj = {"productID":filterValues['productId']}
-        try:
-            tempObj['FilterColorArray'] = {}
-            tempArray= []
-            for color in filterArray['PartColorArray']['partColor']:
-                tempArray.append(color)
-            tempObj['FilterColorArray']['filterColor'] = tempArray
-        except: # fails on missing index
-            pass # is empty
-        try:
-            tempObj['FilterSizeArray'] = {}
-            tempArray= []
-            for label in filterArray['LabelSizeArray']['labelSize']:
-                tempArray.append(label)
-            tempObj['FilterSizeArray']['filterSize'] = tempArray
-        except:
-            pass # is empty
-        try:
-            tempObj['filterSelectionArray'] = {}
-            tempArray= []
-            for partId in filterArray['partIdArray']['partId']:
-                tempArray.append(partId)
-            tempObj['filterSelectionArray']['filterSelection'] = tempArray
-        except:
-            pass # is empty
-        return tempObj
 
     @expose('/getVersion/', methods=['POST'])
     def getVersion(self, **kw):
@@ -87,12 +97,12 @@ class Inventory(SimpleFormView):
             or external ajax request using content-type application/x-www-form-urlencoded
         """
         form_title = "Inventory Request Form"
-        companies = self.inventoryCompanies()
-        id = request.values.get('companyID', 98)
+        companies = inventoryCompanies()
+        cid = request.values.get('companyID', 98)
         prodID = request.values.get('productID', 'BG344')
         if request.method == 'GET':
             return self.render_template(
-                    'inventory/requestForm.html', companies=companies, title=form_title, id=int(id),
+                    'inventory/requestForm.html', companies=companies, title=form_title, id=int(cid),
                     prodID=prodID, form=self.form, message = "Form was submitted", data=False
                     )
         # else deal with post
@@ -101,13 +111,13 @@ class Inventory(SimpleFormView):
         htmlCode = 200
         # get request variables
         c = db.session.query(Company).get(int(request.form['companyID']))
-        filters = {}
+        Filters = {}
         if 'color' in request.values:
-            filters['color'] = request.values.getlist('color')
+            Filters['color'] = request.values.getlist('color')
         if 'size' in request.values:
-            filters['size'] = request.values.getlist('size')
+            Filters['size'] = request.values.getlist('size')
         if 'misc' in request.values:
-            filters['misc'] = request.values.getlist('misc')
+            Filters['misc'] = request.values.getlist('misc')
         serviceMethod = request.form['serviceMethod']
         service_version = request.form['serviceVersion']
         # make the soap request
@@ -154,35 +164,35 @@ class Inventory(SimpleFormView):
                         ('shar','password', kw['password']),('shar',productID, kw[productID])],
                     'Filter': False
                 }
-                if filters:
+                if Filters:
                     values['Filter'] = {'ns':'shar','name':'Filter','filters':[]}
-                    if 'misc' in filters:
+                    if 'misc' in Filters:
                         temp = {'ns':'shar', 'name': 'partIdArray', 'filters':[]}
-                        for filter in filters['misc']:
-                            temp['filters'].append({'ns': 'shar', 'name':'partId','value': filter})
+                        for filterValue in Filters['misc']:
+                            temp['filters'].append({'ns': 'shar', 'name':'partId','value': filterValue})
                         values['Filter']['filters'].append(temp)
-                    if 'size' in filters:
+                    if 'size' in Filters:
                         temp = {'ns':'shar', 'name': 'LabelSizeArray', 'filters':[]}
-                        for filter in filters['size']:
-                            temp['filters'].append({'ns': 'shar', 'name':'labelSize','value': filter})
+                        for filterValue in Filters['size']:
+                            temp['filters'].append({'ns': 'shar', 'name':'labelSize','value': filterValue})
                         values['Filter']['filters'].append(temp)
-                    if 'color' in filters:
+                    if 'color' in Filters:
                         temp = {'ns':'shar', 'name': 'PartColorArray', 'filters':[]}
-                        for filter in filters['color']:
-                            temp['filters'].append({'ns': 'shar', 'name':'partColor','value': filter})
+                        for filterValue in Filters['color']:
+                            temp['filters'].append({'ns': 'shar', 'name':'partColor','value': filterValue})
                         values['Filter']['filters'].append(temp)
             else:
                 kw['productIDtype'] = 'Supplier'
 
             # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
-            #     from .soap_utils import testCall
             #     serviceResponse = 'GetFilterValuesResponse'if serviceMethod == 'getFilterValues' else 'GetInventoryLevelsResponse'
+
             #     testCall(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
             #                         serviceResponse=serviceResponse, values=values)
 
             if not data:
                 client = SoapClient(serviceMethod=serviceMethod, serviceUrl=serviceUrl, serviceCode='INV',
-                    serviceVersion=serviceVersion, serviceWSDL=serviceWSDL, filters=filters, values=values, **kw)
+                    serviceVersion=serviceVersion, serviceWSDL=serviceWSDL, filters=Filters, values=values, **kw)
                 data = client.serviceCall()
                 data = client.sobject_to_dict(json_serialize=True)
 
@@ -209,8 +219,9 @@ class Inventory(SimpleFormView):
                     msg += row['description'] + "\n"
                 flash(msg)
                 errorFlag = True
-        except:
-            pass # on missing index
+        except Exception as e:
+            print(e)
+            # pass on missing index
 
         # if requesting json
         if  request.form['returnType'] == 'json':
@@ -227,7 +238,7 @@ class Inventory(SimpleFormView):
             #redirect to new form with filter options
             if service_version == 'V2':
                 # manipulate data into color, size and misc (partId) arrays
-                result = self.filterDataV2(data)
+                result = filterDataV2(data)
             result['vendorID'] = c.id
             result['vendorName'] = c.company_name
             result['returnType'] = request.form['returnType']
@@ -248,17 +259,17 @@ class Inventory(SimpleFormView):
             if service_version == 'V1':
                 try:
                     checkRow = result['ProductVariationInventoryArray']['ProductVariationInventory'][0]
-                except:
+                except Exception as e:
                     checkRow = None
-                    result['errorMessage'] = "Response structure error"
+                    result['errorMessage'] = str(e)
                     if not PRODUCTION:
                         result['errorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
             else:
                 try:
                     checkRow = result['Inventory']['PartInventoryArray']['PartInventory'][0]
-                except:
+                except Exception as e:
                     checkRow = None
-                    result['errorMessage'] = "Response structure error"
+                    result['errorMessage'] = str(e)
                     if not PRODUCTION:
                         result['errorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
 
@@ -270,12 +281,3 @@ class Inventory(SimpleFormView):
             template, data=result, checkRow=checkRow, companies=companies, form=self.form,
             id=id, prodID=prodID, table=table, form_title=form_title
             )
-
-    def inventoryCompanies(self):
-        """ return available inventory companies"""
-        return db.session.query(Company).filter(
-                or_(
-                    and_(Company.inventory_url != None, Company.user_name != None),
-                    and_(Company.inventory_urlV2 != None, Company.user_name != None)
-                )
-            ).all()

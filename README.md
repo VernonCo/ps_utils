@@ -1,16 +1,17 @@
 # PS Utilities -- A JSON REST API for Promo Standard Services including forms for manual entry
 -   Can update a db with a list of companies and their working endpoints (/update).
--   Returns json or table html for ajax requests  ie returnType=json or returnType=table
--   can use a plugin to update your ERP order status
--   has forms for manual use
--   can import username/passwd service authentications from previous database
--   working services: INV, ORDSTAT, OSN, PO(json POST only)
+-   Returns json or table html for ajax requests to services (ie returnType=json or returnType=table)
+-   Or has forms for manual use
+-   Can use a plugin to update your ERP order status
+-   Can import username/passwd service authentications from previous database
+-   Working services: INV, ORDSTAT, OSN, & PO
+-   PO is json POST only, the previous ones are form-encoded POST only
 
 While PO's may be entered manually in a form eventually, I'm assuming that automated processes
-will be the main usage, and only have it working for a json POST to /jsonpo/index  - see exampleSimplePO.json  The
-json POST is validated by schema, field names, and their value types before sending a soap request.  See the 'Insturctions for PO' under the 'Info' tab on the nav bar.
+will be the main usage, and only have it working for a json POST (no manual form)  - see exampleSimplePO.json  The
+json POST is validated by schema, field names, and their value types before sending a soap request.  See the 'Instructions for PO' under the 'Info' tab on the nav bar.
 
-The PO also only works with the docker image as it has a fix for suds-py3 included (Dockerfile line 24) - Waiting for fix to module - see https://github.com/cackharot/suds-py3/issues/41.  If you build the image your self, you must add the following lines to 171,172 in site-packages/suds/xsd/sxbase.py for it to correctly parse "ref:..." in the WSDLs
+The PO also only works with the vernonco docker image (vernonco/ps-utils:dev) as it has a fix for suds-py3 included (Dockerfile line 24) - Waiting for fix to module - see [suds-py3 issue #41](https://github.com/cackharot/suds-py3/issues/41).  If you build the image your self, you must add the following lines to 171,172 in site-packages/suds/xsd/sxbase.py for it to correctly parse "ref:..." in the WSDLs
     if self.ref and self.ref in self.schema.elements.keys():
         ns = self.ref
 

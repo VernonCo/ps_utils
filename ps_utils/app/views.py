@@ -1,20 +1,14 @@
-
-import  json, os, logging
-from suds.client import Client
-# logging.getLogger('suds.wsdl').setLevel(logging.DEBUG)
-# logging.getLogger('suds.client').setLevel(logging.DEBUG)
-from flask import render_template, flash, request, jsonify, config
+import logging
+from flask import render_template
 from flask_babel import lazy_gettext as _
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from flask_appbuilder import ModelView, ModelRestApi
+from flask_appbuilder import ModelView
 from .models import Company
 from .utilities import Utilities
 from .inventory import Inventory
 from .order_status import OrderStatus
 from .shipping_status import ShippingStatus
 from .purchase_order import JsonPO
-# from .purchasOrder import PurchaseOrder
-from .soap_utils import  SoapClient, tryUrl
 from . import appbuilder, db
 from . import app
 
@@ -56,8 +50,9 @@ try:
     if app.config['PS_USER']:
         logging.info('PS_USER: {}'.format(app.config['PS_USER']))
         appbuilder.add_link("Update Passwords", icon='fa-exclamation-triangle', href='/utilities/updatePasswords/', category='Utilities')
-except:
-    pass  #fails if db connection is not set to bring in passwords from existing db
+except Exception as e:
+    print(e)
+    # pass fails if db connection is not set to bring in passwords from existing db
 
 
 appbuilder.add_view(

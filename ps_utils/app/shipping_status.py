@@ -2,7 +2,7 @@ import json
 from flask_appbuilder import SimpleFormView, expose
 from flask import request, flash
 from .models import Company
-from . import appbuilder, db
+from . import db
 from .soap_utils import SoapClient
 from .tracking_util import Tracking_No
 from . import app
@@ -11,7 +11,82 @@ from sqlalchemy import and_
 
 PRODUCTION = app.config.get('PRODUCTION')
 
+def shippingCompanies():
+    """ return available inventory companies"""
+    return db.session.query(Company).filter(
+            and_(Company.shipping_url != None, Company.user_name != None)
+        ).all()
 
+
+def createTableSet(result):
+    """ creates a table set from result for datatable to display with nested package child row """
+    data = []
+    for order in result['OrderShipmentNotificationArray']['OrderShipmentNotification']:
+        temp = {}
+        temp['PO'] = order['purchaseOrderNumber']
+        temp['complete'] = order['complete']
+        temp['tracking'] = []
+        temp['salesOrder'] = ''
+        # create html table for salesOrder
+        for row in order['SalesOrderArray']['SalesOrder']:
+            temp['salesOrder'] += '<table class="table-bordered striped style="width: 100%"><thead><tr> \
+                <th>Sales Order#</th><th>Complete?</th><th>Location Details</th></tr></thead><tbody><tr> \
+                <td>{}</td><td>{}</td><td>'.format(row['salesOrderNumber'], row['complete'])
+            temp['salesOrder'] += '<div id="accordion">'
+            trackingCounter = 0
+            if 'ShipmentLocation' in row['ShipmentLocationArray']:
+                for location in row['ShipmentLocationArray']['ShipmentLocation']:
+                    temp['salesOrder'] += '<h3>{}</h3><div><table class="table-bordered striped"><thead><tr> \
+                        <th>Ship From</th><th>Ship To</th><th>Dest. Type</th> \
+                        <th>Package Details</th></tr></thead><tbody><tr><td><table cellpadding="5" class="table-striped">'\
+                        .format(location['ShipFromAddress']['address1'])
+                    for k,v in location['ShipFromAddress'].items():
+                        if v and v !='.':
+                            temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
+                    temp['salesOrder'] += '</table></td><td><table class="table-striped">'
+                    for k,v in location['ShipToAddress'].items():
+                        if v and v !='.':
+                            temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
+                    temp['salesOrder'] += '</table></td><td>'
+                    shipmentDestinationType = location['shipmentDestinationType'] if 'shipmentDestinationType' in location else ''
+                    temp['salesOrder'] += '{}</td><td><div class="tracking">'.format(shipmentDestinationType)
+                    trackingCounter += 1
+                    packageCounter = 0
+                    if 'PackageArray' in location and 'Package' in location['PackageArray']:
+                        for package in location['PackageArray']['Package']:
+                            temp['salesOrder'] += '<h3>TRN: {}</h3><div><table class="table-striped">'.format(package['trackingNumber'])
+                            for k,v in package.items():
+                                if v and k != 'ItemArray':
+                                    temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
+                            if 'ItemArray' in package and package['ItemArray']['Item']:
+                                temp['salesOrder'] += '<tr><td colspan="2"><div class="packages">'
+                                packageCounter += 1
+                                itemCounter = 1  # used for heading only
+                                for item in package['ItemArray']['Item']:
+                                    temp['salesOrder'] += '<h3>Package #{}</h3><div><table class="table-striped" style="width:100%">'.format(itemCounter)
+                                    itemCounter += 1
+                                    for k,v in item.items():
+                                        if v and v != '.':
+                                            temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
+                                    temp['salesOrder'] += '</table></div>'
+                            temp['salesOrder'] += '</div></td></tr></table></div>'
+                            if package['trackingNumber']:
+                                trkingNos = package['trackingNumber'].split(',')
+                                carrier = ''
+                                if 'carrier' in package:
+                                    carrier = package['carrier']
+                                for trackno in trkingNos:
+                                    trackno = trackno.strip()
+                                    trk = Tracking_No(trackno, carrier=carrier)
+                                    # elliminates placebo
+                                    if trk.valid():
+                                        temp['tracking'].append(trk.link())
+                temp['salesOrder'] += '</div></tr></tbody></table>'
+        temp['packageCounter'] = packageCounter
+        temp['trackingCounter'] = trackingCounter
+        temp['tracking'] = ', '.join(temp['tracking'])
+        data.append(temp)
+    return json.dumps(data)
 class ShippingStatus(SimpleFormView):
     """
         get order status from submitted form or external post
@@ -30,79 +105,9 @@ class ShippingStatus(SimpleFormView):
     """
     default_view = 'index'
 
-    def createTableSet(self, result):
-        """ creates a table set from result for datatable to display with nested package child row """
-        data = []
-        for order in result['OrderShipmentNotificationArray']['OrderShipmentNotification']:
-            temp = {}
-            temp['PO'] = order['purchaseOrderNumber']
-            temp['complete'] = order['complete']
-            temp['tracking'] = []
-            temp['salesOrder'] = ''
-            # create html table for salesOrder
-            for row in order['SalesOrderArray']['SalesOrder']:
-                temp['salesOrder'] += '<table class="table-bordered striped style="width: 100%"><thead><tr> \
-                    <th>Sales Order#</th><th>Complete?</th><th>Location Details</th></tr></thead><tbody><tr> \
-                    <td>{}</td><td>{}</td><td>'.format(row['salesOrderNumber'], row['complete'])
-                temp['salesOrder'] += '<div id="accordion">'
-                trackingCounter = 0
-                if 'ShipmentLocation' in row['ShipmentLocationArray']:
-                    for location in row['ShipmentLocationArray']['ShipmentLocation']:
-                        temp['salesOrder'] += '<h3>{}</h3><div><table class="table-bordered striped"><thead><tr> \
-                            <th>Ship From</th><th>Ship To</th><th>Dest. Type</th> \
-                            <th>Package Details</th></tr></thead><tbody><tr><td><table cellpadding="5" class="table-striped">'\
-                            .format(location['ShipFromAddress']['address1'])
-                        for k,v in location['ShipFromAddress'].items():
-                            if v and v !='.':
-                                temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
-                        temp['salesOrder'] += '</table></td><td><table class="table-striped">'
-                        for k,v in location['ShipToAddress'].items():
-                            if v and v !='.':
-                                temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
-                        temp['salesOrder'] += '</table></td><td>'
-                        shipmentDestinationType = location['shipmentDestinationType'] if 'shipmentDestinationType' in location else ''
-                        temp['salesOrder'] += '{}</td><td><div class="tracking">'.format(shipmentDestinationType)
-                        trackingCounter += 1
-                        packageCounter = 0
-                        if 'PackageArray' in location and 'Package' in location['PackageArray']:
-                            for package in location['PackageArray']['Package']:
-                                temp['salesOrder'] += '<h3>TRN: {}</h3><div><table class="table-striped">'.format(package['trackingNumber'])
-                                for k,v in package.items():
-                                    if v and k != 'ItemArray':
-                                        temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
-                                if 'ItemArray' in package and package['ItemArray']['Item']:
-                                    temp['salesOrder'] += '<tr><td colspan="2"><div class="packages">'
-                                    packageCounter += 1
-                                    itemCounter = 1  # used for heading only
-                                    for item in package['ItemArray']['Item']:
-                                        temp['salesOrder'] += '<h3>Package #{}</h3><div><table class="table-striped" style="width:100%">'.format(itemCounter)
-                                        itemCounter += 1
-                                        for k,v in item.items():
-                                            if v and v != '.':
-                                                temp['salesOrder'] += '<tr><td class="right bold">' + k + '</td><td class="left">' + str(v) + "</td></tr>"
-                                        temp['salesOrder'] += '</table></div>'
-                                temp['salesOrder'] += '</div></td></tr></table></div>'
-                                if package['trackingNumber']:
-                                    trkingNos = package['trackingNumber'].split(',')
-                                    carrier = ''
-                                    if 'carrier' in package:
-                                        carrier = package['carrier']
-                                    for trackno in trkingNos:
-                                        trackno = trackno.strip()
-                                        trk = Tracking_No(trackno, carrier=carrier)
-                                        # elliminates placebo
-                                        if trk.valid():
-                                            temp['tracking'].append(trk.link())
-                    temp['salesOrder'] += '</div></tr></tbody></table>'
-            temp['packageCounter'] = packageCounter
-            temp['trackingCounter'] = trackingCounter
-            temp['tracking'] = ', '.join(temp['tracking'])
-            data.append(temp)
-        return json.dumps(data)
-
     @expose('/index/', methods=['GET', 'POST'])
     def index(self, **kw):
-        companies = self.shippingCompanies()
+        companies = shippingCompanies()
         form_title = 'Ship Status Request Form'
         if request.method == 'GET':
             id = request.values.get('companyID', 126)
@@ -192,20 +197,15 @@ class ShippingStatus(SimpleFormView):
         try:
             checkRow = result['OrderShipmentNotificationArray']['OrderShipmentNotification'][0]
             if checkRow:
-                tableSet = self.createTableSet(result)
-        except:
+                tableSet = createTableSet(result)
+        except Exception as e:
             checkRow = None
-            error['errorMessage'] = "Error: unable to extract an OrderShipmentNotification. Expected notification or error message from Vendor"
+            error['errorMessage'] = "Error: unable to extract an OrderShipmentNotification. "
+            error['errorMessage'] += "Expected notification or error message from Vendor. Exception: " + str(e)
             if not PRODUCTION:
-                error['errorMessage'] += ": " +str(result)
+                error['errorMessage'] += " Result: " +str(result)
 
         return self.render_template(
             'shipping/results.html', checkRow=checkRow, c=c, tableSet=tableSet, form_title=form_title,
             companies=companies, table=table, error=error, formValues=formValues
             )
-
-    def shippingCompanies(self):
-        """ return available inventory companies"""
-        return db.session.query(Company).filter(
-                and_(Company.shipping_url != None, Company.user_name != None)
-            ).all()

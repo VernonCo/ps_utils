@@ -1,20 +1,14 @@
 """
     utilities for processing soap requests
 """
-import os, logging, requests, re
+import os, logging, requests, re, json
 from suds.client import Client
 from suds.xsd.doctor import Import, ImportDoctor
-from suds.plugin import DocumentPlugin, MessagePlugin
 from flask import request
 from urllib.parse import urlparse
 from xmljson import parker
 from defusedxml.cElementTree import fromstring
-from json import dumps
 from . import app
-from .models import Company
-from . import db
-
-
 
 PRODUCTION = app.config.get('PRODUCTION')
 
@@ -62,31 +56,35 @@ def tryUrl(URL, wsdl_url, code, version):
                 else:
                     # SECOND -- add ?wsdl to provided url
                     url_with_wsdl = URL + '?wsdl'
-                    URL = self.tryUrl(url_with_wsdl, False, code, version)
+                    URL = tryUrl(url_with_wsdl, False, code, version)
                     if URL:
                         return URL
                     else:
                         # FINALLY -- try the wsdl url provided using the scheme and domain in the regular url
-                        URL = self.tryUrl(wsdl_url, False, code, version)
+                        URL = tryUrl(wsdl_url, False, code, version)
                         if URL:
                             return URL
                         else:
                             return
-        except:
+        except Exception as e:
+            print(e)
             if wsdl_url != False:
                 url_with_wsdl = URL + '?wsdl'
                 URL = False
                 try:
-                    URL = self.tryUrl(url_with_wsdl, False, code, version)
+                    URL = tryUrl(url_with_wsdl, False, code, version)
                     if not URL:
                         try:
-                            URL = self.tryUrl(wsdl_url, False, code, version)
-                        except:
+                            URL = tryUrl(wsdl_url, False, code, version)
+                        except Exception as e:
+                            print(e)
                             return
-                except:
+                except Exception as e:
+                    print(e)
                     try:
-                        URL = self.tryUrl(wsdl_url, False, code, version)
-                    except:
+                        URL = tryUrl(wsdl_url, False, code, version)
+                    except Exception as e:
+                        print(e)
                         return
         return URL
 
@@ -108,6 +106,22 @@ def basic_sobject_to_dict( obj):
         else:
             transposed[field] = basic_sobject_to_dict(val)
     return transposed
+
+def testCall(serviceUrl, serviceMethod, serviceResponse, values):
+    try:
+        client = SoapRequest(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
+                            serviceResponse=serviceResponse, values=values)
+        data = client.sendRequest()
+        print(data)
+    except Exception as e:
+        print(e)
+        # assert False
+        exit()
+    # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+    print(client.XML)
+    print(client.response.text)
+    exit()
+
 
 class SoapRequest():
     """
@@ -365,6 +379,7 @@ class SoapClient():
             self.data = self.error_msg
         return self.data
 
+    @classmethod
     def check4Error(self, response):
         """
             check for error that could be caused by improper wsdl parsing so that it will try the next
@@ -486,11 +501,6 @@ class SoapClient():
         logging.info("newbody: " + self.XML)
         return self.XML
 
-    def sendPO(self):
-        """get & process values, and send po"""
-        #TODO: figure out
-        return False
-
     def serviceCall(self):
         """ call the order status service
             Suds-py3 struggles with a couple of services with shared objects. Some suppliers work with the
@@ -526,22 +536,5 @@ class SoapClient():
         :param key_to_lower: If set, changes index key name to lower case.
         :return: json object
         """
-        import json
         transposed = self.sobject_to_dict( key_to_lower=key_to_lower, json_serialize=True)
         return json.dumps(transposed)
-
-
-def testCall(serviceUrl, serviceMethod, serviceResponse, values):
-    try:
-        client = SoapRequest(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
-                            serviceResponse=serviceResponse, values=values)
-        data = client.sendRequest()
-        print(data)
-    except Exception as e:
-        print(e)
-        # assert False
-        exit()
-    # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
-    print(client.XML)
-    print(client.response.text)
-    exit()

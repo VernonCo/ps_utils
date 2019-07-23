@@ -1,12 +1,10 @@
-import requests, json, logging, re
+import requests, logging, re
 from urllib.parse import urlparse
 from flask_appbuilder import BaseView, expose, has_access
-from flask import request, flash
 from .models import Company
-from . import appbuilder, db
+from . import db
 from .soap_utils import tryUrl
 from . import app
-from sqlalchemy import or_, and_
 # only needed if importing passwords from previous db
 import MySQLdb
 
@@ -52,7 +50,8 @@ class Utilities(BaseView):
             try:
                 r = requests.get(uri)
                 endpoints = r.json()
-            except:
+            except Exception as e:
+                print(e)
                 continue
             #test retreiving wsdl with out errors from each endpoint
             has_url = False

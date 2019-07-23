@@ -1,15 +1,10 @@
 from flask_appbuilder import Model
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
 from flask_appbuilder.models.mixins import AuditMixin
 
 """
-
 You can use the extra Flask-AppBuilder fields and Mixin's
-
 AuditMixin will add automatic timestamp of created and modified by who
-
-
 """
 class Company(Model, AuditMixin):
     """ model of companies and their service _urls """
