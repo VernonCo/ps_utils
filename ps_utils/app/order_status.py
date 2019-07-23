@@ -1,13 +1,20 @@
 from flask_appbuilder import SimpleFormView, expose
 from flask import request, flash
 from .models import Company
-from . import appbuilder, db
+from . import db
 from .soap_utils import SoapClient
 from . import app
 from jinja2 import Markup
 from sqlalchemy import and_
 
 PRODUCTION = app.config.get('PRODUCTION')
+
+def orderCompanies():
+    """ return available inventory companies"""
+    return db.session.query(Company).filter(
+            and_(Company.order_url != None, Company.user_name != None)
+        ).all()
+
 
 class OrderStatus(SimpleFormView):
     """
@@ -29,11 +36,11 @@ class OrderStatus(SimpleFormView):
 
     @expose('/index/', methods=['GET', 'POST'])
     def index(self, **kw):
-        companies = self.orderCompanies()
+        companies = orderCompanies()
         form_title = 'Order Status Request Form'
         if request.method == 'GET':
-            id = request.values.get('companyID', 126)
-            return self.render_template( 'order/requestForm.html', companies=companies, id=int(id),
+            cid = request.values.get('companyID', 126)
+            return self.render_template( 'order/requestForm.html', companies=companies, id=int(cid),
                     form_title=form_title, form=self.form, message = "Form was submitted", data=False
                     )
         # else deal with post
@@ -110,8 +117,8 @@ class OrderStatus(SimpleFormView):
                 errorFlag = True
 
         if errorFlag:
-            id = request.values.get('companyID', 126)
-            return self.render_template( 'order/requestForm.html', companies=companies, id=int(id),
+            cid = request.values.get('companyID', 126)
+            return self.render_template( 'order/requestForm.html', companies=companies, id=int(cid),
                     form_title=form_title, form=self.form, message = "Form was submitted"
                     )
 
@@ -128,9 +135,9 @@ class OrderStatus(SimpleFormView):
         else:
             try:
                 checkRow = result['OrderStatusArray']['OrderStatus'][0]
-            except:
+            except Exception as e:
                 checkRow = None
-                result['errorMessage'] = "Response structure error"
+                result['errorMessage'] = str(e)
                 if not PRODUCTION:
                     # assert False
                     result['errorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
@@ -146,9 +153,3 @@ class OrderStatus(SimpleFormView):
     def instructions(self):
         """ diplay instructions for sending form_encoded POST to forms"""
         return self.render_template( 'order/instructions.html')
-
-    def orderCompanies(self):
-        """ return available inventory companies"""
-        return db.session.query(Company).filter(
-                and_(Company.order_url != None, Company.user_name != None)
-            ).all()

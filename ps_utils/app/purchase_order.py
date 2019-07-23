@@ -3,10 +3,8 @@ from flask_appbuilder import SimpleFormView, expose
 from flask_appbuilder.api import  safe
 from flask import request, Response
 from .models import Company
-from . import app, appbuilder, db, csrf
+from . import app, db, csrf
 from .soap_utils import SoapClient
-from jinja2 import Markup
-from sqlalchemy import or_, and_
 from schema import Schema, Optional, And, Regex, Const, Use
 from decimal import Decimal, Context, Inexact
 from datetime import datetime
@@ -70,6 +68,7 @@ class JsonPO(SimpleFormView):
         """ diplay instructions for sending jsonPO"""
         return self.render_template( 'purchaseOrder/instructions.html')
 
+    @classmethod
     def processPO(self, req_json):
         companyID = req_json.pop('companyID', None)
         if not companyID or not isinstance(companyID, int):
@@ -90,6 +89,7 @@ class JsonPO(SimpleFormView):
         data, htmlCode = self.sendPO(c, **kw)
         return data, htmlCode,  {'Content-Type':'application/json'}
 
+    @classmethod
     def sendPO(self, company, **kw):
         """send the request.  Can be used by index or a plugin"""
         htmlCode = 200

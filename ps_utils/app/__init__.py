@@ -5,9 +5,7 @@ from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 from flask_appbuilder import AppBuilder, SQLA
 
-"""
- Logging configuration
-"""
+""" Logging configuration """
 
 logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 logging.getLogger().setLevel(logging.DEBUG)
