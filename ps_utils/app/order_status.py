@@ -2,7 +2,7 @@ from flask_appbuilder import SimpleFormView, expose
 from flask import request, flash
 from .models import Company
 from . import appbuilder, db
-from .soap_utils import SoapClient, testCall
+from .soap_utils import SoapClient
 from . import app
 from jinja2 import Markup
 from sqlalchemy import and_
@@ -60,6 +60,7 @@ class OrderStatus(SimpleFormView):
             kw['referenceNumber']=request.form['refNum']
             values['fields'].append(('ns','referenceNumber',request.form['refNum']))
         # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
+        #     from .soap_utils import testCall
         #     testCall(serviceUrl=c.order_url, serviceMethod='getOrderStatusDetails',
         #                         serviceResponse='GetOrderStatusDetailsResponse', values=values)
 

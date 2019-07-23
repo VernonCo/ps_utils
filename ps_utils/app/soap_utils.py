@@ -537,6 +537,11 @@ def testCall(serviceUrl, serviceMethod, serviceResponse, values):
                             serviceResponse=serviceResponse, values=values)
         data = client.sendRequest()
         print(data)
-    except:
-        assert False
-    assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+    except Exception as e:
+        print(e)
+        # assert False
+        exit()
+    # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+    print(client.XML)
+    print(client.response.text)
+    exit()

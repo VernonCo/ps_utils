@@ -3,7 +3,7 @@ from flask_appbuilder import SimpleFormView, expose
 from flask import request, flash
 from .models import Company
 from . import appbuilder, db
-from .soap_utils import SoapClient, testCall
+from .soap_utils import SoapClient
 from .tracking_util import Tracking_No
 from . import app
 from jinja2 import Markup
@@ -138,6 +138,7 @@ class ShippingStatus(SimpleFormView):
             values['fields'].append(('ns','referenceNumber', request.form['refNum']))
         # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
         # in the debuger: use client.XML (what was sent) & client.response.text (returned response) & client.lastRequest for headers
+        #     from .soap_utils import testCall
         #     testCall(serviceUrl=c.order_url, serviceMethod='GetOrderShipmentNotification',
         #                         serviceResponse='GetOrderShipmentNotificationResponse', values=values)
 

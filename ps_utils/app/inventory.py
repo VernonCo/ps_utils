@@ -5,7 +5,7 @@ from flask import request, flash
 from .models import Company
 from . import appbuilder, db
 from . import app
-from .soap_utils import SoapClient, SoapRequest
+from .soap_utils import SoapClient
 from jinja2 import Markup
 from sqlalchemy import or_, and_
 
@@ -175,8 +175,8 @@ class Inventory(SimpleFormView):
                 kw['productIDtype'] = 'Supplier'
 
             # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
+            #     from .soap_utils import testCall
             #     serviceResponse = 'GetFilterValuesResponse'if serviceMethod == 'getFilterValues' else 'GetInventoryLevelsResponse'
-
             #     testCall(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
             #                         serviceResponse=serviceResponse, values=values)
 

@@ -7,7 +7,7 @@ from . import app, appbuilder, db, csrf
 from .soap_utils import SoapClient
 from jinja2 import Markup
 from sqlalchemy import or_, and_
-from schema import Schema, Optional, And, Or, Regex, Const, Use
+from schema import Schema, Optional, And, Regex, Const, Use
 from decimal import Decimal, Context, Inexact
 from datetime import datetime
 
