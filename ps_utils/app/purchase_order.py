@@ -1,5 +1,5 @@
 import json, html
-from flask_appbuilder import SimpleFormView, expose, has_access
+from flask_appbuilder import SimpleFormView, expose
 from flask_appbuilder.api import  safe
 from flask import request, Response
 from .models import Company

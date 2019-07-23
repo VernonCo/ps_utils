@@ -134,7 +134,7 @@ Click Debug > Open current configurations.  Add following to end of configuratio
 
 ## Soap requests conditional sequence
 
--   if ORDSAT or OSN service Inject xml and location until fix for suds-py issue #41 released to pypi
+-   if INV V2, ORDSAT, or OSN service Inject xml and location until fix for suds-py issue #41 released to pypi
 -   1st call using local wsdl and inject location -- quicker retrieving local wsdl, consistent, and standard
 -   else on error: call using remote wsdl -- some do not work with the standard wsdl
 -   else on error: call using remote wsdl and inject location -- some have the wrong location (ie localhost) in their wsdl
