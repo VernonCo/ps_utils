@@ -11,7 +11,7 @@ While PO's may be entered manually in a form eventually, I'm assuming that autom
 will be the main usage, and only have it working for a json POST (no manual form)  - see exampleSimplePO.json  The
 json POST is validated by schema, field names, and their value types before sending a soap request.  See the 'Instructions for PO' under the 'Info' tab on the nav bar.
 
-The PO also only works with the vernonco docker image (vernonco/ps-utils:dev) as it has a fix for suds-py3 included (Dockerfile line 24) - Waiting for fix to module - see https://github.com/cackharot/suds-py3/issues/41.  If you build the image your self, you must add the following lines to 171,172 in site-packages/suds/xsd/sxbase.py for it to correctly parse "ref:..." in the WSDLs
+The PO also only works with the vernonco docker image (vernonco/ps-utils:dev) as it has a fix for suds-py3 included (Dockerfile line 24) - Waiting for fix to module - see [suds-py3 issue #41](https://github.com/cackharot/suds-py3/issues/41).  If you build the image your self, you must add the following lines to 171,172 in site-packages/suds/xsd/sxbase.py for it to correctly parse "ref:..." in the WSDLs
     if self.ref and self.ref in self.schema.elements.keys():
         ns = self.ref
 

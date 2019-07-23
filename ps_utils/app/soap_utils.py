@@ -4,7 +4,6 @@
 import os, logging, requests, re, json
 from suds.client import Client
 from suds.xsd.doctor import Import, ImportDoctor
-from suds.plugin import DocumentPlugin
 from flask import request
 from urllib.parse import urlparse
 from xmljson import parker
@@ -537,6 +536,5 @@ class SoapClient():
         :param key_to_lower: If set, changes index key name to lower case.
         :return: json object
         """
-        import json
         transposed = self.sobject_to_dict( key_to_lower=key_to_lower, json_serialize=True)
         return json.dumps(transposed)
