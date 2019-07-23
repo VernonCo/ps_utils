@@ -18,7 +18,7 @@ The PO also only works with the docker image as it has a fix for suds-py3 includ
 `git clone https://github.com/VernonCo/ps_utils.git`
 
 ## Run locally or with docker-compose
-###To run locally and/or use with vscode
+### To run locally and/or use with vscode
 first create venv
 `python3 -m venv venv`
 
@@ -43,7 +43,7 @@ if using [weavenet](https://www.weave.works/oss/net/) to provide secure WAN to d
 
 docker-compose files have the option of running the db as a container or comment out db and adminer services and set variables in for remote db access...make sure of persistent volume for production if running in k8 or similar
 
-##create admin user to view additional tabs in web page
+## create admin user to view additional tabs in web page
 in other words, this needs ran to access the utilities.
 
 ### local
@@ -79,6 +79,7 @@ View user registration and roles at [flask_appbuilder security](https://flask-ap
 
 ### set path on vscode to run file locally (will need local database connection in config file)
 Click Debug -> Open current configurations.  Add following to end of configurations if not one created for 'Python: Flask'
+
             ,{
                 "name": "Flask",
                 "type": "python",
