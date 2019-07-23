@@ -4,22 +4,24 @@ from flask import Flask
 from flask_appbuilder import AppBuilder, SQLA
 from flask_wtf.csrf import CSRFProtect
 
-""" Logging configuration """
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 app = Flask(__name__)
 app.config.from_object("config")
-db = SQLA(app)
-appbuilder = AppBuilder(app, db.session)
-csrf = CSRFProtect(app)
-
 PRODUCTION = app.config.get('PRODUCTION')
+
+# Logging configuration
 logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 if not PRODUCTION:
     logging.getLogger().setLevel(logging.DEBUG)
 else:
     logging.getLogger().setLevel(logging.ERROR)
+
+db = SQLA(app)
+appbuilder = AppBuilder(app, db.session)
+csrf = CSRFProtect(app)
+
 
 """
 from sqlalchemy.engine import Engine
