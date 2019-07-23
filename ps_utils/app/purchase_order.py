@@ -1,7 +1,7 @@
-import json, logging, html
+import json, html
 from flask_appbuilder import SimpleFormView, expose, has_access
 from flask_appbuilder.api import  safe
-from flask import request, flash, Response
+from flask import request, Response
 from .models import Company
 from . import app, appbuilder, db, csrf
 from .soap_utils import SoapClient
@@ -63,6 +63,14 @@ class JsonPO(SimpleFormView):
     def index(self, **kw):
         """process json request received"""
         req_json = request.get_json()
+        return self.processPO(req_json)
+
+    @expose('/instructions/', methods=['GET'])
+    def instructions(self):
+        """ diplay instructions for sending jsonPO"""
+        return self.render_template( 'purchaseOrder/instructions.html')
+
+    def processPO(self, req_json):
         companyID = req_json.pop('companyID', None)
         if not companyID or not isinstance(companyID, int):
             error = dict(ServiceMessageArray=[dict(Code=120, Description="The following field(s) are required: companyID")])
@@ -81,11 +89,6 @@ class JsonPO(SimpleFormView):
             return data, 400,  {'Content-Type':'application/json'}
         data, htmlCode = self.sendPO(c, **kw)
         return data, htmlCode,  {'Content-Type':'application/json'}
-
-    @expose('/instructions/', methods=['GET'])
-    def instructions(self):
-        """ diplay instructions for sending jsonPO"""
-        return self.render_template( 'purchaseOrder/instructions.html')
 
     def sendPO(self, company, **kw):
         """send the request.  Can be used by index or a plugin"""
@@ -109,24 +112,7 @@ class JsonPO(SimpleFormView):
         """
         with open('exampleSimplePO.json') as json_file:
             req_json = json.load(json_file)
-        companyID = req_json.pop('companyID', None)
-        if not companyID or not isinstance(companyID, int):
-            error = dict(ServiceMessageArray=[dict(Code=120, Description="The following field(s) are required: companyID")])
-            data = json.dumps(error)
-            return data, 400,  {'Content-Type':'application/json'}
-        c = db.session.query(Company).get(companyID)
-        if not c:
-            error = dict(ServiceMessageArray=[dict(Code=100, Description="ID (companyID) not found")])
-            data = json.dumps(error)
-            return data, 500,  {'Content-Type':'application/json'}
-        kw = {"wsVersion": c.po_version, "id": c.user_name, "password": c.password, "PO": req_json['PO']}
-        try:
-            self.validatePO(**kw)
-        except Exception as e:
-            data = {"ServiceMessageArray":[{"ServiceMessage": {"code": 999, "description": str(e)}}]}
-            return data, 400,  {'Content-Type':'application/json'}
-        data, htmlCode = self.sendPO(c, **kw)
-        return data, htmlCode,  {'Content-Type':'application/json'}
+        return self.processPO(req_json)
 
     @expose('/receiveTest/', methods=['GET','POST'])
     @csrf.exempt

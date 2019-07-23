@@ -1,13 +1,11 @@
-import json, logging
-from flask_appbuilder import SimpleFormView, expose, has_access
+from flask_appbuilder import SimpleFormView, expose
 from flask import request, flash
-from suds.client import Client
 from .models import Company
 from . import appbuilder, db
-from .soap_utils import SoapClient, SoapRequest
+from .soap_utils import SoapClient, testCall
 from . import app
 from jinja2 import Markup
-from sqlalchemy import or_, and_
+from sqlalchemy import and_
 
 PRODUCTION = app.config.get('PRODUCTION')
 
@@ -34,7 +32,6 @@ class OrderStatus(SimpleFormView):
         companies = self.orderCompanies()
         form_title = 'Order Status Request Form'
         if request.method == 'GET':
-            # TODO: add and_ to check for username and password
             id = request.values.get('companyID', 126)
             return self.render_template( 'order/requestForm.html', companies=companies, id=int(id),
                     form_title=form_title, form=self.form, message = "Form was submitted", data=False
@@ -63,16 +60,10 @@ class OrderStatus(SimpleFormView):
             kw['referenceNumber']=request.form['refNum']
             values['fields'].append(('ns','referenceNumber',request.form['refNum']))
         # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
-        # try:
-        #     serviceResponse = 'GetOrderStatusDetailsResponse'
-        #     client = SoapRequest(serviceUrl=c.order_url, serviceMethod='getOrderStatusDetails',
-        #                         serviceResponse=serviceResponse, values=values)
-        #     data = client.sendRequest()
-        # except:
-        #     assert False
-        # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+        #     testCall(serviceUrl=c.order_url, serviceMethod='getOrderStatusDetails',
+        #                         serviceResponse='GetOrderStatusDetailsResponse', values=values)
 
-        # new fix in suds/xsd/sxbase.py takes care of the wsdl parsing issue and values only needed if using SoapRequest above
+        # new fix in suds/xsd/sxbase.py takes care of the wsdl parsing issue and values only needed if using testCall above
         # However, leaving following line commented until fix is pushed to pypi
         # values = False
         client = SoapClient(serviceMethod='getOrderStatusDetails', serviceUrl=c.order_url, serviceWSDL=c.order_wsdl, serviceCode='ORDSTAT',

@@ -529,3 +529,14 @@ class SoapClient():
         import json
         transposed = self.sobject_to_dict( key_to_lower=key_to_lower, json_serialize=True)
         return json.dumps(transposed)
+
+
+def testCall(serviceUrl, serviceMethod, serviceResponse, values):
+    try:
+        client = SoapRequest(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
+                            serviceResponse=serviceResponse, values=values)
+        data = client.sendRequest()
+        print(data)
+    except:
+        assert False
+    assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
