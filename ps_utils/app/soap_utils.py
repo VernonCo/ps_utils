@@ -284,6 +284,7 @@ class SoapClient():
             self.callArray.insert(0,{'msg':'SoapFault: Error(1b) on  injected xml and location {}: '.format(self.serviceUrl),
                 'wsdl':local_wsdl, 'location':self.serviceUrl})
         self.error_msg = {'SoapFault':'No Response Available'}
+        self.response = ''
 
     def basic_sobject_to_dict(self, obj):
         """Converts suds object to dict very quickly.
@@ -337,9 +338,10 @@ class SoapClient():
             # call. Will raise exception to go on to next
             self.check4Error(self.data)
             self.error_msg['SoapFault'] = False
+            self.response = str(client.last_received())
             del client
         except Exception as e:
-            self.cata = {'SoapFault': args['msg'] +str(e)}
+            self.data = {'SoapFault': args['msg'] +str(e)}
             # assert False
             if self.callIndex == 1:
                 self.setErrorMsg(args['msg'],e)
@@ -352,6 +354,7 @@ class SoapClient():
                         client = Client(args['wsdl'], plugins=[args['doctor']])
                     func = getattr(client.service, self.serviceMethod)
                     self.data = func(**self.KW)
+                    self.response = str(client.last_received())
                     self.check4Error(self.data)
                     self.error_msg['SoapFault'] = False
                     del client
@@ -526,3 +529,19 @@ class SoapClient():
         import json
         transposed = self.sobject_to_dict( key_to_lower=key_to_lower, json_serialize=True)
         return json.dumps(transposed)
+
+
+def testCall(serviceUrl, serviceMethod, serviceResponse, values):
+    try:
+        client = SoapRequest(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
+                            serviceResponse=serviceResponse, values=values)
+        data = client.sendRequest()
+        print(data)
+    except Exception as e:
+        print(e)
+        # assert False
+        exit()
+    # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+    print(client.XML)
+    print(client.response.text)
+    exit()

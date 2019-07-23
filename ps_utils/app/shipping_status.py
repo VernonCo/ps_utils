@@ -1,15 +1,16 @@
-import json, logging
-from flask_appbuilder import SimpleFormView, expose, has_access
+import json
+from flask_appbuilder import SimpleFormView, expose
 from flask import request, flash
 from .models import Company
 from . import appbuilder, db
-from .soap_utils import SoapClient, SoapRequest
+from .soap_utils import SoapClient
 from .tracking_util import Tracking_No
 from . import app
 from jinja2 import Markup
-from sqlalchemy import or_, and_
+from sqlalchemy import and_
 
 PRODUCTION = app.config.get('PRODUCTION')
+
 
 class ShippingStatus(SimpleFormView):
     """
@@ -104,7 +105,6 @@ class ShippingStatus(SimpleFormView):
         companies = self.shippingCompanies()
         form_title = 'Ship Status Request Form'
         if request.method == 'GET':
-            # TODO: add and_ to check for username and password
             id = request.values.get('companyID', 126)
             return self.render_template( 'shipping/requestForm.html', companies=companies, id=int(id),
                     form_title=form_title, form=self.form, message = "Form was submitted", data=False
@@ -138,14 +138,13 @@ class ShippingStatus(SimpleFormView):
             values['fields'].append(('ns','referenceNumber', request.form['refNum']))
         # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
         # in the debuger: use client.XML (what was sent) & client.response.text (returned response) & client.lastRequest for headers
-        # try:
-        #     client = SoapRequest(serviceUrl=c.shipping_url, serviceMethod='GetOrderShipmentNotification',
+        #     from .soap_utils import testCall
+        #     testCall(serviceUrl=c.order_url, serviceMethod='GetOrderShipmentNotification',
         #                         serviceResponse='GetOrderShipmentNotificationResponse', values=values)
-        #     data = client.sendRequest()
-        # except:
-        #     assert False
-        # assert False
 
+        # new fix in suds/xsd/sxbase.py takes care of the wsdl parsing issue and values only needed if using testCall above
+        # However, leaving following line commented until fix is pushed to pypi
+        # values = False
         client = SoapClient(serviceMethod='getOrderShipmentNotification', serviceUrl=c.shipping_url, serviceWSDL=c.shipping_wsdl, serviceCode='OSN',
                 serviceVersion=c.shipping_version, filters=False, values=values, **kw)
         data = client.serviceCall()

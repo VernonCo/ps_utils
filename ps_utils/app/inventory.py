@@ -1,11 +1,11 @@
-import json, logging
+import json
 import copy
-from flask_appbuilder import SimpleFormView, expose, has_access
+from flask_appbuilder import SimpleFormView, expose
 from flask import request, flash
 from .models import Company
 from . import appbuilder, db
 from . import app
-from .soap_utils import SoapClient, SoapRequest
+from .soap_utils import SoapClient
 from jinja2 import Markup
 from sqlalchemy import or_, and_
 
@@ -143,6 +143,7 @@ class Inventory(SimpleFormView):
                 # create values for injected xml on Version 2 as the suds-py3 client has issues parcing the shared objects
                 # some vendors accept the parced encoding while others reject it due to it being slightly off
                 # injecting the correct xml each time takes care of this issue
+                # Will need to look at this again when suds-py fix for issue #41 is released to pypi
                 values = {
                     'method':{'ns':'GetFilterValuesRequest' if serviceMethod == 'getFilterValues' else 'GetInventoryLevelsRequest'},
                     'namespaces':{
@@ -172,15 +173,13 @@ class Inventory(SimpleFormView):
                         values['Filter']['filters'].append(temp)
             else:
                 kw['productIDtype'] = 'Supplier'
+
             # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
-            # try:
+            #     from .soap_utils import testCall
             #     serviceResponse = 'GetFilterValuesResponse'if serviceMethod == 'getFilterValues' else 'GetInventoryLevelsResponse'
-            #     client = SoapRequest(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
+            #     testCall(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
             #                         serviceResponse=serviceResponse, values=values)
-            #     data = client.sendRequest()
-            # except:
-            #     assert False
-            # assert False    # in the debuger: use client.XML (what was sent) & client.response.text (returned response)
+
             if not data:
                 client = SoapClient(serviceMethod=serviceMethod, serviceUrl=serviceUrl, serviceCode='INV',
                     serviceVersion=serviceVersion, serviceWSDL=serviceWSDL, filters=filters, values=values, **kw)

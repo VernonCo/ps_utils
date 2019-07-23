@@ -42,5 +42,5 @@ EXPOSE 80
 # ENTRYPOINT ["/entrypoint.sh"]
 
 # Run the start script, it will check for an /app/prestart.sh script (e.g. for migrations)
-# And then will start Gunicorn with Meinheld
+# And then will start Nginx w/ uwsgi (prod) or werkzeug (dev)
 CMD ["/start.sh"]
