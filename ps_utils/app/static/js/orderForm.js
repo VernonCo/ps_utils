@@ -1,6 +1,6 @@
 $(document).ready( function () {
     $("#refNumTR").hide();
-            $("#refDateTR").hide();
+    $("#refDateTR").hide();
     $("#queryType").change(function(){
         var opt = $(this).val();
         if (opt <= 2 ){
