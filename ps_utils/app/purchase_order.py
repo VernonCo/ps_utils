@@ -3,7 +3,7 @@ from flask_appbuilder import SimpleFormView, expose
 from flask_appbuilder.api import  safe
 from flask import request, Response
 from .models import Company
-from . import app, db, csrf, PRODUCTION
+from . import app, db, csrf    #, PRODUCTION
 from .soap_utils import SoapClient
 from schema import Schema, Optional, And, Regex, Const, Use
 from decimal import Decimal, Context, Inexact
