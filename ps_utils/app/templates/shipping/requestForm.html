@@ -96,27 +96,5 @@
 
 
 {% block tail %}
-<script>
-    $(document).ready( function () {
-        $('#refNumTR').hide();
-                $('#refDateTR').hide();
-        $('#queryType').change(function(){
-            var opt = $(this).val();
-            if (opt <= 2 ){
-                $('#refNumTR').show();
-                $('#refNum').attr('required', true);
-                $('#refDateTR').hide();
-                $('#refDate').attr('required', false);
-            }else if (opt == 3){
-                $('#refNumTR').hide();
-                $('#refNum').attr('required', false);
-                $('#refDateTR').show();
-                $('#refDate').attr('required', true);
-            }else{
-                $('#refNumTR').hide();
-                $('#refDateTR').hide();
-            }
-    } );
-} );
-</script>
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='js/shipForm.js')}}"></script>
 {% endblock %}

@@ -3,13 +3,11 @@ import copy
 from flask_appbuilder import SimpleFormView, expose
 from flask import request, flash
 from .models import Company
-from . import db
+from . import db, PRODUCTION
 from . import app
 from .soap_utils import SoapClient
 from jinja2 import Markup
 from sqlalchemy import or_, and_
-
-PRODUCTION = app.config.get('PRODUCTION')
 
 def inventoryCompanies():
     """ return available inventory companies"""

@@ -25,6 +25,8 @@ class Utilities(BaseView):
             Checks if a distributor and gets services and urls for company
             Check urls and versions and saves company information
         """
+        #TODO: get test link for PO service as it pushes content. All the others only pull
+
         # get company list
         uri = 'https://services.promostandards.org/WebServiceRepository/WebServiceRepository.svc/json/companies'
         try:

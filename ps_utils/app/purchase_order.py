@@ -3,13 +3,11 @@ from flask_appbuilder import SimpleFormView, expose
 from flask_appbuilder.api import  safe
 from flask import request, Response
 from .models import Company
-from . import app, db, csrf
+from . import app, db, csrf, PRODUCTION
 from .soap_utils import SoapClient
 from schema import Schema, Optional, And, Regex, Const, Use
 from decimal import Decimal, Context, Inexact
 from datetime import datetime
-
-PRODUCTION = app.config.get('PRODUCTION')
 
 
 # validation functions
@@ -93,6 +91,7 @@ class JsonPO(SimpleFormView):
     def sendPO(self, company, **kw):
         """send the request.  Can be used by index or a plugin"""
         htmlCode = 200
+        # TODO: add test links to the model and use 'if not PRODUCTION:' to switch to test
         client = SoapClient(serviceMethod='sendPO', serviceUrl=company.po_url, serviceWSDL=company.po_wsdl, serviceCode='PO',
                 serviceVersion=company.po_version, filters=False, values=False, **kw)
         client.serviceCall()
