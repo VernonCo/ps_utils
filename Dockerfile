@@ -8,15 +8,15 @@ RUN DEBIAN_FRONTEND="noninteractive" \
     && apt install -y nginx python3-dev  build-essential mysql-client default-libmysqlclient-dev \
     nano wget locate \
     # openssl ca-certificates ntpdate \
-    && pip install --upgrade pip \
-    && pip install -r /requirements.txt \
+    && pip install --no-cache-dir -U pip \
+    && pip install --no-cache-dir -r /requirements.txt \
     && pip install --upgrade certifi \
     && apt autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
     # remove python certs to use openssl
     # && rm /usr/local/lib/python3.7/site-packages/pip/_vendor/certifi/cacert.pem \
     # && rm /usr/local/lib/python3.7/site-packages/certifi/cacert.pem
 
-COPY ./entrypoint.sh /entrypoint.sh
+# COPY ./entrypoint.sh /entrypoint.sh
 
 COPY ./start.sh  ./prestart.sh /
 
@@ -24,7 +24,7 @@ COPY ./start.sh  ./prestart.sh /
 COPY ./venv/lib/python3.6/site-packages/suds/xsd/sxbase.py /usr/local/lib/python3.7/site-packages/suds/xsd/sxbase.py
 
 # allow execute
-RUN chmod +x /entrypoint.sh && chmod +x /start.sh
+RUN chmod +x /start.sh # chmod +x /entrypoint.sh
 
 # USER www-data
 
