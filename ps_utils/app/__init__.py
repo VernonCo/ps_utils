@@ -6,7 +6,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_appbuilder import AppBuilder, SQLA
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app = Flask(__name__,static_url_path='/app/static')
+app = Flask(__name__,static_url_path='/static')
 app.config.from_object(os.getenv("CONFIG_FILE"))
 PRODUCTION = app.config.get('PRODUCTION')
 # Logging configuration
