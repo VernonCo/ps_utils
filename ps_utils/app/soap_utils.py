@@ -22,7 +22,7 @@ def getDoctor( code, version, url=False):
         service =  'MediaService'
     if code == 'OSN':
         service =  'OrderShipmentNotificationService'
-    if code == 'ORDSTAT':
+    if code == 'ODRSTAT':
         service =  'OrderStatusService'
     if code == 'Product':
         service =  'ProductDataService'

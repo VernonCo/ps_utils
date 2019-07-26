@@ -107,7 +107,7 @@ class JsonPO(SimpleFormView):
             test the service using exampleSimplePO.json
             *** MAKE SURE to SET the test link for the company (or receiveTest below) in the DB so that it doesn't hit the production with this test! ***
             currently don't have separate fields for test urls
-            or create a new company which hits http://localhost/jsonpo/test2/ to return the xml to you to view
+            or create a new company which hits http://localhost/jsonpo/receiveTest/ to return the xml to you to view
         """
         with open('exampleSimplePO.json') as json_file:
             req_json = json.load(json_file)
