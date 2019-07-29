@@ -5,7 +5,7 @@ from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_babel import lazy_gettext as _
 
-from . import PRODUCTION, appbuilder, db
+from . import app, appbuilder, db, PRODUCTION
 from .inventory import Inventory
 from .models import Company
 from .order_status import OrderStatus
