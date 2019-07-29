@@ -1,14 +1,16 @@
-import requests, logging, re
+import logging
+import re
 from urllib.parse import urlparse
-from flask_appbuilder import BaseView, expose, has_access
-from .models import Company
-from . import db
-from .soap_utils import tryUrl
-from . import app
+
 # only needed if importing passwords from previous db
 import MySQLdb
+import requests
+from flask_appbuilder import BaseView, expose, has_access
 
-PRODUCTION = app.config.get('PRODUCTION')
+from . import app, db, PRODUCTION
+from .models import Company
+from .soap_utils import tryUrl
+
 
 class Utilities(BaseView):
 

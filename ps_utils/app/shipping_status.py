@@ -1,15 +1,15 @@
 import json
+
+from flask import flash, request
 from flask_appbuilder import SimpleFormView, expose
-from flask import request, flash
-from .models import Company
-from . import db
-from .soap_utils import SoapClient
-from .tracking_util import Tracking_No
-from . import app
 from jinja2 import Markup
 from sqlalchemy import and_
 
-PRODUCTION = app.config.get('PRODUCTION')
+from . import app, db, PRODUCTION
+from .models import Company
+from .soap_utils import SoapClient
+from .tracking_util import Tracking_No
+
 
 def shippingCompanies():
     """ return available inventory companies"""

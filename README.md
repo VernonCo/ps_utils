@@ -1,4 +1,5 @@
-# PS Utilities -- A JSON REST API for Promo Standard Services including forms for manual entry
+# PS Utilities -- A JSON REST API for Promo Standard Services
+## (including forms for manual entry)
 -   Can update a db with a list of companies and their working endpoints (/update).
 -   Returns json or table html for ajax requests to services (ie returnType=json or returnType=table)
 -   Or has forms for manual use
@@ -60,7 +61,8 @@ in other words, this needs ran to access the utilities.
 Make the app available to operators by either putting on limited network or adding users
 
 ### Behind limited network
-The config.py  (or config-4passwords.py) have configuration to allow public access to the forms.
+The config.py  (or config-4passwords.py) have configuration to allow public access to the forms. However, the config has been commented out as it was not working as expected.  Therefore, for public role use the security model below.
+
 If desiring granular control over access, comment out the FAB_ROLES, and use the security model.
 -   Create new roles(s) under Security -> List Roles
 -   Click on Security -> List Roles ->  edit role

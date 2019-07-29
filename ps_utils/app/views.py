@@ -1,18 +1,18 @@
 import logging
-from flask import render_template
-from flask_babel import lazy_gettext as _
-from flask_appbuilder.models.sqla.interface import SQLAInterface
-from flask_appbuilder import ModelView
-from .models import Company
-from .utilities import Utilities
-from .inventory import Inventory
-from .order_status import OrderStatus
-from .shipping_status import ShippingStatus
-from .purchase_order import JsonPO
-from . import appbuilder, db
-from . import app
 
-PRODUCTION = app.config.get('PRODUCTION')
+from flask import render_template
+from flask_appbuilder import ModelView
+from flask_appbuilder.models.sqla.interface import SQLAInterface
+from flask_babel import lazy_gettext as _
+
+from . import PRODUCTION, appbuilder, db
+from .inventory import Inventory
+from .models import Company
+from .order_status import OrderStatus
+from .purchase_order import JsonPO
+from .shipping_status import ShippingStatus
+from .utilities import Utilities
+
 
 """
     Create your Model based REST API::
@@ -111,5 +111,5 @@ def page_not_found(e):
         ),
         404,
     )
-
+appbuilder.security_cleanup()
 db.create_all()
