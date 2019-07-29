@@ -1,10 +1,12 @@
+from flask import flash, request
 from flask_appbuilder import SimpleFormView, expose
-from flask import request, flash
-from .models import Company
-from . import db, PRODUCTION
-from .soap_utils import SoapClient
 from jinja2 import Markup
 from sqlalchemy import and_
+
+from . import PRODUCTION, db
+from .models import Company
+from .soap_utils import SoapClient
+
 
 def orderCompanies():
     """ return available inventory companies"""

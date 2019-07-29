@@ -1,17 +1,16 @@
 """
     utilities for processing soap requests
 """
-import os, logging, requests, re, json
+import json, logging, os, re, requests
+from urllib.parse import urlparse
+
+from defusedxml.cElementTree import fromstring
+from flask import request
 from suds.client import Client
 from suds.xsd.doctor import Import, ImportDoctor
-from flask import request
-from urllib.parse import urlparse
 from xmljson import parker
-from defusedxml.cElementTree import fromstring
-from . import app
 
-PRODUCTION = app.config.get('PRODUCTION')
-
+from . import PRODUCTION
 
 def getDoctor( code, version, url=False):
     """ return service type for code """

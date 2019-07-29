@@ -1,9 +1,8 @@
-import logging
-import os
+import logging, os
 
 from flask import Flask
+from flask_appbuilder import SQLA, AppBuilder
 from flask_wtf.csrf import CSRFProtect
-from flask_appbuilder import AppBuilder, SQLA
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__,static_url_path='/static')
@@ -21,6 +20,8 @@ appbuilder = AppBuilder(app, db.session)
 csrf = CSRFProtect(app)
 
 
+from . import views
+
 """
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
@@ -33,5 +34,3 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 """
-
-from . import views

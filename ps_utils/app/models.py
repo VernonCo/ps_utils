@@ -1,6 +1,7 @@
 from flask_appbuilder import Model
-from sqlalchemy import Column, Integer, String
 from flask_appbuilder.models.mixins import AuditMixin
+from sqlalchemy import Column, Integer, String
+
 
 """
 You can use the extra Flask-AppBuilder fields and Mixin's
