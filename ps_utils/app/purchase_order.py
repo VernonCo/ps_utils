@@ -84,7 +84,8 @@ class JsonPO(SimpleFormView):
         try:
             self.validatePO(**kw)
         except Exception as e:
-            data = {"ServiceMessageArray":[{"ServiceMessage": {"code": 999, "description": str(e)}}]}
+            error = {"ServiceMessageArray":[{"ServiceMessage": {"code": 999, "description": str(e)}}]}
+            data = json.dumps(error)
             return data, 400,  {'Content-Type':'application/json'}
         data, htmlCode = self.sendPO(c, **kw)
         return data, htmlCode,  {'Content-Type':'application/json'}
