@@ -71,6 +71,8 @@ If desiring granular control over access, comment out the FAB_ROLES, and use the
 -   Create users and assign roles under Security > List Users
 
 ### Open network
+Don't forget to change SECRET_KEY in config.py or config-4passwords.py
+
 View user registration and roles at [flask_appbuilder security](https://flask-appbuilder.readthedocs.io/en/latest/security.html).  The flask_appbuilder security also shows how to change the authentication to use LDAP and create roles in line with your AD groups.
 
 ## if using vscode...set interpeter to the one with the path to the venv
