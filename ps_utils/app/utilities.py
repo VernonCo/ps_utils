@@ -1,15 +1,89 @@
 import logging
+import MySQLdb # only needed if importing passwords from previous db
 import re
-from urllib.parse import urlparse
-
-# only needed if importing passwords from previous db
-import MySQLdb
 import requests
+import smtplib
+import ssl
+
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from flask_appbuilder import BaseView, expose, has_access
+from urllib.parse import urlparse
 
 from . import app, db, PRODUCTION
 from .models import Company
 from .soap_utils import tryUrl
+
+
+def sendMail(subj, content, to, cc='', bcc='', filename='',
+    emailFrom=app.config.get('SMTP_FROM'), html=True):
+    """
+    send an email via smtp variables from config
+    """
+    smtp_server = app.config.get('SMTP_SERVER')
+    smtp_port = app.config.get('SMTP_PORT')
+    message = MIMEMultipart("alternative")
+    message["Subject"] = subj
+    message["From"] = emailFrom
+    # prevent emails going out to undesired recipients accidentally in development
+    if not PRODUCTION:
+        to = app.config.get('SMTP_DEV_TO')
+        if not to:
+            return "Email not sent. SMTP_DEV_TO is not configured as an environment variable."
+        cc = bcc = ''
+    message["To"] = to
+    if cc:
+        message['Cc'] = cc
+    if bcc:
+        message['Bcc'] = bcc
+    if html:  #default
+        message.attach(MIMEText(content, "html"))
+    else:
+        message.attach(MIMEText(content, "plain"))
+    if filename:  # pass file path/name to add attachement
+        # Open file in binary mode
+        with open(filename, "rb") as attachment:
+            # Add file as application/octet-stream
+            # Email client can usually download this automatically as attachment
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(attachment.read())
+        # Encode file in ASCII characters to send by email
+        encoders.encode_base64(part)
+        # Add header as key/value pair to attachment part
+        part.add_header(
+            "Content-Disposition",
+            f"attachment; filename= {filename}",
+        )
+        # Add attachment to message and convert message to string
+        message.attach(part)
+    context = ssl.create_default_context()
+    if app.config.get('SMTP_TLS_OR_SSL'): # ssl connection if 1
+        try:
+            with smtplib.SMTP_SSL(smtp_server, smtp_port, context=context) as server:
+                if app.config.get('SMTP_FQDN'):
+                    server.ehlo(app.config.get('SMTP_HOST'))
+                if app.config.get('SMTP_AUTH_REQUIRED'):
+                    smtp_password = app.config.get('SMTP_PASSWORD')
+                    server.login(emailFrom, smtp_password)
+                server.sendmail(emailFrom, to, message.as_string())
+        except Exception as e:
+            return str(e)
+    else:  # newer tls connection is default
+        try:
+            with smtplib.SMTP(smtp_server,smtp_port) as server:
+                server.starttls(context=context) # Secure the connection
+                # used for changing from server's host to a different FQDN
+                # ie going through a firewall for company domain
+                if app.config.get('SMTP_FQDN'):
+                    server.ehlo(app.config.get('SMTP_HOST'))
+                if app.config.get('SMTP_AUTH_REQUIRED'):
+                    smtp_password = app.config.get('SMTP_PASSWORD')
+                    server.login(emailFrom, smtp_password)
+                server.sendmail(emailFrom, to, message.as_string())
+        except Exception as e:
+            return str(e)
 
 
 class Utilities(BaseView):

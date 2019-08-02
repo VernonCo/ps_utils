@@ -15,6 +15,14 @@ services:
       - FLASK_APP="app:app"   # set to run flask fab create-admin (see README.md).
       - FLASK_ENV=development
       - SERVER_PATH=/app
+      # - SMTP_SERVER=
+      # - SMTP_FROM=
+      # - SMTP_PORT=          # defaults to 587 if not passed
+      # - SMTP_TLS_OR_SSL=    # defaults to tls if not passed
+      # - SMTP_AUTH_REQUIRED=  # defaults to 0 if not passed
+      # - SMTP_PASSWORD=      # only used if auth required
+      # - SMTP_FQDN=           # used for changing from server's host to a different FQDN
+      - SMTP_DEV_TO=          # used for sending all emails to in development environment
     ports: ['8089:80', '5001:5000']
     volumes:
       - ./ps_utils:/app
