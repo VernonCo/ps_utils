@@ -73,7 +73,7 @@ class OrderStatus(SimpleFormView):
         # new fix in suds/xsd/sxbase.py takes care of the wsdl parsing issue and values only needed if using testCall above
         # However, leaving following line commented until fix is pushed to pypi
         # values = False
-        client = SoapClient(serviceMethod='getOrderStatusDetails', serviceUrl=c.order_url, serviceWSDL=c.order_wsdl, serviceCode='ORDSTAT',
+        client = SoapClient(serviceMethod='getOrderStatusDetails', serviceUrl=c.order_url, serviceWSDL=c.order_wsdl, serviceCode='ODRSTAT',
                 serviceVersion=c.order_version, filters=False, values=False, **kw)
         data = client.serviceCall()
 
