@@ -102,7 +102,8 @@ class JsonPO(SimpleFormView):
                 "ServiceMessageArray": [{
                     "ServiceMessage": {
                         "code": 999,
-                        "description": str(e)
+                        "description": str(e),
+                        "severity": "Error"
                     }
                 }]
             }
@@ -128,8 +129,16 @@ class JsonPO(SimpleFormView):
         if client.data == 'Unable to get Response' or 'SoapFault' in client.data:
             htmlCode = 500
         # response = client.response
-        # assert False
-        return [client.sobject_to_json(), htmlCode]
+        result = client.sobject_to_dict()
+        # sudsy-py3 not parsing response correctly for ServiceMessageArray
+        try:
+            if result['ServiceMessageArray']['ServiceMessage'][0]['code']:
+                temp = result['ServiceMessageArray']
+                ServiceMessageArray = [{"ServiceMessage":temp['ServiceMessage'][0]}]
+                result['ServiceMessageArray'] = ServiceMessageArray
+        except Exception as e:
+            print(str(e))
+        return [json.dumps(result), htmlCode]
 
     @expose('/test/', methods=['GET'])
     def test(self):
@@ -147,9 +156,8 @@ class JsonPO(SimpleFormView):
     @csrf.exempt
     def receiveTest(self):
         """return the xml received"""
-        s = "Sent: ({})".format(request.data)
-        sent = html.escape(s)
-        logging.error(s)
+        sent = html.escape("Sent: ({})".format(request.data))
+        logging.error(sent)
         data = u'<?xml version="1.0" encoding="UTF-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><SendPOResponse xmlns="http://www.promostandards.org/WSDL/PO/1.0.0/"><ServiceMessageArray><ServiceMessage><code>999</code><description>'
         data = data + sent
         data = data + u'</description><severity>Info</severity></ServiceMessage></ServiceMessageArray></SendPOResponse></s:Body></s:Envelope>'
@@ -170,7 +178,9 @@ class JsonPO(SimpleFormView):
         rdatetime = r'^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$'
         toleranceList = ('AllowOverRun', 'AllowUnderrun',
                          'AllowOverrunOrUnderrun', 'ExactOnly')
-        uomList = ['BX', 'CA', 'DZ', 'EA', 'KT', 'PR', 'PK', 'RL', 'ST', 'SL', 'TH']
+        uomList = [
+            'BX', 'CA', 'DZ', 'EA', 'KT', 'PR', 'PK', 'RL', 'ST', 'SL', 'TH'
+        ]
 
         conact_schema = Schema({
             Optional("attentionTo"):
@@ -206,12 +216,12 @@ class JsonPO(SimpleFormView):
             Optional("phone"):
                 And(lambda s: var_check(s, 32),
                     error='"phone" should evaluate to varchar(32)'),
-            Optional("comments"): str,
+            Optional("comments"): str
         })
 
         quantity_schema = Schema({
-            "value": And(Use(to_decimal_4), validDecimal_12_4),
-            "uom": And(str, lambda s: s in uomList)
+            "uom": And(str, lambda s: s in uomList),
+            "value": And(Use(to_decimal_4), validDecimal_12_4)
         })
         thirdParty_schema = Schema({
             "accountName":
@@ -229,8 +239,7 @@ class JsonPO(SimpleFormView):
             Optional("password"): str,
             "PO": {
                 "orderType":
-                    And(str, lambda s: s in (
-                        'Blank', 'Sample', 'Simple', 'Configured')),
+                    And(str, lambda s: s in ('Blank', 'Sample', 'Simple', 'Configured')),
                 "orderNumber":
                     And(lambda s: var_check(s, 64),
                         error='"orderNumber" should evaluate to varchar(64)'),
@@ -240,14 +249,13 @@ class JsonPO(SimpleFormView):
                 Optional("lastModified"):
                     And(Const(Use(datetime.fromisoformat)),
                         Regex(r'{}'.format(rdatetime))),
-                "totalAmount":  And(Use(to_decimal_4), validDecimal_12_4),
-                Optional("paymentTerms"): str,
+                "totalAmount": And(Use(to_decimal_4), validDecimal_12_4),
+                Optional("paymentTerms"):  str,
                 "rush": Use(xml_bool),
                 "currency":
                     And(lambda s: var_check(s, 3),
                         error='"currency" should evaluate to varchar(3)'),
                 Optional("DigitalProof"): {
-                    "required": Use(xml_bool),
                     "DigitalProofAddressArray": [{
                         "DigitalProofAddress": {
                             "type":
@@ -255,58 +263,71 @@ class JsonPO(SimpleFormView):
                                     error='"type" should evaluate to varchar(64)'),
                             "email":
                                 And(lambda s: var_check(s, 128),
-                                    error='"email" should evaluate to varchar(128)'),
+                                    error='"email" should evaluate to varchar(128)'
+                                    ),
                             "lineItemGroupingId": int
                         }
-                    }]
+                    }],
+                    "required": Use(xml_bool)
                 },
                 Optional("OrderContactArray"): [{
                     "Contact": {
+                        Optional("accountName"):
+                            And(lambda s: var_check(s, 64),
+                                error='"accountName" should evaluate to varchar(64)'),
+                        Optional("accountNumber"):
+                            And(lambda s: var_check(s, 64),
+                                error='"accountNumber" should evaluate to varchar(64)'),
                         "contactType":
                             And(str, lambda s: s in [
-                                    'Art', 'Bill', 'Expeditor', 'Order',
-                                    'Sales', 'Ship', 'Sold'
+                                    'Art', 'Bill', 'Expeditor', 'Order', 'Sales',
+                                    'Ship', 'Sold'
                                 ]),
                         "ContactDetails": conact_schema
                     }
                 }],
                 "ShipmentArray": [{
                     "Shipment": {
-                        "ShipTo": {
-                            "customerPickup": Use(xml_bool),
-                            "shipmentId": int,
-                            "ContactDetails": conact_schema
-                        },
+                        Optional("shipReferences"):
+                            [lambda s: var_check(s, 64)],
+                        Optional("comments"): str,
                         Optional("ThirdPartyAccount"): thirdParty_schema,
-                        Optional("shipReferences"): [lambda s: var_check(s, 64)],
-                        "packingListRequired": Use(xml_bool),
-                        "blindShip": Use(xml_bool),
                         "allowConsolidation": Use(xml_bool),
+                        "blindShip": Use(xml_bool),
+                        "packingListRequired": Use(xml_bool),
                         "FreightDetails": {
                             "carrier":
-                                And(lambda s: var_check(s, 64),
-                                    error='"carrier" should evaluate to varchar(64)'),
+                            And(lambda s: var_check(s, 64),
+                                error='"carrier" should evaluate to varchar(64)'
+                                ),
                             "service":
-                                And(lambda s: var_check(s, 64),
-                                    error='"service" should evaluate to varchar(64)')
+                            And(lambda s: var_check(s, 64),
+                                error='"service" should evaluate to varchar(64)'
+                                )
                         },
-                        Optional("comments"): str
+                        "ShipTo": {
+                            "customerPickup": Use(xml_bool),
+                            "ContactDetails": conact_schema,
+                            "shipmentId": int
+                        }
                     }
                 }],
                 "LineItemArray": [{
                     "LineItem": {
                         "lineNumber": int,
+                        Optional("lineReferenceId"):
+                            And(lambda s: var_check(s, 64),
+                                error='"lineReferenceId" should evaluate to varchar(64)'),
                         "description": str,
-                        "lineType":
-                            And(str, lambda s: s in ['New', 'Repeat', 'Reference']),
+                        "lineType": And(str, lambda s: s in ['New', 'Repeat', 'Reference']),
                         Optional("Quantity"): quantity_schema,
                         Optional("fobid"):
                             And(lambda s: var_check(s, 64),
                                 error='"fobid" should evaluate to varchar(64)'),
                         "ToleranceDetails": {
-                            "tolerance": And(str, lambda s: s in toleranceList),
+                            Optional('uom'): And(str, lambda s: s in uomList),
                             Optional("value"): And(Use(to_decimal_4), validDecimal_12_4),
-                            Optional('uom'): And(str, lambda s: s in uomList)
+                            "tolerance": And(str, lambda s: s in toleranceList)
                         },
                         "allowPartialShipments": Use(xml_bool),
                         Optional("unitPrice"): And(Use(to_decimal_4), validDecimal_12_4),
@@ -330,7 +351,7 @@ class JsonPO(SimpleFormView):
                         },
                         Optional("endCustomerSalesOrder"):
                             And(lambda s: var_check(s, 64),
-                                error='"endCustomerSalesOrder" should evaluate to varchar(64)'),
+                                error= '"endCustomerSalesOrder" should evaluate to varchar(64)'),
                         Optional("productId"):
                             And(lambda s: var_check(s, 64),
                                 error='"productId" should evaluate to varchar(64)'),
@@ -357,104 +378,134 @@ class JsonPO(SimpleFormView):
                                 Optional("extendedPrice"): And(Use(to_decimal_4), validDecimal_12_4),
                                 Optional("ShipmentLinkArray"): [{
                                     "ShipmentLink": {
-                                        "shipmentId": int,
                                         "Quantity": quantity_schema,
+                                        "shipmentId": int
                                     }
                                 }]
                             }
                         }],
                         Optional("Configuration"): {
-                            Optional("referenceNumber"):
-                                And(lambda s: var_check(s, 64),
-                                    error='"referenceNumber" should evaluate to varchar(64)'),
-                            Optional("referenceNumberType"):
-                                And(str, lambda s: s in [
-                                        'PurchaseOrder', 'SalesOrder', 'JobOrWorkOrder'
-                                    ]),
-                            "preProductionProof": Use(xml_bool),
                             Optional("ChargeArray"): [{
                                 "Charge": {
+                                    Optional("chargeName"):
+                                        And(lambda s: var_check(s, 128),
+                                            error='"chargeName" should evaluate to varchar(128)'),
+                                    Optional("description"): str,
+                                    Optional("extendedPrice"): And(Use(to_decimal_4), validDecimal_12_4),
+                                    Optional("unitprice"): And(Use(to_decimal_4), validDecimal_12_4),
                                     "chargeId":
                                         And(lambda s: var_check(s, 64),
                                             error='"chargeId" should evaluate to varchar(64)'),
                                     Optional("chargeName"):
                                         And(lambda s: var_check(s, 128),
                                             error='"chargeName" should evaluate to varchar(128)'),
-                                    Optional("description"): str,
                                     "chargeType":
-                                        And(str, lambda s: s in [
-                                                'Freight', 'Order', 'Run', 'Setup'
-                                            ]),
-                                    "Quantity": quantity_schema,
-                                    Optional("unitprice"): And(Use(to_decimal_4), validDecimal_12_4),
-                                    Optional("extendedPrice"): And(Use(to_decimal_4), validDecimal_12_4)
+                                        And(str, lambda s: s in
+                                            ['Freight', 'Order', 'Run', 'Setup']),
+                                    "Quantity": quantity_schema
                                 }
                             }],
                             Optional("LocationArray"): [{
                                 "Location": {
-                                    "locationLinkId": int,
-                                    "locationId": int,
                                     Optional("locationName"):
                                         And(lambda s: var_check(s, 128),
                                             error='"locationName" should evaluate to varchar(128)'),
                                     "DecorationArray": [{
                                         "Decoration": {
-                                            "decorationId": int,
                                             Optional("decorationName"):
                                                 And(lambda s: var_check(s, 128),
                                                     error='"decorationName" should evaluate to varchar(128)'),
                                             "Artwork": {
+                                                Optional("instructions"): str,
                                                 Optional("refArtworkId"):
                                                     And(lambda s: var_check(s, 64),
                                                         error='"refArtworkId" should evaluate to varchar(64)'),
+                                                Optional("totalStitchCount"): int,
+                                                Optional("ArtworkFileArray"): [{
+                                                    "ArtworkFile": {
+                                                        "artworkType":
+                                                            And(str, lambda s: s in [
+                                                                'ProductionReady', 'VirtualProof',
+                                                                'SupplierArtTemplate', 'NonProductionReady'
+                                                            ]),
+                                                        "fileLocation":
+                                                            And(lambda s: var_check(s, 1024),
+                                                                error='"fileLocation" should evaluate to varchar(1024)'),
+                                                        "fileName":
+                                                            And(lambda s: var_check(s, 256),
+                                                                error='"fileName" should evaluate to varchar(256)'),
+                                                        "transportMechanism":
+                                                            And(str, lambda s: s in [
+                                                                'Email', 'Url', 'Ftp', 'ArtworkToFollow'
+                                                            ]),
+                                                    }
+                                                }],
                                                 Optional("description"): str,
                                                 Optional("Dimensions"): {
+                                                    Optional("diameter"):
+                                                        And(Use(to_decimal_4),validDecimal_12_4),
+                                                    Optional("height"):
+                                                        And(Use(to_decimal_4),validDecimal_12_4),
+                                                    Optional('uom'):
+                                                        And(str, lambda s: s in uomList),
+                                                    Optional("width"):
+                                                        And(Use(to_decimal_4),validDecimal_12_4),
+                                                    "useMaxLocationDimensions": Use(xml_bool),
                                                     "geometry":
                                                         And(str, lambda s: s in [
-                                                                'Circle', 'Rectangle', 'Other'
-                                                            ]),
-                                                    "useMaxLocationDimensions": Use(xml_bool),
-                                                    Optional("height"):
-                                                        And(Use(to_decimal_4), validDecimal_12_4),
-                                                    Optional("width"):
-                                                        And(Use(to_decimal_4), validDecimal_12_4),
-                                                    Optional("diameter"):
-                                                        And(Use(to_decimal_4), validDecimal_12_4),
-                                                    Optional('uom'):
-                                                        And(str, lambda s: s in uomList)
+                                                            'Circle',
+                                                            'Other',
+                                                            'Rectangle'
+                                                        ])
                                                 },
-                                                Optional("instructions"): str,
                                                 Optional("Layers"): {
                                                     "colorSystem":
-                                                        And(str, lambda s: s in [
-                                                                'Cmyk', 'Other', 'Pms', 'Rgb', 'Thread'
-                                                        ]),
+                                                        And(
+                                                            str, lambda s: s in [
+                                                                'Cmyk', 'Other',
+                                                                'Pms', 'Rgb',
+                                                                'Thread'
+                                                            ]),
                                                     "LayerOrStopArray": {
+                                                        "color":
+                                                            And(lambda s: var_check(s, 64),
+                                                                error='Layer "color" should evaluate to varchar(64)'),
                                                         "nameOrNumber":
                                                             And(lambda s: var_check(s, 64),
                                                                 error='"nameOrNumber" should evaluate to varchar(64)'),
-                                                        "description": str,
-                                                        "color":
-                                                            And(lambda s: var_check(s, 64),
-                                                                error='Layer "color" should evaluate to varchar(64)')
+                                                        "description": str
                                                     }
                                                 },
                                                 Optional("TypesetArray"): [{
-                                                    "sequenceNumber": int,
-                                                    "value":
-                                                        And(lambda s: var_check( s, 1024),
-                                                            error='Typset "value" should evaluate to varchar(1024)'),
-                                                    Optional("font"):
-                                                        And(lambda s: var_check(s, 64),
-                                                            error='"font" should evaluate to varchar(64)'),
-                                                    Optional("fontSize"): Use(Decimal)
-                                                }],
-                                                Optional("totalStitchCount"): int
-                                            }
+                                                    "Typeset":{
+                                                        Optional("fontSize"): Use(Decimal),
+                                                        Optional("font"):
+                                                            And(lambda s: var_check(s, 64),
+                                                                error='"font" should evaluate to varchar(64)'),
+                                                        "sequenceNumber": int,
+                                                        "value":
+                                                            And(lambda s: var_check(s, 1024),
+                                                            error='Typset "value" should evaluate to varchar(1024)')
+                                                    }
+                                                }]
+                                            },
+                                            "decorationId": int
                                         }
                                     }],
+                                    "locationLinkId": int,
+                                    "locationId": int
                                 }
-                            }]
+                            }],
+                            Optional("referenceNumberType"):
+                                And(
+                                    str, lambda s: s in [
+                                        'PurchaseOrder', 'SalesOrder',
+                                        'JobOrWorkOrder'
+                                    ]),
+                            Optional("referenceNumber"):
+                                And(lambda s: var_check(s, 64),
+                                    error='"referenceNumber" should evaluate to varchar(64)'),
+                            "preProductionProof": Use(xml_bool),
                         }
                     }
                 }],
@@ -467,16 +518,16 @@ class JsonPO(SimpleFormView):
                         error='"promoCode" should evaluate to varchar(64)'),
                 Optional("TaxInformationArray"): [{
                     "TaxInformation": {
+                        "taxJurisdiction":
+                            And(lambda s: var_check(s, 64),
+                                error='"taxJurisdiction" should evaluate to varchar(64)'),
+                        "taxExempt": Use(xml_bool),
                         "taxId":
                             And(lambda s: var_check(s, 64),
                                 error='"taxId" should evaluate to varchar(64)'),
                         "taxType":
                             And(lambda s: var_check(s, 64),
                                 error='"taxType" should evaluate to varchar(64)'),
-                        "taxExempt": Use(xml_bool),
-                        "taxJurisdiction":
-                            And(lambda s: var_check(s, 64),
-                                error='"taxJurisdiction" should evaluate to varchar(64)'),
                         Optional("taxAmount"): Use(Decimal)
                     }
                 }]

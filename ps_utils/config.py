@@ -26,15 +26,6 @@ DB_PORT = os.getenv('DB_PORT', '3306')
 SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}:{}/ps_utils'.format(DB_AUTH,DB_PASS,DB_HOST,DB_PORT)
 # SQLALCHEMY_DATABASE_URI = 'postgresql://root:password@localhost/myapp'
 
-#smtp variables
-SMTP_FROM = os.getenv('SMTP_FROM', '')
-SMTP_SERVER = os.getenv('SMTP_SERVER', '')
-SMTP_TLS_OR_SSL = int(os.getenv('SMTP_TLS_OR_SSL', 0)) # tls=0 ssl=1
-SMTP_PORT = os.getenv('SMTP_PORT', '587')
-SMTP_AUTH_REQUIRED = int(os.getenv('SMTP_AUTH_REQUIRED', '0'))
-SMTP_PASSWORD = os.getenv('SMTP_PASSWORD', '')
-SMTP_FQDN = os.getenv('SMTP_FQDN', '')
-SMTP_DEV_TO = os.getenv('SMTP_DEV_TO', '')  # used in development to send emails to
 
 # Flask-WTF flag for CSRF
 CSRF_ENABLED = True
@@ -69,6 +60,22 @@ AUTH_USER_REGISTRATION = True
 
 # The default user self registration role
 AUTH_USER_REGISTRATION_ROLE = "Public"
+
+# Config for Flask-WTF Recaptcha necessary for user registration
+RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY', 'GOOGLE PUBLIC KEY FOR RECAPTCHA')
+RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY', 'GOOGLE PRIVATE KEY FOR RECAPTCHA')
+# Config for Flask-Mail necessary for user registration
+# and smtp settings for sendMail() in utilities.py
+MAIL_SERVER = SMTP_SERVER = os.getenv('SMTP_SERVER', '')
+MAIL_USE_TLS = True
+SMTP_TLS_OR_SSL = int(os.getenv('SMTP_TLS_OR_SSL', 0)) # tls=0 ssl=1
+MAIL_PORT = SMTP_PORT = os.getenv('SMTP_PORT', '587')
+SMTP_AUTH_REQUIRED = int(os.getenv('SMTP_AUTH_REQUIRED', '0'))
+MAIL_USERNAME = SMTP_FROM = os.getenv('SMTP_FROM', '')
+MAIL_PASSWORD = SMTP_PASSWORD = os.getenv('SMTP_PASSWORD', '')
+MAIL_DEFAULT_SENDER = SMTP_FROM = os.getenv('SMTP_FROM', '')
+SMTP_FQDN = os.getenv('SMTP_FQDN', '')
+SMTP_DEV_TO = os.getenv('SMTP_DEV_TO', '')  # used in development to send emails to
 
 # comment out to prevent Forms menu and endpoint access from being public or if making any changes in the DB after startup
 # ***commented out as it was not working as expected
