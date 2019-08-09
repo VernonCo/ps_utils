@@ -124,3 +124,9 @@ Click Debug -> Open current configurations.  Add following to end of configurati
 -   1st call using local wsdl and inject location -- quicker retrieving local wsdl, consistent, and standard
 -   else on error: call using remote wsdl -- some do not work with the standard wsdl
 -   else on error: call using remote wsdl and inject location -- some have the wrong location (ie localhost) in their wsdl
+
+## Test Coverage
+Currently, test coverage is very basic...adding as I have the time or get pull requests
+
+To run tests.
+    cd app; python tests/run_tests.py

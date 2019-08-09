@@ -11,3 +11,5 @@ schema
 # used on developement
 pysnooper
 xmljson
+nose2
+unittest2

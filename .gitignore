@@ -13,7 +13,6 @@ docker/dev-build.sh
 docker-compose.yml
 app-bak
 *.bak
-*test*
 *.swp
 first_start.sh
 .vscode
