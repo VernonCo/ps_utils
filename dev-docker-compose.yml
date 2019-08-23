@@ -1,4 +1,4 @@
-version: '3'  # view README.md before running if admin db and admin user needed
+version: '2.4'  # view README.md before running if admin db and admin user needed
 services:
   ps_utils_dev:
     image: vernonco/ps-utils:dev
@@ -15,6 +15,10 @@ services:
       - FLASK_APP="app:app"   # set to run flask fab create-admin (see README.md).
       - FLASK_ENV=development
       - SERVER_PATH=/app
+      - FAB_STATIC_FOLDER=/app/app/static/appbuilder
+      - FAB_STATIC_URL_PATH=/appbuilder
+      # - RECAPTCHA_PUBLIC_KEY=
+      # - RECAPTCHA_PRIVATE_KEY=
       # - SMTP_SERVER=
       # - SMTP_FROM=
       # - SMTP_PORT=          # defaults to 587 if not passed
@@ -22,20 +26,39 @@ services:
       # - SMTP_AUTH_REQUIRED=  # defaults to 0 if not passed
       # - SMTP_PASSWORD=      # only used if auth required
       # - SMTP_FQDN=           # used for changing from server's host to a different FQDN
-      - SMTP_DEV_TO=          # used for sending all emails to in development environment
+      # - SMTP_DEV_TO=          # used for sending all emails to in development environment
     ports: ['8089:80', '5001:5000']
+# to connect to local files for development
     volumes:
       - ./ps_utils:/app
-    logging:
-      options:
-        max-size: "100k"
-        max-file: "20"
+# uncomment for production to prevent run away logs
+    # logging:
+    #   options:
+    #     max-size: "1000k"
+    #     max-file: "10"
     links:
       - db:db
+# for docker-bench-security
+    cpu_shares: 73
+    mem_limit: 512m
+    pids_limit: 50
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: on-failure:5
+    privileged: false
+    ulimits:
+      nproc: 65535
+    security_opt:
+      - no-new-privileges:true
 # for weave network
     # network_mode: "bridge"
     # dns_search:
     #   - weave.local
+
     # command: flask run  #  to run as flask instead of gunicorn
 
 

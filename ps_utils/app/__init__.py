@@ -5,7 +5,7 @@ from flask_appbuilder import SQLA, AppBuilder
 from flask_wtf.csrf import CSRFProtect
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app = Flask(__name__,static_url_path='/static')
+app = Flask(__name__)
 app.config.from_object(os.getenv("CONFIG_FILE"))
 PRODUCTION = app.config.get('PRODUCTION')
 # Logging configuration
@@ -18,6 +18,14 @@ AppBuilder.app_name = 'PS Utils'
 db = SQLA(app)
 appbuilder = AppBuilder(app, db.session)
 csrf = CSRFProtect(app)
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    """
+        prevents sqlalchemy pool exceeding 10 by leaving connections hanging
+        with production evenlet
+    """
+    db.session.remove()
 
 
 from . import views

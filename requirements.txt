@@ -1,7 +1,10 @@
-# meinheld
-# gunicorn
-requests
+# choose your server in start.sh
+gunicorn
+eventlet
+# or uwsgi (only if using cpython instead of pypy3)
 uWSGI
+
+requests
 flask-appbuilder
 boto3
 suds-py3
@@ -11,5 +14,3 @@ schema
 # used on developement
 pysnooper
 xmljson
-nose2
-unittest2

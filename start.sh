@@ -14,10 +14,12 @@ fi
 
 
 if test "$FLASK_ENV" = "development" ; then
-    python run.py
+    pypy3 run.py
 else
-    /etc/init.d/nginx restart
-    uwsgi --ini uwsgi.ini
-    # Start Gunicorn  --- had issues with creating the views for each worker
-    # exec gunicorn -k egg:meinheld#gunicorn_worker -c "$GUNICORN_CONF" "$APP_MODULE"
+    nginx -t && /etc/init.d/nginx restart
+    # uwsgi is having issues with pypy3 must change nginx.conf to work with uwsgi socket
+    # uwsgi --ini uwsgi.ini
+
+    # gunicorn
+    gunicorn --name 'Gunicorn App Gevent' --chdir ./app --bind 0.0.0.0:9000 app:app -k eventlet --worker-connections 1001 --workers 4
 fi
