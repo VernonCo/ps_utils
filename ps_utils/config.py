@@ -8,8 +8,12 @@ from flask_appbuilder.security.manager import (
 )
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+#set static folder used to populate requests to static resources
 if os.getenv('FAB_STATIC_FOLDER'):
     FAB_STATIC_FOLDER = os.getenv('FAB_STATIC_FOLDER')
+if os.getenv('FAB_STATIC_URL_PATH'):
+    FAB_STATIC_URL_PATH = os.getenv('FAB_STATIC_URL_PATH')
 
 # Your App secret key
 SECRET_KEY = "\2\1thisismyscretkey\1\2\e\y\y\h"

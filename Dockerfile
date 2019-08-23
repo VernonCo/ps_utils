@@ -1,12 +1,13 @@
-FROM python:3.7-slim
-
+# FROM python:3.7-slim
+# pypy3 v3.7
+FROM pypy:slim
 LABEL maintainer="Stuart Zurcher <stuartz@vernoncompany.com>"
 
 COPY ./requirements.txt /
 RUN DEBIAN_FRONTEND="noninteractive" \
     && apt update && apt upgrade -y \
     && apt install -y nginx python3-dev  build-essential mysql-client default-libmysqlclient-dev \
-    nano wget locate \
+    nano wget locate dnsutils \
     # openssl ca-certificates ntpdate \
     && pip install --no-cache-dir -U pip \
     && pip install --no-cache-dir -r /requirements.txt \
@@ -16,20 +17,20 @@ RUN DEBIAN_FRONTEND="noninteractive" \
     # && rm /usr/local/lib/python3.7/site-packages/pip/_vendor/certifi/cacert.pem \
     # && rm /usr/local/lib/python3.7/site-packages/certifi/cacert.pem
 
-# COPY ./entrypoint.sh /entrypoint.sh
-
-COPY ./start.sh  ./prestart.sh /
 
 #suds-py fix for ref in wsdls
 COPY ./venv/lib/python3.6/site-packages/suds/xsd/sxbase.py /usr/local/lib/python3.7/site-packages/suds/xsd/sxbase.py
 
+# COPY ./entrypoint.sh /entrypoint.sh
+
+COPY ./start.sh  ./prestart.sh /
 # allow execute
 RUN chmod +x /start.sh # chmod +x /entrypoint.sh
 
-# USER www-data
-
-# COPY ./gunicorn_conf.py /gunicorn_conf.py
+# for gunicorn server
 COPY ./nginx.conf /etc/nginx
+# for uswgi server (change start.sh and uncomment FROM line 1)
+# COPY ./nginx-uwsgi.conf /etc/nginx
 
 COPY ./ps_utils /app
 
@@ -37,7 +38,8 @@ WORKDIR /app
 
 ENV PYTHONPATH=/app
 
-EXPOSE 80
+#nginx 80, gunicorn 9000
+EXPOSE 80 9000
 
 # ENTRYPOINT ["/entrypoint.sh"]
 
