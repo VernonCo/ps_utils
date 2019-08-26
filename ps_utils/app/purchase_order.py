@@ -11,21 +11,110 @@ from . import csrf, db  # , PRODUCTION
 from .models import Company
 from .soap_utils import SoapClient
 
-
 # validation functions
-def validDecimal_12_4(d):
-    """validate that d is dec(12,4)"""
-    FOURPLACES = Decimal(10)**-4
-    d.quantize(FOURPLACES, context=Context(traps=[Inexact]))
-    if d < Decimal("1000000000000"):
-        return True
-    return False
+
+# Helpers for parsing the result of isoformat()
+def _parse_isoformat_date(dtstr):
+    # It is assumed that this function will only be called with a
+    # string of length exactly 10, and (though this is not used) ASCII-only
+    year = int(dtstr[0:4])
+    if dtstr[4] != '-':
+        raise ValueError('Invalid date separator: %s' % dtstr[4])
+    month = int(dtstr[5:7])
+    if dtstr[7] != '-':
+        raise ValueError('Invalid date separator')
+    day = int(dtstr[8:10])
+    return [year, month, day]
+
+def _parse_hh_mm_ss_ff(tstr):
+    # Parses things of the form HH[:MM[:SS[.fff[fff]]]]
+    len_str = len(tstr)
+    time_comps = [0, 0, 0, 0]
+    pos = 0
+    for comp in range(0, 3):
+        if (len_str - pos) < 2:
+            raise ValueError('Incomplete time component')
+        time_comps[comp] = int(tstr[pos:pos+2])
+        pos += 2
+        next_char = tstr[pos:pos+1]
+        if not next_char or comp >= 2:
+            break
+        if next_char != ':':
+            raise ValueError('Invalid time separator: %c' % next_char)
+        pos += 1
+    if pos < len_str:
+        if tstr[pos] != '.':
+            raise ValueError('Invalid microsecond component')
+        else:
+            pos += 1
+            len_remainder = len_str - pos
+            if len_remainder not in (3, 6):
+                raise ValueError('Invalid microsecond component')
+            time_comps[3] = int(tstr[pos:])
+            if len_remainder == 3:
+                time_comps[3] *= 1000
+    return time_comps
+
+def _parse_isoformat_time(tstr):
+    # Format supported is HH[:MM[:SS[.fff[fff]]]][+HH:MM[:SS[.ffffff]]]
+    len_str = len(tstr)
+    if len_str < 2:
+        raise ValueError('Isoformat time too short')
+    # This is equivalent to re.search('[+-]', tstr), but faster
+    tz_pos = (tstr.find('-') + 1 or tstr.find('+') + 1)
+    timestr = tstr[:tz_pos-1] if tz_pos > 0 else tstr
+    time_comps = _parse_hh_mm_ss_ff(timestr)
+    tzi = None
+    if tz_pos > 0:
+        tzstr = tstr[tz_pos:]
+        # Valid time zone strings are:
+        # HH:MM               len: 5
+        # HH:MM:SS            len: 8
+        # HH:MM:SS.ffffff     len: 15
+        if len(tzstr) not in (5, 8, 15):
+            raise ValueError('Malformed time zone string')
+        tz_comps = _parse_hh_mm_ss_ff(tzstr)
+        if all(x == 0 for x in tz_comps):
+            tzi = timezone.utc
+        else:
+            tzsign = -1 if tstr[tz_pos - 1] == '-' else 1
+            td = timedelta(hours=tz_comps[0], minutes=tz_comps[1],
+                           seconds=tz_comps[2], microseconds=tz_comps[3])
+            tzi = timezone(tzsign * td)
+    time_comps.append(tzi)
+    return time_comps
+
+def fromisoformat(date_string):
+        """
+            validate a datetime from the code used in datetime.isoformat().
+            added in python 3.7, but pypy3 does not yet have it
+
+        """
+        if not isinstance(date_string, str):
+            raise TypeError('fromisoformat: argument must be str')
+
+        # Split this at the separator
+        dstr = date_string[0:10]
+        tstr = date_string[11:]
+
+        try:
+            date_components = _parse_isoformat_date(dstr)
+        except ValueError:
+            raise ValueError(f'Invalid isoformat string: {date_string!r}')
+
+        if tstr:
+            try:
+                time_components = _parse_isoformat_time(tstr)
+            except ValueError:
+                raise ValueError(f'Invalid isoformat string: {date_string!r}')
+        else:
+            time_components = [0, 0, 0, 0, None]
+        return date_string
 
 def to_decimal_4(d):
     """verifies that it is a decimal"""
     x = "{:.4f}".format(Decimal(d))
     return Decimal(x)
-
 
 def xml_bool(v):
     """verifies that it is a xml standard boolean"""
@@ -34,6 +123,12 @@ def xml_bool(v):
         return v
     return False
 
+def validDecimal_12_4(d):
+    """validate that d is dec(12,4)"""
+    FOURPLACES = Decimal(10)**-4
+    d.quantize(FOURPLACES, context=Context(traps=[Inexact]))
+    if d < Decimal("1000000000000"):
+        return True
 
 def var_check(v, l):
     """
@@ -53,6 +148,11 @@ class JsonPO(SimpleFormView):
         Returns a status and json response after validating and submitting a sendPO.
     """
     default_view = 'index'
+
+    def createXML(self):
+        """parse through the po dict and create the xml to be injected into the request"""
+        header = '<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ns1=\"http://www.promostandards.org/WSDL/PO/1.0.0/\" xmlns:ns2=\"http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/\"><SOAP-ENV:Header/>'
+
 
     # Make sure this is only accessible by apps you want as it is open
     # or add authentication protection
@@ -144,18 +244,29 @@ class JsonPO(SimpleFormView):
     def test(self):
         """
             test the service using exampleSimplePO.json
-            *** MAKE SURE to SET the test link for the company (or receiveTest below) in the DB so that it doesn't hit the production with this test! ***
-            currently don't have separate fields for test urls
-            or create a new company which hits http://localhost/jsonpo/receiveTest/ to return the xml to you to view
+            1) Create a "TEST" company which hits hits the receiveTest (http://localhost/jsonpo/receiveTest/)
+            and returns the xml that was sent
+            OR
+            2) Change companyID in the exampleSimplePO.json and set that company's PO url to their
+            test link to pass it to the company.
+            *** MAKE SURE to SET the test link for the company in the DB so
+            that it doesn't hit the production with this test! ***
+            PS_utils currently doesn't pull separate fields for test urls into the db
         """
         with open('exampleSimplePO.json') as json_file:
             req_json = json.load(json_file)
+        if req_json['companyID'] == 0:
+            c = db.session.query(Company).filter(Company.company_name=='TEST').first()
+            if not c:
+                data = '{"Error": "Missing a TEST company"}'
+                return data, 500, {'Content-Type': 'application/json'}
+            req_json['companyID'] = c.id
         return self.processPO(req_json)
 
     @expose('/receiveTest/', methods=['GET', 'POST'])
     @csrf.exempt
     def receiveTest(self):
-        """return the xml received"""
+        """return the xml received in the ServiceMessage.description"""
         sent = html.escape("Sent: ({})".format(request.data))
         logging.error(sent)
         data = u'<?xml version="1.0" encoding="UTF-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><SendPOResponse xmlns="http://www.promostandards.org/WSDL/PO/1.0.0/"><ServiceMessageArray><ServiceMessage><code>999</code><description>'
@@ -244,10 +355,10 @@ class JsonPO(SimpleFormView):
                     And(lambda s: var_check(s, 64),
                         error='"orderNumber" should evaluate to varchar(64)'),
                 "orderDate":
-                    And(Const(Use(datetime.fromisoformat)),
+                    And(Const(Use(fromisoformat)),
                         Regex(r'{}'.format(rdatetime))),
                 Optional("lastModified"):
-                    And(Const(Use(datetime.fromisoformat)),
+                    And(Const(Use(fromisoformat)),
                         Regex(r'{}'.format(rdatetime))),
                 "totalAmount": And(Use(to_decimal_4), validDecimal_12_4),
                 Optional("paymentTerms"):  str,
@@ -333,10 +444,10 @@ class JsonPO(SimpleFormView):
                         Optional("unitPrice"): And(Use(to_decimal_4), validDecimal_12_4),
                         "lineItemTotal": And(Use(to_decimal_4), validDecimal_12_4),
                         Optional("requestedShipDate"):
-                            And(Const(Use(datetime.fromisoformat)),
+                            And(Const(Use(fromisoformat)),
                                 Regex(r'{}'.format(rdatetime))),
                         Optional("requestedInHands"):
-                            And(Const(Use(datetime.fromisoformat)),
+                            And(Const(Use(fromisoformat)),
                                 Regex(r'{}'.format(rdatetime))),
                         Optional("referenceSalesQuote"):
                             And(lambda s: var_check(s, 64),

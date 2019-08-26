@@ -1,6 +1,5 @@
 # choose your server in start.sh
 gunicorn
-eventlet
 # or uwsgi (only if using cpython instead of pypy3)
 uWSGI
 
