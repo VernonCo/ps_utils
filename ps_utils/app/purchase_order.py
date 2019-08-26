@@ -75,12 +75,12 @@ def _parse_isoformat_time(tstr):
             raise ValueError('Malformed time zone string')
         tz_comps = _parse_hh_mm_ss_ff(tzstr)
         if all(x == 0 for x in tz_comps):
-            tzi = timezone.utc
+            tzi = datetime.timezone.utc
         else:
             tzsign = -1 if tstr[tz_pos - 1] == '-' else 1
-            td = timedelta(hours=tz_comps[0], minutes=tz_comps[1],
+            td = datetime.timedelta(hours=tz_comps[0], minutes=tz_comps[1],
                            seconds=tz_comps[2], microseconds=tz_comps[3])
-            tzi = timezone(tzsign * td)
+            tzi = datetime.timezone(tzsign * td)
     time_comps.append(tzi)
     return time_comps
 
@@ -92,23 +92,18 @@ def fromisoformat(date_string):
         """
         if not isinstance(date_string, str):
             raise TypeError('fromisoformat: argument must be str')
-
         # Split this at the separator
         dstr = date_string[0:10]
         tstr = date_string[11:]
-
         try:
             date_components = _parse_isoformat_date(dstr)
         except ValueError:
             raise ValueError(f'Invalid isoformat string: {date_string!r}')
-
         if tstr:
             try:
                 time_components = _parse_isoformat_time(tstr)
             except ValueError:
                 raise ValueError(f'Invalid isoformat string: {date_string!r}')
-        else:
-            time_components = [0, 0, 0, 0, None]
         return date_string
 
 def to_decimal_4(d):
@@ -149,10 +144,31 @@ class JsonPO(SimpleFormView):
     """
     default_view = 'index'
 
+    def createXMLSubstring(self, obj):
+        ns1Array = ['orderType','orderNumber','orderDate','lastModified','totalAmount','paymentTerms',
+            'rush','OrderContactArray','ShipmentArray','LineItemArray','LineItem','lineNumber',
+            'lineReferenceId','lineType','allowPartialShipments','lineItemTotal','requestedShipDate',
+            'requestedInHandsDate','referenceSalesQuote','endCustomerSalesOrder','customerProductId',
+            'PartArray','termsAndConditions','salesChannel','promoCode','TaxInformationArray']
+        if isinstance(obj, list):
+            for v in obj:
+                self.createXMLSubstring(v)
+        elif isinstance(obj, dict):
+            for k,v in obj.items():
+                ns = 'ns' if k in ns1Array else 'shar'
+                self.XML += '<{}:{}>'.format(ns,k)
+                self.createXMLSubstring(v)
+                self.XML += '</{}:{}>'.format(ns,k)
+        else:
+            self.XML += '{}'.format(obj)
+
+
     def createXML(self):
         """parse through the po dict and create the xml to be injected into the request"""
-        header = '<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ns1=\"http://www.promostandards.org/WSDL/PO/1.0.0/\" xmlns:ns2=\"http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/\"><SOAP-ENV:Header/>'
-
+        self.XML += '<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.promostandards.org/WSDL/PO/1.0.0/" xmlns:shar="http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/">'
+        self.XML += '<soapenv:Header/><soapenv:Body><ns:SendPORequest>'
+        self.createXMLSubstring(self.PO)
+        self.XML += '</ns:SendPORequest></soapenv:Body></soapenv:Envelope>'
 
     # Make sure this is only accessible by apps you want as it is open
     # or add authentication protection
@@ -170,7 +186,6 @@ class JsonPO(SimpleFormView):
         """ diplay instructions for sending jsonPO"""
         return self.render_template('purchaseOrder/instructions.html')
 
-    @classmethod
     def processPO(self, req_json):
         companyID = req_json.pop('companyID', None)
         if not companyID or not isinstance(companyID, int):
@@ -182,17 +197,17 @@ class JsonPO(SimpleFormView):
             ])
             data = json.dumps(error)
             return data, 400, {'Content-Type': 'application/json'}
-        c = db.session.query(Company).get(companyID)
-        if not c:
+        self.company = db.session.query(Company).get(companyID)
+        if not self.company:
             error = dict(ServiceMessageArray=[
                 dict(Code=100, Description="ID (companyID) not found")
             ])
             data = json.dumps(error)
             return data, 500, {'Content-Type': 'application/json'}
         kw = {
-            "wsVersion": c.po_version,
-            "id": c.user_name,
-            "password": c.password,
+            "wsVersion": self.company.po_version,
+            "id": self.company.user_name,
+            "password": self.company.password,
             "PO": req_json['PO']
         }
         try:
@@ -209,22 +224,25 @@ class JsonPO(SimpleFormView):
             }
             data = json.dumps(error)
             return data, 400, {'Content-Type': 'application/json'}
-        data, htmlCode = self.sendPO(c, **kw)
+        data, htmlCode = self.sendPO(**kw)
         return data, htmlCode, {'Content-Type': 'application/json'}
 
-    @classmethod
-    def sendPO(self, company, **kw):
+    def sendPO(self, **kw):
         """send the request.  Can be used by index or a plugin"""
         htmlCode = 200
+        self.XML = ''
+        self.PO = kw
+        self.createXML()
         # TODO: add test links to the model and use 'if not PRODUCTION:' to switch to test
         client = SoapClient(serviceMethod='sendPO',
-                            serviceUrl=company.po_url,
-                            serviceWSDL=company.po_wsdl,
+                            serviceUrl=self.company.po_url,
+                            serviceWSDL=self.company.po_wsdl,
                             serviceCode='PO',
-                            serviceVersion=company.po_version,
+                            serviceVersion=self.company.po_version,
                             filters=False,
-                            values=False,
+                            values=True,
                             **kw)
+        client.XML = self.XML
         client.serviceCall()
         if client.data == 'Unable to get Response' or 'SoapFault' in client.data:
             htmlCode = 500
