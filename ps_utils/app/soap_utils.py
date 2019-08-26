@@ -320,9 +320,13 @@ class SoapClient():
             {'msg':'SoapFault: Error(3) on remote location {}: '.format(self.serviceUrl),
                 'wsdl':self.serviceUrl, 'location':False, 'doctor':d},
         ]
+        self.multiCallOnError = True
         if values:
-            self.values = values
-            self.rawXML()
+            if not isinstance(values,bool):
+                self.values = values
+                self.rawXML()
+            else:
+                self.multiCallOnError = False # POService gets called once with injected xml only
             self.callArray.insert(0,{'msg':'SoapFault: Error(1b) on  injected xml and location {}: '.format(self.serviceUrl),
                 'wsdl':local_wsdl, 'location':self.serviceUrl})
         self.error_msg = {'SoapFault':'No Response Available'}
@@ -370,19 +374,20 @@ class SoapClient():
                 self.setErrorMsg(args['msg'],e)
             else:  # does not need to try with doctor on injected correct xml
                 #try with schema doctor
-                try:
-                    if args['location']:
-                        client = Client(args['wsdl'], location=args['location'], plugins=[args['doctor']])
-                    else:
-                        client = Client(args['wsdl'], plugins=[args['doctor']])
-                    func = getattr(client.service, self.serviceMethod)
-                    self.data = func(**self.KW)
-                    self.response = str(client.last_received())
-                    self.check4Error(self.data)
-                    self.error_msg['SoapFault'] = False
-                    del client
-                except Exception as e:
-                   self.setErrorMsg(args['msg'],e)
+                if self.multiCallOnError:
+                    try:
+                        if args['location']:
+                            client = Client(args['wsdl'], location=args['location'], plugins=[args['doctor']])
+                        else:
+                            client = Client(args['wsdl'], plugins=[args['doctor']])
+                        func = getattr(client.service, self.serviceMethod)
+                        self.data = func(**self.KW)
+                        self.response = str(client.last_received())
+                        self.check4Error(self.data)
+                        self.error_msg['SoapFault'] = False
+                        del client
+                    except Exception as e:
+                        self.setErrorMsg(args['msg'],e)
         # assert False
         if not hasattr(self, 'data'):
             self.data = self.error_msg
