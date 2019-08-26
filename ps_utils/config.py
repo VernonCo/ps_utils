@@ -19,15 +19,19 @@ if os.getenv('FAB_STATIC_URL_PATH'):
 SECRET_KEY = "\2\1thisismyscretkey\1\2\e\y\y\h"
 
 PRODUCTION = os.getenv('ENVIRONMENT', False)
+if PRODUCTION:
+    # prevent race conditions trying to create permissions from multiple workers
+    FAB_UPDATE_PERMS = False
 
 DB_AUTH = os.getenv('DB_AUTH', 'admin')
 DB_PASS = os.getenv('DB_PASS', 'password')
 DB_HOST = os.getenv('DB_HOST', 'db')
 DB_PORT = os.getenv('DB_PORT', '3306')
+DATABASE = os.getenv('DATABASE', 'ps_utils')
 
 # The SQLAlchemy connection string.
 # SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
-SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}:{}/ps_utils'.format(DB_AUTH,DB_PASS,DB_HOST,DB_PORT)
+SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}:{}/{}'.format(DB_AUTH, DB_PASS, DB_HOST, DB_PORT, DATABASE)
 # SQLALCHEMY_DATABASE_URI = 'postgresql://root:password@localhost/myapp'
 
 
