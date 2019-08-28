@@ -1,5 +1,5 @@
 import html, json, logging
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Context, Decimal, Inexact
 
 from flask import Response, request
@@ -75,12 +75,12 @@ def _parse_isoformat_time(tstr):
             raise ValueError('Malformed time zone string')
         tz_comps = _parse_hh_mm_ss_ff(tzstr)
         if all(x == 0 for x in tz_comps):
-            tzi = datetime.timezone.utc
+            tzi = timezone.utc
         else:
             tzsign = -1 if tstr[tz_pos - 1] == '-' else 1
             td = datetime.timedelta(hours=tz_comps[0], minutes=tz_comps[1],
                            seconds=tz_comps[2], microseconds=tz_comps[3])
-            tzi = datetime.timezone(tzsign * td)
+            tzi = timezone(tzsign * td)
     time_comps.append(tzi)
     return time_comps
 
