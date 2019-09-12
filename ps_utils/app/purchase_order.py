@@ -145,7 +145,7 @@ class JsonPO(SimpleFormView):
     default_view = 'index'
 
     def createXMLSubstring(self, obj):
-        ns1Array = ['orderType','orderNumber','orderDate','lastModified','totalAmount','paymentTerms',
+        ns1Array = ['PO','orderType','orderNumber','orderDate','lastModified','totalAmount','paymentTerms',
             'rush','OrderContactArray','ShipmentArray','LineItemArray','LineItem','lineNumber',
             'lineReferenceId','lineType','allowPartialShipments','lineItemTotal','requestedShipDate',
             'requestedInHandsDate','referenceSalesQuote','endCustomerSalesOrder','customerProductId',

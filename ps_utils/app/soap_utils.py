@@ -374,21 +374,22 @@ class SoapClient():
                 self.setErrorMsg(args['msg'],e)
             else:  # does not need to try with doctor on injected correct xml
                 #try with schema doctor
-                if self.multiCallOnError:
-                    try:
-                        if args['location']:
-                            client = Client(args['wsdl'], location=args['location'], plugins=[args['doctor']])
-                        else:
-                            client = Client(args['wsdl'], plugins=[args['doctor']])
-                        func = getattr(client.service, self.serviceMethod)
-                        self.data = func(**self.KW)
-                        self.response = str(client.last_received())
-                        self.check4Error(self.data)
-                        self.error_msg['SoapFault'] = False
-                        del client
-                    except Exception as e:
-                        self.setErrorMsg(args['msg'],e)
-        # assert False
+                try:
+                    if args['location']:
+                        client = Client(args['wsdl'], location=args['location'], plugins=[args['doctor']])
+                    else:
+                        client = Client(args['wsdl'], plugins=[args['doctor']])
+                    func = getattr(client.service, self.serviceMethod)
+                    self.data = func(**self.KW)
+                    self.response = str(client.last_received())
+                    self.check4Error(self.data)
+                    self.error_msg['SoapFault'] = False
+                    del client
+                except Exception as e:
+                    self.setErrorMsg(args['msg'],e)
+
+        if not self.multiCallOnError:
+            self.callIndex = 3
         if not hasattr(self, 'data'):
             self.data = self.error_msg
         return self.data
