@@ -21,10 +21,7 @@ csrf = CSRFProtect(app)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    """
-        prevents sqlalchemy pool exceeding 10 by leaving connections hanging
-        with production evenlet
-    """
+    """prevents sqlalchemy pool exceeding 10 by leaving connections hanging"""
     db.session.remove()
 
 
