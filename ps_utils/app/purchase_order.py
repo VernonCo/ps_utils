@@ -84,6 +84,14 @@ def _parse_isoformat_time(tstr):
     time_comps.append(tzi)
     return time_comps
 
+def escape( str ):
+    str = str.replace("&", "&amp;")
+    str = str.replace("<", "&lt;")
+    str = str.replace(">", "&gt;")
+    str = str.replace('"', "&quot;")
+    str = str.replace("'", "&apos;")
+    return str
+
 def fromisoformat(date_string):
         """
             validate a datetime from the code used in datetime.isoformat().
@@ -160,15 +168,19 @@ class JsonPO(SimpleFormView):
                 self.createXMLSubstring(v)
                 self.XML += '</{}:{}>'.format(ns,k)
         else:
-            self.XML += '{}'.format(obj)
+            if isinstance(obj,str):
+                self.XML += '{}'.format(escape(obj))
+            else:
+                self.XML += '{}'.format(obj)
 
 
     def createXML(self):
         """parse through the po dict and create the xml to be injected into the request"""
-        self.XML += '<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.promostandards.org/WSDL/PO/1.0.0/" xmlns:shar="http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/">'
+        self.XML += '<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.promostandards.org/WSDL/PO/1.0.0/" xmlns:shar="http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/">'
         self.XML += '<soapenv:Header/><soapenv:Body><ns:SendPORequest>'
         self.createXMLSubstring(self.PO)
         self.XML += '</ns:SendPORequest></soapenv:Body></soapenv:Envelope>'
+        # logging.error('XML: {}'.format(self.XML))
 
     # Make sure this is only accessible by apps you want as it is open
     # or add authentication protection

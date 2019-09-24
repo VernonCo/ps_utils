@@ -16,11 +16,8 @@
                 "--no-debugger",
                 "--no-reload"
             ],
-            "debugOptions": [
-                "WaitOnAbnormalExit",
-                "WaitOnNormalExit",
-                "RedirectOutput"
-            ]
+            "jinja": true,
+            "showReturnValue": true
         }
     ]
 }
