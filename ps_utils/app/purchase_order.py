@@ -84,13 +84,13 @@ def _parse_isoformat_time(tstr):
     time_comps.append(tzi)
     return time_comps
 
-def escape( str ):
-    str = str.replace("&", "&amp;")
-    str = str.replace("<", "&lt;")
-    str = str.replace(">", "&gt;")
-    str = str.replace('"', "&quot;")
-    str = str.replace("'", "&apos;")
-    return str
+def escape( data_obj ):
+    data_obj = data_obj.replace("&", "&amp;")
+    data_obj = data_obj.replace("<", "&lt;")
+    data_obj = data_obj.replace(">", "&gt;")
+    data_obj = data_obj.replace('"', "&quot;")
+    data_obj = data_obj.replace("'", "&apos;")
+    return data_obj
 
 def fromisoformat(date_string):
         """
@@ -151,6 +151,7 @@ class JsonPO(SimpleFormView):
         Returns a status and json response after validating and submitting a sendPO.
     """
     default_view = 'index'
+    XML = ''
 
     def createXMLSubstring(self, obj):
         ns1Array = ['PO','orderType','orderNumber','orderDate','lastModified','totalAmount','paymentTerms',
@@ -180,7 +181,8 @@ class JsonPO(SimpleFormView):
         self.XML += '<soapenv:Header/><soapenv:Body><ns:SendPORequest>'
         self.createXMLSubstring(self.PO)
         self.XML += '</ns:SendPORequest></soapenv:Body></soapenv:Envelope>'
-        # logging.error('XML: {}'.format(self.XML))
+        logging.error('XML: {}'.format(self.XML))
+        # assert False
 
     # Make sure this is only accessible by apps you want as it is open
     # or add authentication protection
