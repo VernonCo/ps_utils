@@ -101,7 +101,7 @@ class Inventory(SimpleFormView):
         prodID = request.values.get('productID', 'BG344')
         if request.method == 'GET':
             return self.render_template(
-                    'inventory/requestForm.html', companies=companies, title=form_title, id=int(cid),
+                    'inventory/requestForm.html', companies=companies, form_title=form_title, id=int(cid),
                     prodID=prodID, form=self.form, message = "Form was submitted", data=False
                     )
         # else deal with post

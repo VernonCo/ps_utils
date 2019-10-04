@@ -25,6 +25,9 @@
 
     <div class="panel panel-primary">
         {% if not table %}
+            <a class="fa fa-question-circle" style="float:right;padding-right:10px;"
+                href="https://github.com/VernonCo/ps_utils/wiki/Order-Status-Form"
+                target="_blank">Help</a>
             {% call lib.accordion_tag('requestForm',form_title, False) %}
             <form  action="" method="POST" class="form-inline">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
