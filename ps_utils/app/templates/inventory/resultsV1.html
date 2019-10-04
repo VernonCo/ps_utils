@@ -24,6 +24,9 @@
 
     <div class="panel panel-primary">
         {% if not table %}
+            <a class="fa fa-question-circle" style="float:right;padding-right:10px;"
+                href="https://github.com/VernonCo/ps_utils/wiki/Inventory-Form"
+                target="_blank">Help</a>
             {% call lib.accordion_tag('requestForm',form_title, False) %}
             {% include 'inventory/form-inline.html' %}
             {% endcall %}
