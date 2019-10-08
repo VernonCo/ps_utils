@@ -28,5 +28,4 @@ def shutdown_session(exception=None):
     """prevents sqlalchemy pool exceeding 10 by leaving connections hanging"""
     db.session.remove()
 
-
 from . import views

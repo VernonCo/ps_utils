@@ -12,12 +12,12 @@ else
     echo "There is no script $PRE_START_PATH"
 fi
 
-
 if test "$FLASK_ENV" = "development" ; then
     pypy3 run.py
 else
     nginx -t && /etc/init.d/nginx restart
-    # uwsgi is having issues with pypy3 must change nginx.conf to work with uwsgi socket
+    # uwsgi is having issues with pypy3
+    # if using uwsgi with python3, must change nginx.conf to work with uwsgi socket
     # uwsgi --ini uwsgi.ini
 
     # gunicorn

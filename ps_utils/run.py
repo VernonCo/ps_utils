@@ -1,4 +1,4 @@
-import os
+#!/bin/python3
 from app import app
 
 # Following code is executed when running the server directly, for development
