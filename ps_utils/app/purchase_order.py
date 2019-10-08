@@ -609,7 +609,8 @@ class JsonPO(SimpleFormView):
                                                                 'Pms', 'Rgb',
                                                                 'Thread'
                                                             ]),
-                                                    "LayerOrStopArray": {
+                                                    "LayerOrStopArray": [{
+                                                        "LayerOrStop":{
                                                         "color":
                                                             And(lambda s: var_check(s, 64),
                                                                 error='Layer "color" should evaluate to varchar(64)'),
@@ -617,7 +618,8 @@ class JsonPO(SimpleFormView):
                                                             And(lambda s: var_check(s, 64),
                                                                 error='"nameOrNumber" should evaluate to varchar(64)'),
                                                         "description": str
-                                                    }
+                                                        }}
+                                                    ]
                                                 },
                                                 Optional("TypesetArray"): [{
                                                     "Typeset":{

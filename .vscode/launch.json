@@ -9,8 +9,8 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
-            "program": "${workspaceFolder}/venv/bin/flask",
-            "envFile": "${workspaceFolder}/../.env",
+            "program": "${workspaceFolder}/ps_utils/run.py",
+            "envFile": "/home/stuartz/Applications/.env",
             "args": [
                 "run",
                 "--no-debugger",

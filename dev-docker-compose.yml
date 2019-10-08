@@ -6,14 +6,16 @@ services:
     environment:
 #      - local=true
       - TERM=xterm
-      - ENVIRONMENT= # use 1 or production for production
+      - ENVIRONMENT= # use 1 or production for production environment.  Look for PRODUCTION variable in code.
       - DB_AUTH=youruser
       - DB_PASS=yourpassword
       - DB_HOST=db
       - DB_PORT=3306
       - CONFIG_FILE=config  # or config-4passwords if bringing over previous passwords
       - FLASK_APP="app:app"   # set to run flask fab create-admin (see README.md).
-      - FLASK_ENV=development
+      - FLASK_ENV=development       # comment out to run without debugging
+      - GUWORKERS_CONNECTIONS=1001  #needed if FLASK_ENV  is commented out
+      - GUWORKERS=4                 #needed if FLASK_ENV  is commented out
       - SERVER_PATH=/app
       - FAB_STATIC_FOLDER=/app/app/static/appbuilder
       - FAB_STATIC_URL_PATH=/appbuilder
@@ -27,7 +29,11 @@ services:
       # - SMTP_PASSWORD=      # only used if auth required
       # - SMTP_FQDN=           # used for changing from server's host to a different FQDN
       # - SMTP_DEV_TO=          # used for sending all emails to in development environment
-    ports: ['8089:80', '5001:5000']
+# With FLASK_ENV for dev, use '127.0.0.1:8089:9000'  9000 will be werkzeug in debug mode
+    ports: ['9000:9000']
+# When FLASK_ENV is commented out to run production, use ['127.0.0.1:8089:80']
+# Port 80 is nginx with caching for static files and proxies gunicorn's 9000
+#    ports: ['127.0.0.1:8089:80']
 # to connect to local files for development
     volumes:
       - ./ps_utils:/app
@@ -43,8 +49,8 @@ services:
     mem_limit: 512m
     pids_limit: 50
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
-      interval: 1m30s
+      test: ["CMD", "wget", "-O-", "http://localhost:9000"]  # remove ':9000' for production
+      interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s

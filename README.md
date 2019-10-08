@@ -1,7 +1,7 @@
 # PS Utilities -- A JSON REST API for Promo Standard Services
 ## (including forms for manual entry)
 -   Can update a db with a list of companies and their working endpoints (/update).
--   Returns json or table html for ajax requests to services (ie returnType=json or returnType=table)
+-   Returns json or html table for ajax form_encoded POST to services (ie returnType=json or returnType=table)
 -   Or has forms for manual use
 -   Can use a plugin to update your ERP order status
 -   Can import username/passwd service authentications from previous database
@@ -21,6 +21,8 @@ The PO also only works with the vernonco docker image (vernonco/ps-utils:dev) as
 
 ## Run locally or with docker-compose
 ### To run locally and/or use with vscode
+Requires python 3.7 +
+
 first create venv
 `python3 -m venv venv`
 
@@ -90,8 +92,8 @@ Click Debug -> Open current configurations.  Add following to end of configurati
                 "type": "python",
                 "request": "launch",
                 "stopOnEntry": false,
-                "program": "${workspaceFolder}/venv/bin/flask",
-                "envFile": "${workspaceFolder}/../.env",
+                "program": "${workspaceFolder}/ps_utils/run.py",
+                "envFile": "absolute_path_to/.env",
                 "args": [
                     "run",
                     "--no-debugger",
@@ -105,12 +107,12 @@ Click Debug -> Open current configurations.  Add following to end of configurati
             }
 
 ### add to ../.env to keep envirnoment variables out of your code
-    FLASK_APP=ps_utils/run.py
+    FLASK_APP=ps_utils/app
     DB_AUTH=youruser
     DB_PASS=yourpassword
     DB_HOST=yourhost
     DB_PORT=yourhostport
-    SERVER_PATH=/path to/ps_
+    SERVER_PATH=/path to/ps_utils
 
     CONFIG_FILE='config'   # or config-4passwords to move existing credentials
     #for passwords move

@@ -3,11 +3,15 @@ import logging, os
 from flask import Flask
 from flask_appbuilder import SQLA, AppBuilder
 from flask_wtf.csrf import CSRFProtect
+from werkzeug.contrib.fixers import ProxyFix
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app)
 app.config.from_object(os.getenv("CONFIG_FILE"))
+
 PRODUCTION = app.config.get('PRODUCTION')
+
 # Logging configuration
 logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 if not PRODUCTION:
@@ -26,16 +30,3 @@ def shutdown_session(exception=None):
 
 
 from . import views
-
-"""
-from sqlalchemy.engine import Engine
-from sqlalchemy import event
-
-#Only include this for SQLLite constraints
-@event.listens_for(Engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    # Will force sqllite contraint foreign keys
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
-"""

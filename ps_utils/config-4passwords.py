@@ -16,7 +16,7 @@ if os.getenv('FAB_STATIC_URL_PATH'):
     FAB_STATIC_URL_PATH = os.getenv('FAB_STATIC_URL_PATH')
 
 # Your App secret key
-SECRET_KEY = "\2\1thisismyscretkey\1\2/e/y/y/h"
+SECRET_KEY = os.getenv('SECRET_KEY', "\2\1thisismyscretkey\1\2/e/y/y/h")
 
 # pass these through the environment variables or set default
 PRODUCTION = os.getenv('ENVIRONMENT', False)
@@ -30,6 +30,7 @@ DATABASE = os.getenv('DATABASE', 'ps_utils')
 # SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
 SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}:{}/{}'.format(DB_AUTH, DB_PASS, DB_HOST, DB_PORT, DATABASE)
 # SQLALCHEMY_DATABASE_URI = 'postgresql://root:password@localhost/myapp'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # used for transfering password from previous db.
 # Change driver and connection string as needed in view.py updatePasswords
@@ -170,4 +171,3 @@ APP_THEME = "cerulean.css"
 # APP_THEME = "spacelab.css"
 # APP_THEME = "united.css"
 # APP_THEME = "yeti.css"
-SQLALCHEMY_TRACK_MODIFICATIONS = False

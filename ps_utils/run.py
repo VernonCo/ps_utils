@@ -1,3 +1,6 @@
+import os
 from app import app
 
-app.run(host='0.0.0.0',port='80',debug=True)
+# Following code is executed when running the server directly, for development
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9000)
