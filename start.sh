@@ -12,14 +12,14 @@ else
     echo "There is no script $PRE_START_PATH"
 fi
 
-
 if test "$FLASK_ENV" = "development" ; then
     pypy3 run.py
 else
     nginx -t && /etc/init.d/nginx restart
-    # uwsgi is having issues with pypy3 must change nginx.conf to work with uwsgi socket
+    # uwsgi is having issues with pypy3
+    # if using uwsgi with python3, must change nginx.conf to work with uwsgi socket
     # uwsgi --ini uwsgi.ini
 
     # gunicorn
-    gunicorn --name 'Gunicorn App Gevent' --chdir /app/src --bind 0.0.0.0:9000 server:app -k gevent --worker-connections $GUWORKERS_CONNECTIONS --workers $GUWORKERS --log-file /dev/null
+    gunicorn --name 'Gunicorn App Gevent'  --bind 0.0.0.0:9000 app:app -k gevent --worker-connections $GUWORKERS_CONNECTIONS --workers $GUWORKERS --log-file /dev/null
 fi

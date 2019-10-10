@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
-            "program": "${workspaceFolder}/ps_utils/run.py",
+            "program": "${workspaceFolder}/ps_utils/vs_debug.py",
             "envFile": "/home/stuartz/Applications/.env",
             "args": [
                 "run",

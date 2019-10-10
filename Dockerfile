@@ -18,7 +18,7 @@ RUN DEBIAN_FRONTEND="noninteractive" \
 
 
 #suds-py fix for ref in wsdls
-COPY ./venv/lib/python3.6/site-packages/suds/xsd/sxbase.py /usr/local/lib/python3.7/site-packages/suds/xsd/sxbase.py
+COPY ./sxbase.py /usr/local/site-packages/suds/xsd/sxbase.py
 
 # COPY ./entrypoint.sh /entrypoint.sh
 
