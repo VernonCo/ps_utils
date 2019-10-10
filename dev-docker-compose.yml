@@ -29,11 +29,7 @@ services:
       # - SMTP_PASSWORD=      # only used if auth required
       # - SMTP_FQDN=           # used for changing from server's host to a different FQDN
       # - SMTP_DEV_TO=          # used for sending all emails to in development environment
-# With FLASK_ENV for dev, use '127.0.0.1:8089:9000'  9000 will be werkzeug in debug mode
-    ports: ['9000:9000']
-# When FLASK_ENV is commented out to run production, use ['127.0.0.1:8089:80']
-# Port 80 is nginx with caching for static files and proxies gunicorn's 9000
-#    ports: ['127.0.0.1:8089:80']
+   ports: ['127.0.0.1:8089:80']
 # to connect to local files for development
     volumes:
       - ./ps_utils:/app

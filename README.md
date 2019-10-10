@@ -92,7 +92,7 @@ Click Debug -> Open current configurations.  Add following to end of configurati
                 "type": "python",
                 "request": "launch",
                 "stopOnEntry": false,
-                "program": "${workspaceFolder}/ps_utils/run.py",
+                "program": "${workspaceFolder}/ps_utils/vs_debug.py",
                 "envFile": "absolute_path_to/.env",
                 "args": [
                     "run",

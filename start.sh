@@ -21,5 +21,5 @@ else
     # uwsgi --ini uwsgi.ini
 
     # gunicorn
-    gunicorn --name 'Gunicorn App Gevent' --chdir /app/src --bind 0.0.0.0:9000 server:app -k gevent --worker-connections $GUWORKERS_CONNECTIONS --workers $GUWORKERS --log-file /dev/null
+    gunicorn --name 'Gunicorn App Gevent'  --bind 0.0.0.0:9000 app:app -k gevent --worker-connections $GUWORKERS_CONNECTIONS --workers $GUWORKERS --log-file /dev/null
 fi
