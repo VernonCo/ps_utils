@@ -51,7 +51,7 @@ docker-compose files have the option of running the db as a container or comment
 in other words, this needs ran to access the utilities.
 
 ### local
-    export FLASK_APP="app:app"
+    export FLASK_APP="run:app"
     flask fab create-admin
 
 ### on container

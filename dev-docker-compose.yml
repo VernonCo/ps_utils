@@ -12,7 +12,7 @@ services:
       - DB_HOST=db
       - DB_PORT=3306
       - CONFIG_FILE=config  # or config-4passwords if bringing over previous passwords
-      - FLASK_APP="app:app"   # set to run flask fab create-admin (see README.md).
+      - FLASK_APP=run:app   # set to run flask fab create-admin (see README.md).
       - FLASK_ENV=development       # comment out to run without debugging
       - GUWORKERS_CONNECTIONS=1001  #needed if FLASK_ENV  is commented out
       - GUWORKERS=4                 #needed if FLASK_ENV  is commented out
