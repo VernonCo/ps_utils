@@ -1,0 +1,48 @@
+{% extends "appbuilder/base.html" %}
+{% block head_css %}
+{{ super() }}
+<style>
+    .alert-error {background-color: coral;font-size: large;}
+</style>
+{% endblock %}
+{% block content %}
+<div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">{{form_title}}
+                    <a class="fa fa-question-circle" style="float:right;padding-right:10px;"
+                        href="https://github.com/VernonCo/ps_utils/wiki/PPC-Form"
+                        target="_blank">Help</a>
+                </h4>
+        </div>
+        <div id="Home" class="tab-pane active">
+{% include service_path + '/form.html' %}
+        </div></div>
+
+{% endblock %}
+{% block tail %}
+<!--script type="text/javascript">
+    //for getting version by ajax call
+    var csrf_token = "{{ csrf_token() }}";
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
+            }
+        }
+    });
+</script>
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='js/getVersion.js')}}"></script-->
+<script>
+    function setRequired(obj) {
+        if(obj.value == 'getConfigurationAndPricing'){
+            $(".PPC").show();
+            // alway remove the class before adding so that it does not double up by accident
+            $(".ppcInput").removeClass('required').addClass('required');
+        }else if (obj.value != 'getConfigurationAndPricing'){
+            $(".PPC").hide();
+            $(".ppcInput").removeClass('required');
+        }
+    }
+</script>
+{% endblock %}

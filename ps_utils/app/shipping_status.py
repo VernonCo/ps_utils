@@ -99,7 +99,7 @@ class ShippingStatus(SimpleFormView):
     default_view = 'index'
     companies = db.session.query(Company).filter(
             and_(Company.shipping_url != None, Company.user_name != None)
-        ).all()
+        ).order_by(Company.company_name).all()
 
     def get_shipping_status(self, c, values, **kw):
         returnType = kw.pop('returnType') if 'returnType' in kw else request.form['returnType']
@@ -133,9 +133,8 @@ class ShippingStatus(SimpleFormView):
             return data, htmlCode,  {'Content-Type':'applicaion/json'}
 
         if errorFlag and returnType != 'internal':
-            id = c.id
-            return self.render_template( 'shipping/requestForm.html', companies=self.companies, id=int(id),
-                    form_title=form_title, form=self.form, message = "Form was submitted"
+            return self.render_template( 'shipping/requestForm.html', companies=self.companies, cid = c.id,
+                    form_title=form_title, form=self.form, message = "Form was submitted", service_path='shipping'
                     )
 
         # else redirct to results page
@@ -165,17 +164,19 @@ class ShippingStatus(SimpleFormView):
             if returnType == 'internal':
                 return result
         return self.render_template(
-            'shipping/results.html', checkRow=checkRow, c=c, tableSet=tableSet, form_title=form_title,
-            companies=self.companies, table=table, error=error, formValues=formValues
+            'shipping/results.html', checkRow=checkRow, cid=c.id, tableSet=tableSet, form_title=form_title,
+            companies=self.companies, table=table, error=error, formValues=formValues, service_path='shipping'
             )
 
     @expose('/index/', methods=['GET', 'POST'])
     def index(self, **kw):
         if request.method == 'GET':
             form_title = 'Ship Status Request Form'
-            id = request.values.get('companyID', 126)
-            return self.render_template( 'shipping/requestForm.html', companies=self.companies, id=int(id),
-                    form_title=form_title, form=self.form, message = "Form was submitted", data=False
+            cid = request.values.get('companyID', 126)
+            return self.render_template( 'shipping/requestForm.html',
+                    companies=self.companies, cid = int(cid),
+                    form_title=form_title, form=self.form, message = "Form was submitted",
+                    data=False, service_path='shipping'
                     )
         # else deal with post
         c = db.session.query(Company).get(int(request.form['companyID']))

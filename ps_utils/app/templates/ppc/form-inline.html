@@ -1,0 +1,67 @@
+    <form  action="" method="POST" class="form-inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="currency" value="USD">
+        <div class="form-group">
+            <label for="companyID">Supplier
+                    <strong style="color: red">*</strong></label>
+                    {% include 'companySelect.html' %}
+        </div>
+        <div class="form-group">
+            <label for="productId" control-label="">Product SKU
+                <strong style="color: red">*</strong></label>
+            <input type="text" name="productId" value="{{prodID}}">
+        </div>
+        <div class="form-group">
+            <label for="serviceMethod" control-label="">Service
+                <strong style="color: red">*</strong></label>
+                <select id="serviceMethod" name="serviceMethod" required="" onclick="setRequired(this)">
+                    <option value="" selected>-- Select One --</option>
+                    <option value="getAvailableCharges">Get Available Charges</option>
+                    <option value="getFobPoints">Get FOB Locations</option>
+                    <option value="getConfigurationAndPricing">Get Product, Pricing, & Config</option>
+                </select>
+        </div>
+        <div class="form-group PPC">
+            <label for="fobId">fobid required<br>Use 'Get FOB Locations' if unkown<strong style="color: red">*</strong></label>
+            <input class="ppcInput" name="fobId" type="text" maxlength="64">
+        </div>
+        <div class="form-group">
+            <label for="priceType">Price Type<strong style="color: red">*</strong></label>
+            <select  name="priceType" >
+                <option value="Customer">Customer</option>
+                <option value="List">List</option>
+                <option value="Net">Net</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="configurationType">Config Type<strong style="color: red">*</strong></label>
+            <select  name="configurationType" >
+                <option value="Blank">Blank</option>
+                <option value="Decorated">Decorated</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="localizationCountry">Country<strong style="color: red">*</strong></label>
+            <select name="localizationCountry" >
+                <option value="US">US</option>
+                <option value="CA">Canada</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="localizationLanguage">Language<strong style="color: red">*</strong></label>
+            <select name="localizationLanguage" >
+                <option value="en">English</option>
+                <option value="fr">French</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="returnType" control-label="">Return Type
+                <strong style="color: red">*</strong></label>
+                {% include 'returnTypeSelect.html' %}
+        </div>
+        <div class="well well-sm">
+            <button type="submit" class="btn  btn-sm btn-primary">
+                    <i class="fa fa-search"></i> Submit
+                </button>
+        </div>
+    </form>

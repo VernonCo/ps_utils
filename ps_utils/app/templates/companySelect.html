@@ -1,7 +1,11 @@
-<select id="companyID" name="companyID" required="">
+<select autocomplete="off"  id="companyID" name="companyID"
+{% if service_path in ['inventory','product'] %}
+    onclick="getVersion()"
+{% endif %}
+    required="">
     <option value=""> -- Select One -- </option>
     {% for c in companies %}
-        {% if id == c.id %}
+        {% if cid == c.id %}
             <option value="{{c.id}}" selected >{{c}}</option>
         {% else %}
             <option value="{{c.id}}" >{{c}}</option>

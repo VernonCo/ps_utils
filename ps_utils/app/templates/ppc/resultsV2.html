@@ -9,9 +9,12 @@
     <link type="text/css" href="{{url_for('static',filename='DataTables-1.10.18/css/jquery.dataTables.min.css')}}" rel="stylesheet">
     <link type="text/css" href="{{url_for('static',filename='jquery-ui-1.12.1/jquery-ui.theme.min.css')}}" rel="stylesheet">
     <style>
-            .panel-primary  .panel-title, .panel-title {
-                color: #0f87ec;
-                }
+        .panel-primary .panel-heading, .panel-success .panel-heading, .panel-warning .panel-heading,
+        .panel-danger .panel-heading, .panel-info .panel-heading, .panel-primary .panel-title,
+        .panel-success .panel-title, .panel-warning .panel-title, .panel-danger .panel-title,
+        .panel-info .panel-title {
+            color: #0f87ec;
+            }
     </style>
 
     {% endblock %}
@@ -25,7 +28,7 @@
                 href="https://github.com/VernonCo/ps_utils/wiki/Inventory-Form"
                 target="_blank">Help</a>
             {% call lib.accordion_tag('requestForm',form_title, False) %}
-                {% include service_path + '/form.html' %}
+            {% include 'inventory/form-inline.html' %}
             {% endcall %}
         {%endif %}
         {% call lib.accordion_tag('productTable',data['vendorName'] + " Listings for Product ID #" + prodID, True) %}

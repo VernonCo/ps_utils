@@ -9,10 +9,8 @@
     <link type="text/css" href="{{url_for('static',filename='DataTables-1.10.18/css/jquery.dataTables.min.css')}}" rel="stylesheet">
     <link type="text/css" href="{{url_for('static',filename='jquery-ui-1.12.1/jquery-ui.theme.min.css')}}" rel="stylesheet">
     <style>
-        .panel-primary .panel-heading, .panel-success .panel-heading, .panel-warning .panel-heading,
-        .panel-danger .panel-heading, .panel-info .panel-heading, .panel-primary .panel-title,
-        .panel-success .panel-title, .panel-warning .panel-title, .panel-danger .panel-title,
-        .panel-info .panel-title {
+
+        .panel-primary  .panel-title, .panel-title {
             color: #0f87ec;
             }
         th {text-align: center;}
@@ -25,70 +23,11 @@
 
     <div class="panel panel-primary">
         {% if not table %}
-            <a class="fa fa-question-circle" style="float:right;padding-right:10px;"
+            <a class="fa fa-question-circle" style="float:right;padding-right:10px;margin-top: 10px;"
                 href="https://github.com/VernonCo/ps_utils/wiki/Order-Status-Form"
                 target="_blank">Help</a>
             {% call lib.accordion_tag('requestForm',form_title, False) %}
-            <form  action="" method="POST" class="form-inline">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <div class="form-group">
-                    <label for="companyID">Supplier
-                            <strong style="color: red">*</strong></label>
-                    <select id="companyID" name="companyID" required="">
-                        <option value=""> -- Select One -- </option>
-                        {% for c in companies %}
-                            {% if data['vendorID'] == c.id %}
-                                <option value="{{c.id}}" selected >{{c}}</option>
-                            {% else %}
-                                <option value="{{c.id}}" >{{c}}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="queryType" control-label="">
-                        Query Type
-                        <strong style="color: red">*</strong>
-                    </label>
-                    <select id="queryType" name="queryType" required="">
-                        <option value="">-- Select One --</option>
-                        <option value="1">PO Search</option>
-                        <option value="2">SO Search</option>
-                        <option value="3">Last Update Search</option>
-                        <option value="4">All Open Orders</option>
-                    </select>
-                </div>
-                <div class="form-group" id="refNumTR">
-                    <label for="refNum" control-label="">
-                        Reference Number
-                    </label>
-                    <input class="form-control" id="refNum" name="refNum" placeholder="PO or SO Reference Number"
-                        required="" type="text" value="{{data.refNum}}">
-                </div>
-                <div class="form-group" id="refDateTR">
-                    <label for="refNum" control-label="">
-                        Begin Date
-                    </label>
-                    <div class="input-group date appbuilder_date" id="datepicker">
-                        <span class="input-group-addon"><i class="fa fa-calendar cursor-hand"></i></span>
-                        <input class="form-control" data-format="yyyy-MM-dd" id="refDate" name="refDate" placeholder="YYYY/MM/DD"
-                            type="text" value="{{data.refDate}}"></div>
-                </div>
-                <div class="form-group">
-                    <label for="returnType" control-label="">Return Type
-                        <strong style="color: red">*</strong></label>
-                        <select id="returnType" name="returnType" required="">
-                            <option value="">-- Select One --</option>
-                            <option value="json">Return As JSON</option>
-                            <option value="table">Return As Results Table</option>
-                            <option value="page" selected>Display in app</option>
-                        </select>
-                </div>
-                <div class="well well-sm">
-                    <button type="submit" class="btn  btn-sm btn-primary">Submit
-                        <i class="fa fa-save"></i></button>
-                </div>
-            </form>
+                {% include service_path + '/form.html' %}
             {% endcall %}
         {%endif %}
         {% call lib.accordion_tag('orderTable',data['vendorName'] + " Order Status", True) %}
@@ -152,7 +91,7 @@
                             {% if row.statusID=="80" or row.statusID=="75" %}
                             <form action="/shippingstatus/index/" method="POST">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                <input type="hidden" name="companyID" value="{{c.id}}">
+                                <input type="hidden" name="companyID" value="{{cid}}">
                                 <input name="refNum" type="hidden" value="{{order.purchaseOrderNumber}}">
                                 <input name="refDate" type="hidden" value="">
                                 <input type="hidden" name="queryType" value="1">

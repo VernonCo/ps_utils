@@ -1,4 +1,4 @@
-# pypy3 v7.1.1
+# pypy3 v7.2.0
 FROM pypy:3.6-slim
 LABEL maintainer="Stuart Zurcher <stuartz@vernoncompany.com>"
 
