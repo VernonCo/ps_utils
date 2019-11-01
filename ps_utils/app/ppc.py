@@ -1,4 +1,4 @@
-import copy,json, logging
+import json, logging
 
 from flask import flash, request
 from flask_appbuilder import SimpleFormView, expose
@@ -21,19 +21,6 @@ def ppcCompanies():
 
 class PPC(SimpleFormView):
     default_view = 'index'
-
-    @expose('/getVersion/', methods=['POST'])
-    def getVersion(self, **kw):
-        """ get latest inventory service version used by company """
-        data = {"version":'1'}
-        companyID = request.values.get('companyID', 0)
-        if companyID != 0:
-            companyID = int(companyID)
-        if companyID:
-            c = db.session.query(Company).get(companyID)
-            if c.price_urlV2:
-                data['version'] = '2'
-        return json.dumps(data), 200,  {'Content-Type':'applicaion/json'}
 
     @expose('/index/', methods=['GET', 'POST'])
     def index(self, **kw):

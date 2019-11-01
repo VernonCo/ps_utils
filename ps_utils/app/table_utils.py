@@ -1,6 +1,5 @@
 #!/bin/python3
-import logging, re
-import pprint as pp
+import re
 
 def titlize(columnName):
     """
