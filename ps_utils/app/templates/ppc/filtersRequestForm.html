@@ -1,0 +1,80 @@
+{% extends "appbuilder/base.html" %}
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+        <h4 class="panel-title">PPC FOB Filters Request Form
+            <a class="fa fa-question-circle" style="float:right;padding-right:10px;"
+                href="https://github.com/VernonCo/ps_utils/wiki/PPC-Form"
+                target="_blank">Help</a>
+        </h4>
+        </div>
+        {% if data['errorMessage'] %}
+            <h2>{{data['errorMessage']}}</h2>
+            <div class="well well-sm">
+                <a href="/back" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip" title=""
+                    data-original-title="Back">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+            </div>
+        {% else %}
+        <div id="Home" class="tab-pane active">
+            <form id="model_form" action="" method="post" enctype="multipart/form-data" _lpchecked="1">
+                <input type="hidden" id="companyID" name="companyID" value="{{data['companyID']}}">
+                <input type="hidden" id="productID" name="productId" value="{{data['productId']}}">
+                <input type="hidden" id="serviceMethod" name="serviceMethod" required="" value="getConfigurationAndPricing">
+                <input type="hidden" id="returnType" name="returnType" required="" value="{{data['returnType']}}">
+                <input type="hidden" id="priceType" name="priceType" required="" value="{{data['priceType']}}">
+                <input type="hidden" id="configurationType" name="configurationType" required="" value="{{data['configurationType']}}">
+                <input type="hidden" id="currency" name="currency" required="" value="{{data['currency']}}">
+                <input type="hidden" id="localizationCountry" name="localizationCountry" required="" value="{{data['localizationCountry']}}">
+                <input type="hidden" id="localizationLanguage" name="localizationLanguage" required="" value="{{data['localizationLanguage']}}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="supplier" control-label="">
+                                        Supplier<strong style="color: red">*</strong></label>
+                                </td>
+                                <td>
+                                    <input required id="supplier" disabled value="{{data['vendorName']}}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="sku" control-label="">
+                                        Product SKU<strong style="color: red">*</strong></label>
+                                </td>
+                                <td>
+                                    <input id="sku"  disabled required value="{{data['productId']}}">
+                                </td>
+                            </tr>
+                            {% if 'FobPointArray' in data and data['FobPointArray']['FobPoint'] %}
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="fobId" control-label="">
+                                        FOB Filter<strong style="color: red">*</strong>
+                                        </label>
+                                </td>
+                                <td>
+                                    <select required class="form-control" id="color" name="fobId">
+                                        {% for FobPoint in data['FobPointArray']['FobPoint'] %}
+                                        <option value="{{FobPoint['fobId']}}">{{FobPoint['fobCity']}}, {{FobPoint['fobState']}} {{FobPoint['fobPostalCode']}} {{FobPoint['fobCountry']}}</option>
+                                        {% endfor %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                    </tbody></table>
+                </div>
+                <div class="well well-sm">
+                    <button type="submit" class="btn  btn-sm btn-primary"><i class="fa fa-search"> </i>Get Configuration And Pricing </i></button>
+                    <a href="/ppc/index/" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip" title="" data-original-title="Back">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

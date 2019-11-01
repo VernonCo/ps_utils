@@ -1,5 +1,5 @@
-# pypy3 v7.1.1
-FROM pypy:3.6-slim
+# pypy3 v7.2.0
+FROM pypy:3.6-7.2-slim
 LABEL maintainer="Stuart Zurcher <stuartz@vernoncompany.com>"
 
 COPY ./requirements.txt /

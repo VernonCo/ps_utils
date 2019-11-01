@@ -366,6 +366,8 @@ class SoapClient():
             self.check4Error(self.data)
             self.error_msg['SoapFault'] = False
             self.response = str(client.last_received())
+            self.last_sent = str(client.last_sent())
+            logging.debug("{}".format(self.response))
             del client
         except Exception as e:
             self.data = {'SoapFault': args['msg'] +str(e)}
@@ -387,7 +389,7 @@ class SoapClient():
                     del client
                 except Exception as e:
                     self.setErrorMsg(args['msg'],e)
-
+        # assert False
         if not self.multiCallOnError:
             self.callIndex = 3
         if not hasattr(self, 'data'):

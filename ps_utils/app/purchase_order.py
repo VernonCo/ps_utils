@@ -539,9 +539,6 @@ class JsonPO(SimpleFormView):
                                     "chargeId":
                                         And(lambda s: var_check(s, 64),
                                             error='"chargeId" should evaluate to varchar(64)'),
-                                    Optional("chargeName"):
-                                        And(lambda s: var_check(s, 128),
-                                            error='"chargeName" should evaluate to varchar(128)'),
                                     "chargeType":
                                         And(str, lambda s: s in
                                             ['Freight', 'Order', 'Run', 'Setup']),

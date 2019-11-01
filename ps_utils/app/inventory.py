@@ -97,12 +97,13 @@ class Inventory(SimpleFormView):
         """
         form_title = "Inventory Request Form"
         companies = inventoryCompanies()
-        cid = request.values.get('companyID', 98)
+        cid = request.values.get('companyID', 101)
         prodID = request.values.get('productID', 'BG344')
         if request.method == 'GET':
             return self.render_template(
-                    'inventory/requestForm.html', companies=companies, form_title=form_title, id=int(cid),
-                    prodID=prodID, form=self.form, message = "Form was submitted", data=False
+                    'inventory/requestForm.html', companies=companies, form_title=form_title, cid=int(cid),
+                    form=self.form, message = "Form was submitted", data=False,
+                    prodID=prodID, service_path='inventory'
                     )
         # else deal with post
         data = False
@@ -229,7 +230,8 @@ class Inventory(SimpleFormView):
         if errorFlag:
             return self.render_template(
                     'inventory/requestForm.html', companies=companies, form_title=form_title,
-                    id=id, prodID=prodID, form=self.form, message = "Form was submitted"
+                    cid=int(cid), form=self.form, message = "Form was submitted",
+                    prodID=prodID, service_path='inventory'
                     )
 
 
@@ -278,5 +280,5 @@ class Inventory(SimpleFormView):
             table=True
         return self.render_template(
             template, data=result, checkRow=checkRow, companies=companies, form=self.form,
-            id=id, prodID=prodID, table=table, form_title=form_title
+            cid=int(cid), table=table, form_title=form_title, prodID=prodID, service_path='inventory'
             )

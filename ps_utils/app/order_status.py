@@ -26,7 +26,7 @@ class OrderStatus(SimpleFormView):
     """
     default_view = 'index'
     companies = db.session.query(Company).filter(
-        and_(Company.order_url != None, Company.user_name != None)).all()
+        and_(Company.order_url != None, Company.user_name != None)).order_by(Company.company_name).all()
 
     def get_order_status(self, c, **kw):
         returnType = kw.pop('returnType') if 'returnType' in kw else request.form['returnType']
@@ -71,7 +71,7 @@ class OrderStatus(SimpleFormView):
         # finally check if a status returned if checking for specific order.
         #    This service does not provide handling for order not found like code: 301 in OSN service
         result = client.sobject_to_dict(json_serialize = True)
-        if kw['referenceNumber'] and 'errorMessage' not in result:
+        if  'errorMessage' not in result:
             try:
                 status = result['OrderStatusArray']['OrderStatus'][0]\
                     ['OrderStatusDetailArray']['OrderStatusDetail'][0]['statusID']
@@ -92,14 +92,13 @@ class OrderStatus(SimpleFormView):
             else:
                 return result
         if errorFlag:
-            cid = c.id
             return self.render_template('order/requestForm.html',
                                         companies = self.companies,
-                                        id = int(cid),
+                                        cid = c.id,
                                         form_title = form_title,
                                         form = self.form,
-                                        message = "Form was submitted")
-
+                                        message = "Form was submitted",
+                                        service_path='order')
         # else redirct to results page
         result['vendorID'] = c.id
         result['vendorName'] = c.company_name
@@ -126,9 +125,10 @@ class OrderStatus(SimpleFormView):
         return self.render_template('order/results.html',
                                     data = result,
                                     checkRow = checkRow,
-                                    c = c,
+                                    cid = c.id,
                                     form_title = form_title,
                                     companies = self.companies,
+                                    service_path='order',
                                     table = table)
 
     @expose('/index/', methods = ['GET', 'POST'])
@@ -138,10 +138,11 @@ class OrderStatus(SimpleFormView):
             cid = request.values.get('companyID', 126)
             return self.render_template('order/requestForm.html',
                                         companies = self.companies,
-                                        id = int(cid),
+                                        cid = int(cid),
                                         form_title = form_title,
                                         form = self.form,
                                         message = "Form was submitted",
+                                        service_path='order',
                                         data = False)
         # else deal with post
         c = db.session.query(Company).get(int(request.form['companyID']))

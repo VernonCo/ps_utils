@@ -1,5 +1,5 @@
+#!/bin/python3
 import logging
-
 from flask import render_template
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
@@ -9,6 +9,7 @@ from . import app, appbuilder, db, PRODUCTION
 from .inventory import Inventory
 from .models import Company
 from .order_status import OrderStatus
+from .ppc import PPC
 from .purchase_order import JsonPO
 from .shipping_status import ShippingStatus
 from .utilities import Utilities
@@ -68,6 +69,15 @@ appbuilder.add_view(
     OrderStatus,
     "Order Status Request",
     href='/orderstatus/index/',
+    icon="fa-search",
+    category='Forms',
+    category_icon='fa-wpforms'
+)
+
+appbuilder.add_view(
+    PPC,
+    "Product, Pricing, & Config",
+    href='/ppc/index/',
     icon="fa-search",
     category='Forms',
     category_icon='fa-wpforms'

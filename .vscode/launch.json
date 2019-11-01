@@ -5,12 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "pythonPath": "${workspaceFolder}/venv/bin/python",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Flask",
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
             "program": "${workspaceFolder}/ps_utils/vs_debug.py",
-            "envFile": "/home/stuartz/Applications/.env",
+            "envFile": "path_to/.env",
+            "pythonPath": "${workspaceFolder}/venv/bin/python",
             "args": [
                 "run",
                 "--no-debugger",

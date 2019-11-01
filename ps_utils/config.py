@@ -48,9 +48,18 @@ CSRF_ENABLED = True
 # Uncomment to setup Setup an App icon
 # APP_ICON = "static/img/logo.jpg"
 
+
 # ----------------------------------------------------
 # AUTHENTICATION CONFIG
 # ----------------------------------------------------
+
+# use on production once db created to prevent race condition of creating permissions
+# on gunicorn multiple works.  You will need to run '- FLASK_ENV=development' in the docker-compose.yml
+# once to create the permissions on the database, after which you can run gunicorn
+update_permissions = os.getenv('FAB_UPDATE_PERMS', '')
+if update_permissions == 'False':
+    FAB_UPDATE_PERMS = False
+
 # The authentication type
 # AUTH_OID : Is for OpenID
 # AUTH_DB : Is for database (username/password()

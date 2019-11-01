@@ -1,0 +1,102 @@
+
+{% import 'appbuilder/general/lib.html' as lib %}
+
+{% if not table %}
+    {% extends "appbuilder/base.html" %}
+    {% block head_css %}
+    {{ super() }}
+
+    <link type="text/css" href="{{url_for('static',filename='jquery-ui-1.12.1/jquery-ui.theme.min.css')}}" rel="stylesheet">
+    <style>
+        .panel-primary .panel-title, .panel-title {
+            color: #0f87ec;
+
+            }
+        .panel{
+            border-left: none;
+            border-right: none;
+        }
+        .{{list_header}} td {vertical-align:top;}
+        .container {width:99%;}
+        .left{text-align: left;}
+        .right{text-align: right;}
+        .ui-icon {display:inline-block;}
+        .bold{font-weight: bold;}
+        .ui-state-default{background: #468DD4 !important;color: white !important;}
+        .ui-state-active{background: #1F67AD !important;color: white !important;}
+        table >tbody > tr >td > div > h3:hover{background:#78B9FA !important;color: white !important;}
+    </style>
+
+    {% endblock %}
+{% endif %}
+
+{% block content %}
+
+    <div class="panel panel-primary">
+        {% if not table %}
+            <a class="fa fa-question-circle" style="float:right;padding-right:10px;margin-top: 10px;"
+                href="https://github.com/VernonCo/ps_utils/wiki/PPC-Form"
+                target="_blank">Help</a>
+            {% call lib.accordion_tag('requestForm',form_title, False) %}
+                {% include service_path + '/form.html' %}
+            {% endcall %}
+        {%endif %}
+        {% call lib.accordion_tag('productTable',data['vendorName'] + " Listings for Product ID #" + data['productId'], True) %}
+            {% if data['errorMessage'] %}
+                <div>
+                    <h3>{{data['errorMessage']}}</h3>
+                </div>
+            {% else %}
+                {{html_table|safe}}
+            {% endif %}
+        {% endcall %}
+</div>
+
+{% endblock %}
+{% block tail %}
+<script type="text/javascript">
+    var csrf_token = "{{ csrf_token() }}";
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
+            }
+        }
+    });
+</script>
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='jquery-ui-1.12.1/jquery-ui.min.js')}}"></script>
+<script>
+    // var accordionList = {{accordionList | safe}};
+    $(document).ready(function ($) {
+
+    {% for item in accordionList %}
+        {{item}}Panels = $(".{{item}} > div").hide();
+        $(".{{item}} > h3").addClass("ui-state-default");
+        $(".{{item}} > h3").click(function() {
+            {{item}}Panels.slideUp();
+            $(this ).next('div').slideDown();
+            $(".{{item}} > h3").removeClass("ui-state-active").addClass("ui-state-default");
+            $(this).addClass("ui-state-active");
+            return false;
+        })
+    {% endfor %}
+
+        var priceList = $(".PartPrice").find('h3');
+        priceList.each(function (index){
+                $(this).text($(this).text() + ' (min qty ' +$(this).next().find('td:first').text() + ')');
+        });
+    });
+
+    function setRequired(obj) {
+        if(obj.value == 'getConfigurationAndPricing'){
+            $(".PPC").show();
+            // alway remove the class before adding so that it does not double up by accident
+            $(".ppcInput").removeClass('required').addClass('required');
+        }else if (obj.value != 'getConfigurationAndPricing'){
+            $(".PPC").hide();
+            $(".ppcInput").removeClass('required');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,155 @@
+
+
+            <form id="model_form" action="" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="currency" value="USD">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="companyID" control-label="">
+                                        Supplier
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    {% include 'companySelect.html' %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="productId" control-label="">
+                                        Product SKU
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    <input class="form-control" id="productId" name="productId" placeholder="Product SKU"
+                                        required="" type="text" value="{{prodID}}">
+                                    <span class="help-block">Enter the SKU for the Item you want to check for
+                                        inventory.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="serviceMethod" control-label="">
+                                        Service
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    <select id="serviceMethod" name="serviceMethod" required="" onclick="setRequired(this)">
+                                        <option value="" selected>-- Select One --</option>
+                                        <option value="getAvailableCharges">Get Available Charges</option>
+                                        <option value="getFobPoints">Get FOB Locations</option>
+                                        <option value="getConfigurationAndPricing">Get Product, Pricing, & Config</option>
+                                    </select>
+                                    <span class="help-block">Enter the desired service call.</span>
+                                </td>
+                            </tr>
+                            <tr  class="PPC">
+                                <td class="col-lg-2">
+                                    <label for="fobId" control-label="">
+                                        fobId <strong style="color: red">*</strong><br>If unkown: use 'Get FOB Locations'<br> or locaionId from Inventory
+
+                                    </label>
+                                </td>
+                                <td>
+                                    <input class="ppcInput" name="fobId" type="text" maxlength="64">
+                                </td>
+                            </tr>
+                            <tr >
+                                <td class="col-lg-2">
+                                    <label for="priceType" control-label="">
+                                        Price Type
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    <select name="priceType" >
+                                        <option value="Customer">Customer</option>
+                                        <option value="List">List</option>
+                                        <option value="Net">Net</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="configurationType" control-label="">
+                                        Config Type
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    <select name="configurationType" >
+                                        <option value="Blank">Blank</option>
+                                        <option value="Decorated">Decorated</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="localizationCountry" control-label="">
+                                        Country
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    <select name="localizationCountry" >
+                                        <option value="US">US</option>
+                                        <option value="CA">Canada</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="localizationLanguage" control-label="">
+                                            Language
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    <select name="localizationLanguage" >
+                                        <option value="en">English</option>
+                                        <option value="fr">French</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-lg-2">
+                                    <label for="returnType" control-label="">
+                                        Return Type
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    {% include 'returnTypeSelect.html' %}
+                                </td>
+                            </tr>
+                            <!--tr>
+                                <td class="col-lg-2">
+                                    <label for="serviceVersion" control-label="">
+                                        Service Version
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    <select id="serviceVersion" name="serviceVersion" required="">
+                                        <option value="" selected> -- Select -- </option>
+                                        <option value="V1">1.x.x</option>
+                                        <option value="V2">2.x.x</option>
+                                    </select>
+                                    <span class="help-block">Auto selects latest version for selected Company.  Version 2 provides inventory by location.</span>
+                                </td>
+                            </tr-->
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="well well-sm">
+                        <button type="submit" class="btn  btn-sm btn-primary">
+                                <i class="fa fa-search"></i> Submit
+                            </button>
+                </div>
+            </form>

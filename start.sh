@@ -13,6 +13,7 @@ else
 fi
 
 if test "$FLASK_ENV" = "development" ; then
+    echo "Running development with debugging"
     pypy3 run.py
 else
     nginx -t && /etc/init.d/nginx restart
@@ -21,5 +22,6 @@ else
     # uwsgi --ini uwsgi.ini
 
     # gunicorn
+    echo "connections: $GUWORKERS_CONNECTIONS workers: $GUWORKERS"
     gunicorn --name 'Gunicorn App Gevent'  --bind 0.0.0.0:9000 app:app -k gevent --worker-connections $GUWORKERS_CONNECTIONS --workers $GUWORKERS --log-file /dev/null
 fi
