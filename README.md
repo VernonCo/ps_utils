@@ -48,11 +48,14 @@ if using [weavenet](https://www.weave.works/oss/net/) to provide secure WAN to d
 docker-compose files have the option of running the db as a container or comment out db and adminer services and set variables in for remote db access...make sure of persistent volume for production if running in k8 or similar
 
 #### If you run gunicorn on production, make sure to set the following on the docker-coompose.yml
-      - FAB_UPDATE_PERMS = False    # need to run production as gunicorn with multiple workers
-This prevents a race condition of multiple works trying to set up permissions.  You will need to run the database once with
+need the following to run production as gunicorn with multiple workers. This prevents a race condition of multiple works trying to set up permissions.
+      - FAB_UPDATE_PERMS = False
+#### To set up permission rules on production
+You will need to run the database once with `FLASK_ENV=development` used so that only one thread is running and the following COMMENTED out in order FOR THE APP to set the permissions up in the database:
 
-      - FLASK_ENV=development       # comment out to run without debugging
-in order to set the permissions up in the database.
+    - FAB_UPDATE_PERMS = False
+    - ENVIRONMENT=1
+
 
 ## create admin user to view additional tabs in web page
 in other words, this needs ran to access the utilities.
