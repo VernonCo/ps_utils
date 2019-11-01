@@ -38,10 +38,10 @@
         if(obj.value == 'getConfigurationAndPricing'){
             $(".PPC").show();
             // alway remove the class before adding so that it does not double up by accident
-            $(".ppcInput").removeClass('required').addClass('required');
+            $(".ppcInput").prop('required',true);
         }else if (obj.value != 'getConfigurationAndPricing'){
             $(".PPC").hide();
-            $(".ppcInput").removeClass('required');
+            $(".ppcInput").prop('required',false);
         }
     }
 </script>
