@@ -65,7 +65,7 @@ CSRF_ENABLED = True
 # use on production once db created to prevent race condition of creating permissions
 # on gunicorn multiple works.  You will need to run '- FLASK_ENV=development' in the docker-compose.yml
 # once to create the permissions on the database, after which you can run gunicorn
-update_permissions = os.getenv('FAB_UPDATE_PERMS', '')
+update_permissions = os.getenv('FAB_UPDATE_PERMS', True)
 if update_permissions == 'False':
     FAB_UPDATE_PERMS = False
 
