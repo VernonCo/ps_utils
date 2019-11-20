@@ -9,13 +9,13 @@ def current_datetime():
     return time.strftime('%Y-%m-%d %H:%M:%S')
 
 def current_jde_date():
-    return dt2Julian(current_datetime())
+    return dt_to_Julian(current_datetime())
 
 def current_jde_time():
     """return current jde time"""
     return int(time.strftime('%H%M%S'))
 
-def dt2Julian(dt):
+def dt_to_Julian(dt):
     """
     convert '%Y-%m-%d %H:%M:%S' to 'Cyj' where C = century or 0=19, 1=20, 2=21,...
     """
@@ -28,7 +28,7 @@ def dt2Julian(dt):
         logging.error(str(e))
         return 0
 
-def dt2jde_time(dt):
+def dt_to_JDE_time(dt):
     """return jde time for datetime string"""
     try:
         date_obj = parse(dt)
@@ -37,7 +37,7 @@ def dt2jde_time(dt):
         logging.error(str(e))
         return 0
 
-def julianDate2ISO8601(d, offset='+00:00'):
+def julian_to_ISO8601_date(d, offset='+00:00'):
     """
     return ISO8601 formated datetime from julian date
     optional offset  [+|-]hh:mm
@@ -54,20 +54,20 @@ def julianDate2ISO8601(d, offset='+00:00'):
         # default Jan 1, 1970
         return '1970-01-01T00:00:00+00:00'
 
-def strtodatetime(dt):
+def str_to_datetime(dt):
     """returns datetime.datetime for date string"""
     try:
         return parse(dt)
     except Exception as e:
         logging.error(str(e))
         # default Jan 1, 1970
-        return strtodatetime('1970/01/01')
+        return str_to_datetime('1970/01/01')
 
-def strtotime(dt):
+def str_to_time(dt):
     """returns time object for datetime string"""
     try:
         return parse(dt).timetuple()
     except Exception as e:
         logging.error(str(e))
         # default Jan 1, 1970
-        return strtotime('1970/01/01')
+        return str_to_time('1970/01/01')

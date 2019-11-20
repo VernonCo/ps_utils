@@ -2,7 +2,7 @@
 gunicorn
 gevent
 # or uwsgi (only if using cpython instead of pypy3)
-uWSGI
+# uWSGI
 
 requests
 flask-appbuilder

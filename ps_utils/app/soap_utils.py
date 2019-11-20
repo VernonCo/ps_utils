@@ -12,7 +12,7 @@ from xmljson import parker
 
 from . import PRODUCTION
 
-def getDoctor( code, version, url=False):
+def get_doctor( code, version, url=False):
     """ return service type for code """
         # set schema doctor to fix missing schemas
     if code == 'INV':
@@ -39,10 +39,10 @@ def getDoctor( code, version, url=False):
     d = ImportDoctor(imp)
     return d
 
-def tryUrl(URL, wsdl_url, code, version):
+def try_url(URL, wsdl_url, code, version):
         """ verify that we can get a valid wsdl to use """
         # set schema doctor to fix missing schemas
-        d = getDoctor(code, version)
+        d = get_doctor(code, version)
         if not d: return
         try:
             # FIRST -- try the provided url
@@ -55,12 +55,12 @@ def tryUrl(URL, wsdl_url, code, version):
                 else:
                     # SECOND -- add ?wsdl to provided url
                     url_with_wsdl = URL + '?wsdl'
-                    URL = tryUrl(url_with_wsdl, False, code, version)
+                    URL = try_url(url_with_wsdl, False, code, version)
                     if URL:
                         return URL
                     else:
                         # FINALLY -- try the wsdl url provided using the scheme and domain in the regular url
-                        URL = tryUrl(wsdl_url, False, code, version)
+                        URL = try_url(wsdl_url, False, code, version)
                         if URL:
                             return URL
                         else:
@@ -71,17 +71,17 @@ def tryUrl(URL, wsdl_url, code, version):
                 url_with_wsdl = URL + '?wsdl'
                 URL = False
                 try:
-                    URL = tryUrl(url_with_wsdl, False, code, version)
+                    URL = try_url(url_with_wsdl, False, code, version)
                     if not URL:
                         try:
-                            URL = tryUrl(wsdl_url, False, code, version)
+                            URL = try_url(wsdl_url, False, code, version)
                         except Exception as e:
                             print(e)
                             return
                 except Exception as e:
                     print(e)
                     try:
-                        URL = tryUrl(wsdl_url, False, code, version)
+                        URL = try_url(wsdl_url, False, code, version)
                     except Exception as e:
                         print(e)
                         return
@@ -134,12 +134,12 @@ def object_to_dict(obj, key_to_lower=False, json_serialize=False):
             transposed[field] = object_to_dict(val, json_serialize=True)
     return transposed
 
-def testCall(serviceUrl, serviceMethod, serviceResponse, values):
+def test_call(service_url, service_method, serviceResponse, values):
     """used to debug a soapcall call to a url"""
     try:
-        client = SoapRequest(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
+        client = SoapRequest(service_url=service_url, service_method=service_method,
                             serviceResponse=serviceResponse, values=values)
-        data = client.sendRequest()
+        data = client.send_request()
         print(data)
     except Exception as e:
         print(e)
@@ -173,11 +173,11 @@ class SoapRequest():
         response = requests.post(url,data=encoded_request,headers=headers)
         print response.content
     """
-    def __init__(self, serviceUrl=False, serviceMethod=False, serviceResponse=False, values=False):
-        if not serviceUrl or not serviceMethod or not serviceResponse or not values:
+    def __init__(self, service_url=False, service_method=False, serviceResponse=False, values=False):
+        if not service_url or not service_method or not serviceResponse or not values:
             raise Exception('Missing parameters')
-        self.url = serviceUrl
-        self.serviceMethod = serviceMethod
+        self.url = service_url
+        self.service_method = service_method
         self.serviceResponse = serviceResponse
         self.values = values
         self.XML = ''
@@ -186,11 +186,11 @@ class SoapRequest():
         self.data = False
         self.error_msg = ''
 
-    def createValues(self):
+    def _create_values(self):
         """used by individual services to create dict for create XML"""
         pass
 
-    def createXML(self):
+    def _create_XML(self):
         """ create the xml for the request and save as self.lastRequest"""
         xml_version = ''  #<?xml version="1.0" encoding="UTF-8"?>
         envelope = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" '
@@ -211,16 +211,16 @@ class SoapRequest():
         logging.info("newbody: " + body)
         self.XML = '{}{}{}'.format(xml_version, envelope, body)
 
-    def getServiceRequest(self, obj):
+    def _get_service_request(self, obj):
         if not hasattr(obj, 'items'):
             raise Exception( 'Bad object' )
         for k,v in obj.items():
             if k == self.serviceResponse:
                 return v
-            return self.getServiceRequest(v)
+            return self._get_service_request(v)
         raise Exception( self.serviceResponse + ' Not Found' )
 
-    def pretty_print_POST(self, req):
+    def _pretty_print_POST(self, req):
         """
         At this point it is completely built and ready
         to be fired; it is "prepared".
@@ -237,7 +237,7 @@ class SoapRequest():
             )
         self.lastRequest = r
 
-    def removeNamespacesFromKeys(self,obj):
+    def _remove_namespaces_from_keys(self,obj):
         """Converts Parker object to dict with namespace removed from key.
         Does not serialize date time or normalize key case.
         :return: dict object
@@ -252,38 +252,38 @@ class SoapRequest():
             if isinstance(val, list):
                 transposed[tempField] = []
                 for item in val:
-                    transposed[tempField].append(self.removeNamespacesFromKeys(item))
+                    transposed[tempField].append(self._remove_namespaces_from_keys(item))
             else:
-                transposed[tempField] = self.removeNamespacesFromKeys(val)
+                transposed[tempField] = self._remove_namespaces_from_keys(val)
         return transposed
 
-    def responseToData(self):
+    def _response_to_data(self):
         """get the dict from the envelope.body.serviceResponse"""
 
         # using defusedxml's fromstring to prevent xml vulnerabilities
         tempParker = parker.data(fromstring(self.response.text), preserve_root=True)
-        temp = self.removeNamespacesFromKeys(tempParker)
-        self.data = self.getServiceRequest(temp)
+        temp = self._remove_namespaces_from_keys(tempParker)
+        self.data = self._get_service_request(temp)
 
-    def sendRequest(self):
+    def send_request(self):
         """
             send the request
             set error messages as self.error_msg
             set response as self.response
             if not error: set data= response to dict
         """
-        self.createXML()
+        self._create_XML()
         parsed_uri = urlparse(self.url)
         headers = {"Host": parsed_uri.netloc, 'User-Agent': 'python-requests/2.21.0',
             #"Content-Type": "application/soap+xml; charset=UTF-8",
             "Content-Type": "text/xml; charset=utf-8",
             "Content-Length": str(len(self.XML)),
-            "SOAPAction": '"{}"'.format(self.serviceMethod)}
+            "SOAPAction": '"{}"'.format(self.service_method)}
         encoded_request = self.XML.encode('utf-8')
         r = requests.Request('POST',self.url,data=encoded_request,headers=headers)
         prepared = r.prepare()
         # save request as lastRequest
-        self.pretty_print_POST(prepared)
+        self._pretty_print_POST(prepared)
         s = requests.Session()
         self.response = s.send(prepared)
         try:
@@ -291,64 +291,73 @@ class SoapRequest():
         except Exception as e:
             self.data = {'SoapFault': str(e)}
             return False
-        self.responseToData()
+        self._response_to_data()
         return self.data
 
 
 class SoapClient():
     """Client to process soap requests"""
-    def __init__(self, serviceMethod='', serviceUrl='', serviceWSDL='', serviceCode='',
-                 serviceVersion='1.0.0', filters=None, values=None, **kw):
-        self.serviceMethod = serviceMethod #
-        self.serviceUrl = serviceUrl  # service url
-        self.serviceWSDL = serviceWSDL  #url for remote wsdl
-        self.serviceCode = serviceCode  # ie INV, OSN, ORDSTAT, etc.
-        self.serviceVersion = serviceVersion   #ie. 1.0.0, 1.2.1, etc.
+    def __init__(self, service_method='', service_url='', service_WSDL='', service_code='',
+                 service_version='1.0.0', filters=None, values=None, self_cert=False, **kw):
+        if self_cert:
+            import ssl
+            if hasattr(ssl, '_create_unverified_context'):
+                ssl._create_default_https_context = ssl._create_unverified_context
+        self.service_method = service_method #
+        self.service_url = service_url  # service url
+        self.service_WSDL = service_WSDL  #url for remote wsdl
+        self.service_code = service_code  # ie INV, OSN, ORDSTAT, etc.
+        self.service_version = service_version   #ie. 1.0.0, 1.2.1, etc.
         self.filters = filters
         self.KW = kw
         self.XML = False
-        self.callIndex = 0  # used to check which call succeeded / failed
+        self.call_index = 0  # used to check which call succeeded / failed
+        # following variables and conditional allows use of the client for calls outside
+        # of Promostandards without the service_code
+        self.callArray = []
+        local_wsdl = self.service_WSDL
+        if self.service_code:
         # get local wsdl file
-        local_wsdl = getDoctor(self.serviceCode, self.serviceVersion, url=True)
+        local_wsdl = get_doctor(self.service_code, self.service_version, url=True)
         # set schema doctor to fix missing schemas
-        d = getDoctor(self.serviceCode, self.serviceVersion)
+        d = get_doctor(self.service_code, self.service_version)
         self.callArray = [
-            {'msg':'SoapFault: Error(1) on local wsdl and location {}: '.format(self.serviceUrl),
-                'wsdl':local_wsdl, 'location':self.serviceUrl, 'doctor':d},
-            {'msg':'SoapFault: Error(2) on remote wsdl {}: '.format(self.serviceWSDL),
-                'wsdl':self.serviceWSDL, 'location':False, 'doctor':d},
-            {'msg':'SoapFault: Error(3) on remote location {}: '.format(self.serviceUrl),
-                'wsdl':self.serviceUrl, 'location':False, 'doctor':d},
+            {'msg':'SoapFault: Error(1) on local wsdl and location {}: '.format(self.service_url),
+                'wsdl':local_wsdl, 'location':self.service_url, 'doctor':d},
+            {'msg':'SoapFault: Error(2) on remote wsdl {}: '.format(self.service_WSDL),
+                'wsdl':self.service_WSDL, 'location':False, 'doctor':d},
+            {'msg':'SoapFault: Error(3) on remote location {}: '.format(self.service_url),
+                'wsdl':self.service_url, 'location':False, 'doctor':d},
         ]
-        self.multiCallOnError = True
+        self.multi_call_on_error = True
         if values:
             if not isinstance(values,bool):
                 self.values = values
-                self.rawXML()
+                self._raw_XML()
             else:
-                self.multiCallOnError = False # POService gets called once with injected xml only
-            self.callArray.insert(0,{'msg':'SoapFault: Error(1b) on  injected xml and location {}: '.format(self.serviceUrl),
-                'wsdl':local_wsdl, 'location':self.serviceUrl})
+                self.multi_call_on_error = False # POService gets called once with injected xml only
+            self.callArray.insert(0,{'msg':'SoapFault: Error(1b) on  injected xml and location {}: '.format(self.service_url),
+                'wsdl':local_wsdl, 'location':self.service_url})
         self.error_msg = {'SoapFault':'No Response Available'}
         self.response = ''
 
-    def call(self):
+    def _call(self):
         """
             make the service call using the index on the self.callArray
         """
         self.data = {'SoapFault':'Unable to get Response'}
         # index== 0: get the local wsdl and inject the endpoint
         # ...should almost always work if they follow the wsdl and give a valid endpoint to PS
-        args = self.callArray[self.callIndex]
-        self.callIndex += 1
+        args = self.callArray[self.call_index]
+        self.call_index += 1
         try:
             if args['location']:
                 client = Client(args['wsdl'], location=args['location'])
             else:
                 client = Client(args['wsdl'])
             # call the method
-            func = getattr(client.service, self.serviceMethod)
-            if self.XML and self.callIndex == 1:
+            func = getattr(client.service, self.service_method)
+            if self.XML and self.call_index == 1:
                 # used for suppliers that reject the suds-py3 parsing of the wsdl. Tried on the first call
                 # the Dockerfile has a fix for suds-py, but anyone using this local instead of using the docker image
                 # will still have issues unless they add following lines to 171,172 in site-packages/suds/xsd/sxbase.py
@@ -359,21 +368,22 @@ class SoapClient():
             else:
                 kw = self.KW
                 # must create filters after each client created to use that client's factory for services using filters
-                kw = self.check4Filters(client, **kw)
+                kw = self._check_for_filters(client, **kw)
                 self.data = func(**kw)
             # check for error that could be caused by improper wsdl parsing so that it will try the next
             # call. Will raise exception to go on to next
-            self.check4Error(self.data)
+            self._check_for_error(self.data)
             self.error_msg['SoapFault'] = False
             self.response = str(client.last_received())
             self.last_sent = str(client.last_sent())
-            logging.debug("{}".format(self.response))
+            logging.error("Sent: {}".format(self.last_sent))
+            logging.error("Response: {}".format(self.response))
             del client
         except Exception as e:
             self.data = {'SoapFault': args['msg'] +str(e)}
             # assert False
-            if self.callIndex == 1:
-                self.setErrorMsg(args['msg'],e)
+            if self.call_index == 1:
+                self._set_error_msg(args['msg'],e)
             else:  # does not need to try with doctor on injected correct xml
                 #try with schema doctor
                 try:
@@ -381,23 +391,23 @@ class SoapClient():
                         client = Client(args['wsdl'], location=args['location'], plugins=[args['doctor']])
                     else:
                         client = Client(args['wsdl'], plugins=[args['doctor']])
-                    func = getattr(client.service, self.serviceMethod)
+                    func = getattr(client.service, self.service_method)
                     self.data = func(**self.KW)
                     self.response = str(client.last_received())
-                    self.check4Error(self.data)
+                    self._check_for_error(self.data)
                     self.error_msg['SoapFault'] = False
                     del client
                 except Exception as e:
-                    self.setErrorMsg(args['msg'],e)
+                    self._set_error_msg(args['msg'],e)
         # assert False
-        if not self.multiCallOnError:
-            self.callIndex = 3
+        if not self.multi_call_on_error:
+            self.call_index = 3
         if not hasattr(self, 'data'):
             self.data = self.error_msg
         return self.data
 
     @classmethod
-    def check4Error(self, response):
+    def _check_for_error(self, response):
         """
             check for error that could be caused by improper wsdl parsing so that it will try the next
             possible call.  Have to check both ServiceMessage and ErrorMessage for different services
@@ -412,16 +422,16 @@ class SoapClient():
                 and response['ErrorMessageArray']['ErrorMessage'][0]['code'] in [115,120,125]:
             raise Exception('Service Error: ' + response['ErrorMessageArray']['ErrorMessage'][0]['description'])
 
-    def check4Filters(self, client, **kw):
+    def _check_for_filters(self, client, **kw):
         """ update kw with filters as needed """
-        if self.serviceCode == 'INV' and self.filters:
-            if self.serviceVersion == '2.0.0':
-                kw = self.check4InventoryFiltersV2(client, kw)
+        if self.service_code == 'INV' and self.filters:
+            if self.service_version == '2.0.0':
+                kw = self._check_for_inv_filters_v2(client, kw)
             else:
-                kw = self.check4InventoryFiltersV1(client, kw)
+                kw = self._check_for_inv_filters_v1(client, kw)
         return kw
 
-    def check4InventoryFiltersV1(self, client, kw):
+    def _check_for_inv_filters_v1(self, client, kw):
         """ check for filters to set on soap call on version 1.0.0 and 1.2.1"""
         if 'color' in self.filters:
             filterColorArray = client.factory.create('FilterColorArray')
@@ -437,7 +447,7 @@ class SoapClient():
             kw['FilterSelectionArray'] = filterMiscArray
         return kw
 
-    def check4InventoryFiltersV2(self, client, kw):
+    def _check_for_inv_filters_v2(self, client, kw):
         """ check for filters to set on soap call on version 1.0.0 and 1.2.1"""
         Filter = client.factory.create('ns3:Filter')
         if 'color' in self.filters:
@@ -455,18 +465,18 @@ class SoapClient():
         kw['Filter'] = Filter
         return kw
 
-    def createFilters(self, F):
+    def _create_filters(self, F):
         """cycle through to create levels for request"""
 
         if 'filters' in F:
             self.XML +='<{}:{}>'.format(F['ns'],F['name'])
             for row in F['filters']:
-                self.createFilters(row)
+                self._create_filters(row)
             self.XML +='</{}:{}>'.format(F['ns'],F['name'])
         elif 'value' in F:
             self.XML += '<{}:{}>{}</{}:{}>'.format(F['ns'],F['name'],F['value'],F['ns'],F['name'])
 
-    def rawXML(self):
+    def _raw_XML(self):
         """used to create the xml sent to the service"""
         self.XML = ''
         self.XML += '<?xml version="1.0" encoding="UTF-8"?>'
@@ -483,30 +493,30 @@ class SoapClient():
             ns,name,value = field
             self.XML += '<{}:{}>{}</{}:{}>'.format(ns,name,value,ns,name) #'<{} xmlns="{}">{}</{}>'.format(name,kw['namespaces'][ns],value,name)
         if self.values['Filter']:
-           self.createFilters(self.values['Filter'])
+           self._create_filters(self.values['Filter'])
         for ns,service in self.values['method'].items():
             self.XML += '</{}:{}>'.format(ns,service)
         self.XML += "</soapenv:Body></soapenv:Envelope>"
         logging.info("newbody: " + self.XML)
         return self.XML
 
-    def serviceCall(self):
+    def service_call(self):
         """ call the order status service
             Suds-py3 struggles with a couple of services with shared objects. Some suppliers work with the
             parsed version of the wsdl.  Others require a strict interpretation and we inject it on the second
             pass using a loop on the first exception. An ugly solution unless WSDL is changed or the Suds-py3
             module is updated to be able to parse it correctly.
         """
-        while self.error_msg['SoapFault'] and self.callIndex < 3:
-            response = self.call()
+        while self.error_msg['SoapFault'] and self.call_index < 3:
+            response = self._call()
 
         return response
 
-    def setErrorMsg(self, msg, e):
+    def _set_error_msg(self, msg, e):
         logging.error(msg + str(e))
         # set up error message to be given if all tries fail. As this one should have worked, give this error
         # if not PRODUCTION, all errors will be given
-        if self.callIndex == 0 or not PRODUCTION:
+        if self.call_index == 0 or not PRODUCTION:
             self.error_msg['SoapFault'] += msg +str(e) + " | "
 
     def sobject_to_dict(self, key_to_lower=False, json_serialize=False):

@@ -12,9 +12,9 @@
             <input type="text" name="productId" value="{{prodID}}">
         </div>
         <div class="form-group">
-            <label for="serviceMethod" control-label="">Service
+            <label for="service_method" control-label="">Service
                 <strong style="color: red">*</strong></label>
-                <select id="serviceMethod" name="serviceMethod" required="" onclick="setRequired(this)">
+                <select id="service_method" name="service_method" required="" onclick="setRequired(this)">
                     <option value="" selected>-- Select One --</option>
                     <option value="getAvailableCharges">Get Available Charges</option>
                     <option value="getFobPoints">Get FOB Locations</option>
@@ -55,7 +55,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="returnType" control-label="">Return Type
+            <label for="return_type" control-label="">Return Type
                 <strong style="color: red">*</strong></label>
                 {% include 'returnTypeSelect.html' %}
         </div>

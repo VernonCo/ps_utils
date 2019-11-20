@@ -1,16 +1,16 @@
-import json, logging
+import copy,json, logging
 
 from flask import flash, request
 from flask_appbuilder import SimpleFormView, expose
 from jinja2 import Markup
 from sqlalchemy import and_, or_
 
-from . import PRODUCTION, db
+from . import PRODUCTION, db, default_co, default_part
 from .models import Company
 from .soap_utils import SoapClient
 from .table_utils import Table
 
-def ppcCompanies():
+def ppc_companies():
     """ return available inventory companies"""
     return db.session.query(Company).filter(
             or_(
@@ -30,19 +30,19 @@ class PPC(SimpleFormView):
         params:
             companyID = int
             productId = 'SKU'
-            serviceMethod = 'getAvailableLocations', 'getDecorationColors' (requires locationId), 'GetFobPointsRequest',
+            service_method = 'getAvailableLocations', 'getDecorationColors' (requires locationId), 'GetFobPointsRequest',
                 'GetAvailableChargesRequest', or 'GetConfigurationAndPricingRequest (requires fobid)'
-            returnType = return json, table (getInventoryLevels only), or html
-            serviceVersion = 'V1' or 'V2'
+            return_type = return json, table (getInventoryLevels only), or html
+            service_version = 'V1' or 'V2'
 
         use request.form or request.values(for default values):  to be able to get either form post
             or external ajax request using content-type application/x-www-form-urlencoded
         """
 
         form_title = "PPC Request Form"
-        companies = ppcCompanies()
-        cid = request.values.get('companyID', 101)
-        prodID = request.values.get('productId', 'BG344')
+        companies = ppc_companies()
+        cid = request.values.get('companyID', default_co)
+        prodID = request.values.get('productId', default_part)
         if request.method == 'GET':
             return self.render_template(
                     'ppc/requestForm.html', companies=companies, form_title=form_title, cid=int(cid),
@@ -50,50 +50,50 @@ class PPC(SimpleFormView):
                     )
         # else deal with post
         data = False
-        errorFlag = False
-        htmlCode = 200
+        error_flag = False
+        html_code = 200
         # get request variables
         c = db.session.query(Company).get(int(request.form['companyID']))
-        serviceMethod = request.form['serviceMethod']
+        service_method = request.form['service_method']
         service_version = 'V1'
-        #TODO: add when version 2 added request.form['serviceVersion']
+        #TODO: add when version 2 added request.form['service_version']
         # make the soap request
         # if service_version == 'V2':
         #     if not c.price_urlV2:
         #         flash('Version 2 not available for this supplier', 'error')
-        #         errorFlag = True
+        #         error_flag = True
         #         data = 'Unable to get Response'
         #     else:
-        #         serviceVersion = c.price_versionV2
-        #         serviceUrl = c.price_urlV2
-        #         serviceWSDL = c.price_wsdlV2
+        #         service_version = c.price_versionV2
+        #         service_url = c.price_urlV2
+        #         service_WSDL = c.price_wsdlV2
         #         productId = 'productId'  # changed field name in V2...why?
         # else:
         if not c:
             flash('PS Service does not exist for Company # {}'.format(request.form['companyID']), 'error')
-            errorFlag = True
+            error_flag = True
             data = 'Unable to get Response'
         if not c.price_url:
             flash('Version 1 not available for this supplier', 'error')
-            errorFlag = True
+            error_flag = True
             data = 'Unable to get Response'
         else:
-            serviceVersion = c.price_version
-            serviceUrl = c.price_url
-            serviceWSDL = c.price_wsdl
+            service_version = c.price_version
+            service_url = c.price_url
+            service_WSDL = c.price_wsdl
             productId = 'productId'
-        if not errorFlag:
+        if not error_flag:
             kw = dict(
-                wsVersion=serviceVersion,
+                wsVersion=service_version,
                 id=c.user_name)
             if c.password:
                 kw['password'] = c.password
             kw[productId] = request.form['productId']
             kw['localizationCountry'] = request.form['localizationCountry']
             kw['localizationLanguage'] = request.form['localizationLanguage']
-            if serviceMethod == 'getDecorationColors':
+            if service_method == 'getDecorationColors':
                 kw['decorationId'] = request.form['decorationId']
-            elif serviceMethod == 'getConfigurationAndPricing':
+            elif service_method == 'getConfigurationAndPricing':
                 kw['currency'] = request.form['currency']
                 kw['fobId'] = request.form['fobId']
                 kw['priceType'] = request.form['priceType']
@@ -106,7 +106,7 @@ class PPC(SimpleFormView):
             #     # injecting the correct xml each time takes care of this issue
             #     # Will need to look at this again when suds-py fix for issue #41 is released to pypi
             #     values = {
-            #         'method':{'ns':'GetFilterValuesRequest' if serviceMethod == 'getFilterValues' else 'GetInventoryLevelsRequest'},
+            #         'method':{'ns':'GetFilterValuesRequest' if service_method == 'getFilterValues' else 'GetInventoryLevelsRequest'},
             #         'namespaces':{
             #             'ns':"http://www.promostandards.org/WSDL/Inventory/2.0.0/",
             #             'shar':"http://www.promostandards.org/WSDL/Inventory/2.0.0/SharedObjects/"
@@ -134,39 +134,39 @@ class PPC(SimpleFormView):
             #             values['Filter']['filters'].append(temp)
             Filters = False
             # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
-            #     serviceResponse = 'GetFilterValuesResponse'if serviceMethod == 'getFilterValues' else 'GetInventoryLevelsResponse'
+            #     serviceResponse = 'GetFilterValuesResponse'if service_method == 'getFilterValues' else 'GetInventoryLevelsResponse'
 
-            #     testCall(serviceUrl=serviceUrl, serviceMethod=serviceMethod,
+            #     test_call(service_url=service_url, service_method=service_method,
             #                         serviceResponse=serviceResponse, values=values)
 
             if not data:
-                client = SoapClient(serviceMethod=serviceMethod, serviceUrl=serviceUrl, serviceCode='PPC',
-                    serviceVersion=serviceVersion, serviceWSDL=serviceWSDL, filters=Filters, values=values, **kw)
-                data = client.serviceCall()
+                client = SoapClient(service_method=service_method, service_url=service_url, service_code='PPC',
+                    service_version=service_version, service_WSDL=service_WSDL, filters=Filters, values=values, **kw)
+                data = client.service_call()
                 data = client.sobject_to_dict(json_serialize=True)
 
 
         # if error return to request form
         if data == 'Unable to get Response':
             flash('Error: {}'.format(data), 'error')
-            errorFlag = True
-            htmlCode = 500
+            error_flag = True
+            html_code = 500
         elif 'SoapFault' in data:
             # safe html from exceptions
             flash(Markup('{}'.format(data['SoapFault'])), 'error')
-            errorFlag = True
-            htmlCode = 500
+            error_flag = True
+            html_code = 500
         elif 'ErrorMessage' in data and data['ErrorMessage']:
             # unsafe html...ErrorMessage from suppliers
             flash('Error Message: {} from {}'.format(data['ErrorMessage']['description'], c), 'error')
-            errorFlag = True
+            error_flag = True
 
 
         # if requesting json
-        if  request.form['returnType'] == 'json':
-            return json.dumps(data), htmlCode,  {'Content-Type':'applicaion/json'}
+        if  request.form['return_type'] == 'json':
+            return json.dumps(data), html_code,  {'Content-Type':'applicaion/json'}
 
-        if errorFlag and request.form['returnType'] != 'table':
+        if error_flag and request.form['return_type'] != 'table':
             return self.render_template(
                     'ppc/requestForm.html', companies=companies, form_title=form_title,
                     cid=int(cid), prodID=prodID, form=self.form, message = "Form was submitted"
@@ -177,44 +177,44 @@ class PPC(SimpleFormView):
         result={}
         result['companyID'] = c.id
         result['vendorName'] = c.company_name
-        result['returnType'] = request.form['returnType']
+        result['return_type'] = request.form['return_type']
         result['productId'] = request.form['productId']
         result['localizationCountry'] = request.form['localizationCountry']
         result['localizationLanguage'] = request.form['localizationLanguage']
         result['configurationType'] = request.form['configurationType']
         result['priceType'] = request.form['priceType']
         result['currency'] = request.form['currency']
-        if request.form['serviceMethod'] == 'getFobPoints':
+        if request.form['service_method'] == 'getFobPoints':
             data.update(result)
             #redirect to new form with filter options
             # if service_version == 'V2':
             #     # manipulate data into color, size and misc (partId) arrays
             #     result = filterDataV2(data)
-            # result['serviceVersion'] = request.form['serviceVersion']
+            # result['service_version'] = request.form['service_version']
 
             return self.render_template('ppc/filtersRequestForm.html', data=data,
                                         form=self.form, service_path='ppc')
         html_table = ''
         list_header = ''
-        accordionList = []
-        if not errorFlag:
-            # try:
-            t = Table(data, request.form['serviceMethod'].replace('get',''))
-            t.parse_return()
-            html_table = t.table_html()
-            accordionList = t.listColumns
-            list_header = t.list_header
-            # except Exception as e:
-            #     result['ErrorMessage'] = str(e)
-            #     if not PRODUCTION:
-            #         result['ErrorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
+        accordion_list = []
+        if not error_flag:
+            try:
+                t = Table(data, request.form['service_method'].replace('get',''))
+                t.parse_return()
+                html_table = t.table_html()
+                accordion_list = t.list_columns
+                list_header = t.list_header
+            except Exception as e:
+                result['ErrorMessage'] = str(e)
+                if not PRODUCTION:
+                    result['ErrorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
         logging.debug("{}".format(data))
         logging.debug("{}".format(t.parsed))
         table = False
         template = 'ppc/results{}.html'.format(service_version)
-        if request.form['returnType'] == 'table': # return html for table only
+        if request.form['return_type'] == 'table': # return html for table only
             table=True
         return self.render_template(
-            template, data=result, accordionList=accordionList, html_table=html_table, companies=companies, form=self.form,
+            template, data=result, accordion_list=accordion_list, html_table=html_table, companies=companies, form=self.form,
             cid=c.id, table=table, form_title=form_title, list_header=list_header, service_path='ppc', prodID=prodID
             )

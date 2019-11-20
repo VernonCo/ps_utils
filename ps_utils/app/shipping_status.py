@@ -5,7 +5,7 @@ from flask_appbuilder import SimpleFormView, expose
 from jinja2 import Markup
 from sqlalchemy import and_
 
-from . import app, db, PRODUCTION
+from . import app, db, default_co, PRODUCTION
 from .models import Company
 from .soap_utils import SoapClient
 from .tracking_util import Tracking_No
@@ -80,6 +80,8 @@ def create_table_set(result):
         temp['tracking'] = ', '.join(temp['tracking'])
         data.append(temp)
     return json.dumps(data)
+
+
 class ShippingStatus(SimpleFormView):
     """
         get order status from submitted form or external post
@@ -88,7 +90,7 @@ class ShippingStatus(SimpleFormView):
         params:
             companyID = PS companyID
             queryType = query search type: 1=PO#,2=SO#,3=from date
-            returnType = return type json or html
+            return_type = return type json or html
             [options depend on queryType]
                 refNum for PO or SO#
                 refDate for from Date
@@ -102,77 +104,77 @@ class ShippingStatus(SimpleFormView):
         ).order_by(Company.company_name).all()
 
     def get_shipping_status(self, c, values, **kw):
-        returnType = kw.pop('returnType') if 'returnType' in kw else request.form['returnType']
+        return_type = kw.pop('return_type') if 'return_type' in kw else request.form['return_type']
         form_title = 'Ship Status Request Form'
-        errorFlag = False
-        htmlCode = 200
-        client = SoapClient(serviceMethod='getOrderShipmentNotification', serviceUrl=c.shipping_url, serviceWSDL=c.shipping_wsdl, serviceCode='OSN',
-                serviceVersion=c.shipping_version, filters=False, values=values, **kw)
-        data = client.serviceCall()
+        error_flag = False
+        html_code = 200
+        client = SoapClient(service_method='getOrderShipmentNotification', service_url=c.shipping_url, service_WSDL=c.shipping_wsdl, service_code='OSN',
+                service_version=c.shipping_version, filters=False, values=values, **kw)
+        data = client.service_call()
         # if error return to request form
         if data == {} or ('errorMessage' not in data and 'OrderShipmentNotificationArray' not in data):
             flash('Error: empty response returned for request', 'error')
-            errorFlag = True
+            error_flag = True
         if data == 'Unable to get Response':
             flash('Error: {}'.format(data), 'error')
-            errorFlag = True
-            htmlCode = 500
+            error_flag = True
+            html_code = 500
         elif 'SoapFault' in data:
             # safe html from exceptions
             flash(Markup('{}'.format(data['SoapFault'])), 'error')
-            errorFlag = True
-            htmlCode = 500
+            error_flag = True
+            html_code = 500
         elif 'errorMessage' in data and data.errorMessage.code > 9:
             # found some non-compliant vendors returning code=0 and description=SUCCESS
             flash('Error Message: {} from {}'.format(data.errorMessage.description, c), 'error')
-            errorFlag = True
+            error_flag = True
 
         # if requesting json
-        if  returnType == 'json':
+        if  return_type == 'json':
             data = client.sobject_to_json()
-            return data, htmlCode,  {'Content-Type':'applicaion/json'}
+            return data, html_code,  {'Content-Type':'applicaion/json'}
 
-        if errorFlag and returnType != 'internal':
+        if error_flag and return_type != 'internal':
             return self.render_template( 'shipping/requestForm.html', companies=self.companies, cid = c.id,
                     form_title=form_title, form=self.form, message = "Form was submitted", service_path='shipping'
                     )
 
         # else redirct to results page
         result = client.sobject_to_dict(json_serialize=True)
-        formValues = error = tableSet = {}
-        table = True if returnType == 'table' else False
+        form_values = error = tableSet = {}
+        table = True if return_type == 'table' else False
         error['errorMessage'] = ''
-        formValues['vendorID'] = c.id
-        formValues['vendorName'] = c.company_name
-        formValues['returnType'] = returnType
-        formValues['refNum'] = kw['referenceNumber'] if 'referenceNumber' in kw else ''
-        formValues['refDate'] = kw['shipmentDateTimeStamp'] if 'shipmentDateTimeStamp' in kw else ''
+        form_values['vendorID'] = c.id
+        form_values['vendorName'] = c.company_name
+        form_values['return_type'] = return_type
+        form_values['refNum'] = kw['referenceNumber'] if 'referenceNumber' in kw else ''
+        form_values['refDate'] = kw['shipmentDateTimeStamp'] if 'shipmentDateTimeStamp' in kw else ''
 
         # found some returning OrderShipmentNotificationArray without OrderShipmentNotification
         try:
-            checkRow = result['OrderShipmentNotificationArray']['OrderShipmentNotification'][0]
-            if checkRow:
-                if returnType == 'internal':
-                    return checkRow
+            check_row = result['OrderShipmentNotificationArray']['OrderShipmentNotification'][0]
+            if check_row:
+                if return_type == 'internal':
+                    return check_row
                 tableSet = create_table_set(result)
         except Exception as e:
-            checkRow = None
+            check_row = None
             error['errorMessage'] = "Error: unable to extract an OrderShipmentNotification. "
             error['errorMessage'] += "Expected notification or error message from Vendor. Exception: " + str(e)
             if not PRODUCTION:
                 error['errorMessage'] += " Result: " +str(result)
-            if returnType == 'internal':
+            if return_type == 'internal':
                 return result
         return self.render_template(
-            'shipping/results.html', checkRow=checkRow, cid=c.id, tableSet=tableSet, form_title=form_title,
-            companies=self.companies, table=table, error=error, formValues=formValues, service_path='shipping'
+            'shipping/results.html', check_row=check_row, cid=c.id, tableSet=tableSet, form_title=form_title,
+            companies=self.companies, table=table, error=error, form_values=form_values, service_path='shipping'
             )
 
     @expose('/index/', methods=['GET', 'POST'])
     def index(self, **kw):
         if request.method == 'GET':
             form_title = 'Ship Status Request Form'
-            cid = request.values.get('companyID', 126)
+            cid = request.values.get('companyID', default_co)
             return self.render_template( 'shipping/requestForm.html',
                     companies=self.companies, cid = int(cid),
                     form_title=form_title, form=self.form, message = "Form was submitted",
@@ -205,11 +207,11 @@ class ShippingStatus(SimpleFormView):
             values['fields'].append(('ns','referenceNumber', request.form['refNum']))
         # this block can be uncommented to get the returned xml if not parsing via WSDL to see what is the error
         # in the debuger: use client.XML (what was sent) & client.response.text (returned response) & client.lastRequest for headers
-        #     from .soap_utils import testCall
-        #     testCall(serviceUrl=c.order_url, serviceMethod='GetOrderShipmentNotification',
+        #     from .soap_utils import test_call
+        #     test_call(service_url=c.order_url, service_method='GetOrderShipmentNotification',
         #                         serviceResponse='GetOrderShipmentNotificationResponse', values=values)
 
-        # new fix in suds/xsd/sxbase.py takes care of the wsdl parsing issue and values only needed if using testCall above
+        # new fix in suds/xsd/sxbase.py takes care of the wsdl parsing issue and values only needed if using test_call above
         # However, leaving following line commented until fix is pushed to pypi
         # values = False
         return self.get_shipping_status(c, values, **kw)
