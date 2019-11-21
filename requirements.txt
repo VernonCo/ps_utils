@@ -6,7 +6,7 @@ uWSGI==2.0.18
 
 requests==2.22.0
 flask-appbuilder==2.2.0
-boto3
+boto3==1.10.23
 suds-py3
 mysqlclient
 schema
