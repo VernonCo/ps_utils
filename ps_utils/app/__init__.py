@@ -34,8 +34,10 @@ if 'produc_url' in check:
         db.engine.execute(sql)
         sql = DDL("ALTER TABLE company CHANGE produc_vVersion product_version VARCHAR(255)")
         db.engine.execute(sql)
-    except:
-        logging.error('Database not updated. See app.__init__')
+    except Exception as e:
+        if not str(e):
+            e = repr(e)
+        logging.error('Database not updated. See app.__init__. Error: {}'.format(e))
         exit(1)
 if 'product_urlV2' not in check:
     try:
@@ -43,8 +45,10 @@ if 'product_urlV2' not in check:
         db.engine.execute(sql)
         sql = DDL('ALTER TABLE company ADD COLUMN product_versionV2 VARCHAR(255) AFTER product_version')
         db.engine.execute(sql)
-    except:
-        logging.error('Database not updated. See app.__init__')
+    except Exception as e:
+        if not str(e):
+            e = repr(e)
+        logging.error('Database not updated. See app.__init__. Error: {}'.format(e))
         exit(1)
 
 appbuilder = AppBuilder(app, db.session)

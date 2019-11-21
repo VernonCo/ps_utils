@@ -1,4 +1,4 @@
-import copy,json, logging
+import json, logging
 
 from flask import flash, request
 from flask_appbuilder import SimpleFormView, expose
@@ -173,16 +173,16 @@ class Product(SimpleFormView):
         list_header = ''
         accordion_list = []
         if not error_flag:
-            # try:
-            t = Table(data, return_field_name)
-            t.parse_return()
-            html_table = t.table_html()
-            accordion_list = t.list_columns
-            list_header = t.list_header
-            # except Exception as e:
-            #     result['ErrorMessage'] = str(e)
-            #     if not PRODUCTION:
-            #         result['ErrorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
+            try:
+                t = Table(data, return_field_name)
+                t.parse_return()
+                html_table = t.table_html()
+                accordion_list = t.list_columns
+                list_header = t.list_header
+            except Exception as e:
+                result['ErrorMessage'] = str(e)
+                if not PRODUCTION:
+                    result['ErrorMessage'] += ": " +str(client.sobject_to_dict(json_serialize=True))
         logging.debug("{}".format(data))
         logging.debug("{}".format(t.parsed))
         table = False

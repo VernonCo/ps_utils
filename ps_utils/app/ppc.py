@@ -1,4 +1,4 @@
-import copy,json, logging
+import json, logging
 
 from flask import flash, request
 from flask_appbuilder import SimpleFormView, expose
