@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:ns1="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/"
+            xmlns:ns2="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/"
+            xmlns:ns3="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/SharedObjects/"
+            targetNamespace="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/"
+            elementFormDefault="qualified">
+    <xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/SharedObjects/"
+                schemaLocation="SharedProductObjects.xsd"/>
+    <xsd:element name="GetProductSellableRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ns3:wsVersion"/>
+                <xsd:element ref="ns3:id"/>
+                <xsd:element ref="ns3:password" minOccurs="0"/>
+				<xsd:element ref="ns3:localizationCountry" minOccurs="0"/>
+                <xsd:element ref="ns3:localizationLanguage" minOccurs="0"/>
+                <xsd:element ref="ns3:productId" minOccurs="0"/>
+                <xsd:element ref="ns3:partId" minOccurs="0"/>
+                <xsd:element ref="ns3:lineName" minOccurs="0"/>
+                <xsd:element ref="ns3:isSellable"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

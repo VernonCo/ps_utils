@@ -153,7 +153,7 @@ class JsonPO(SimpleFormView):
     default_view = 'index'
     XML = ''
 
-    def createXMLSubstring(self, obj):
+    def _create_XML_substring(self, obj):
         ns1Array = ['PO','orderType','orderNumber','orderDate','lastModified','totalAmount','paymentTerms',
             'rush','OrderContactArray','ShipmentArray','LineItemArray','LineItem','lineNumber',
             'lineReferenceId','lineType','allowPartialShipments','lineItemTotal','requestedShipDate',
@@ -161,12 +161,12 @@ class JsonPO(SimpleFormView):
             'PartArray','termsAndConditions','salesChannel','promoCode','TaxInformationArray']
         if isinstance(obj, list):
             for v in obj:
-                self.createXMLSubstring(v)
+                self._create_XML_substring(v)
         elif isinstance(obj, dict):
             for k,v in obj.items():
                 ns = 'ns' if k in ns1Array else 'shar'
                 self.XML += '<{}:{}>'.format(ns,k)
-                self.createXMLSubstring(v)
+                self._create_XML_substring(v)
                 self.XML += '</{}:{}>'.format(ns,k)
         else:
             if isinstance(obj,str):
@@ -175,15 +175,41 @@ class JsonPO(SimpleFormView):
                 self.XML += '{}'.format(obj)
 
 
-    def createXML(self):
+    def _create_XML(self):
         """parse through the po dict and create the xml to be injected into the request"""
         self.XML += '<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.promostandards.org/WSDL/PO/1.0.0/" xmlns:shar="http://www.promostandards.org/WSDL/PO/1.0.0/SharedObjects/">'
         self.XML += '<soapenv:Header/><soapenv:Body><ns:SendPORequest>'
-        self.createXMLSubstring(self.PO)
+        self._create_XML_substring(self.PO)
         self.XML += '</ns:SendPORequest></soapenv:Body></soapenv:Envelope>'
         logging.error('XML: {}'.format(self.XML))
         # assert False
 
+    def send_order_types_request(self, kw):
+        """send the request.  Can be used by index or a plugin"""
+        html_code = 200
+        # TODO: add test links to the model and use 'if not PRODUCTION:' to switch to test
+        client = SoapClient(service_method='sendPO',
+                            service_url=self.company.po_url,
+                            service_WSDL=self.company.po_wsdl,
+                            service_code='PO',
+                            service_version=self.company.po_version,
+                            filters=False,
+                            values=True,
+                            **kw)
+        client.service_call()
+        if client.data == 'Unable to get Response' or 'SoapFault' in client.data:
+            html_code = 500
+        # response = client.response
+        result = client.sobject_to_dict()
+        # sudsy-py3 not parsing response correctly for ServiceMessageArray
+        try:
+            if result['ServiceMessageArray']['ServiceMessage'][0]['code']:
+                temp = result['ServiceMessageArray']
+                ServiceMessageArray = [{"ServiceMessage":temp['ServiceMessage'][0]}]
+                result['ServiceMessageArray'] = ServiceMessageArray
+        except Exception as e:
+            print(str(e))
+        return [json.dumps(result), html_code]
     # Make sure this is only accessible by apps you want as it is open
     # or add authentication protection
     # send POST header 'Content-Type: applicaion/json'
@@ -193,14 +219,14 @@ class JsonPO(SimpleFormView):
     def index(self, **kw):
         """process json request received"""
         req_json = request.get_json()
-        return self.processPO(req_json)
+        return self.process_PO(req_json)
 
     @expose('/instructions/', methods=['GET'])
     def instructions(self):
         """ diplay instructions for sending jsonPO"""
         return self.render_template('purchaseOrder/instructions.html')
 
-    def processPO(self, req_json):
+    def process_PO(self, req_json):
         companyID = req_json.pop('companyID', None)
         if not companyID or not isinstance(companyID, int):
             error = dict(ServiceMessageArray=[
@@ -225,7 +251,7 @@ class JsonPO(SimpleFormView):
             "PO": req_json['PO']
         }
         try:
-            self.validatePO(**kw)
+            self._validate_PO(**kw)
         except Exception as e:
             error = {
                 "ServiceMessageArray": [{
@@ -238,28 +264,28 @@ class JsonPO(SimpleFormView):
             }
             data = json.dumps(error)
             return data, 400, {'Content-Type': 'application/json'}
-        data, htmlCode = self.sendPO(**kw)
-        return data, htmlCode, {'Content-Type': 'application/json'}
+        data, html_code = self._send_PO(**kw)
+        return data, html_code, {'Content-Type': 'application/json'}
 
-    def sendPO(self, **kw):
+    def _send_PO(self, **kw):
         """send the request.  Can be used by index or a plugin"""
-        htmlCode = 200
+        html_code = 200
         self.XML = ''
         self.PO = kw
-        self.createXML()
+        self._create_XML()
         # TODO: add test links to the model and use 'if not PRODUCTION:' to switch to test
-        client = SoapClient(serviceMethod='sendPO',
-                            serviceUrl=self.company.po_url,
-                            serviceWSDL=self.company.po_wsdl,
-                            serviceCode='PO',
-                            serviceVersion=self.company.po_version,
+        client = SoapClient(service_method='sendPO',
+                            service_url=self.company.po_url,
+                            service_WSDL=self.company.po_wsdl,
+                            service_code='PO',
+                            service_version=self.company.po_version,
                             filters=False,
                             values=True,
                             **kw)
         client.XML = self.XML
-        client.serviceCall()
+        client.service_call()
         if client.data == 'Unable to get Response' or 'SoapFault' in client.data:
-            htmlCode = 500
+            html_code = 500
         # response = client.response
         result = client.sobject_to_dict()
         # sudsy-py3 not parsing response correctly for ServiceMessageArray
@@ -270,7 +296,7 @@ class JsonPO(SimpleFormView):
                 result['ServiceMessageArray'] = ServiceMessageArray
         except Exception as e:
             print(str(e))
-        return [json.dumps(result), htmlCode]
+        return [json.dumps(result), html_code]
 
     @expose('/test/', methods=['GET'])
     def test(self):
@@ -293,11 +319,11 @@ class JsonPO(SimpleFormView):
                 data = '{"Error": "Missing a TEST company"}'
                 return data, 500, {'Content-Type': 'application/json'}
             req_json['companyID'] = c.id
-        return self.processPO(req_json)
+        return self.process_PO(req_json)
 
     @expose('/receiveTest/', methods=['GET', 'POST'])
     @csrf.exempt
-    def receiveTest(self):
+    def receive_test(self):
         """return the xml received in the ServiceMessage.description"""
         sent = html.escape("Sent: ({})".format(request.data))
         logging.error(sent)
@@ -311,7 +337,7 @@ class JsonPO(SimpleFormView):
         return r
 
     @classmethod
-    def validatePO(self, **kw):
+    def _validate_PO(self, **kw):
         """
         validate required fields are present and validate types
         uses schema to validate and return validated kw
@@ -366,7 +392,7 @@ class JsonPO(SimpleFormView):
             "uom": And(str, lambda s: s in uomList),
             "value": And(Use(to_decimal_4), validDecimal_12_4)
         })
-        thirdParty_schema = Schema({
+        third_party_schema = Schema({
             "accountName":
                 And(lambda s: var_check(s, 64),
                     error='"accountName" should evaluate to varchar(64)'),
@@ -434,7 +460,7 @@ class JsonPO(SimpleFormView):
                         Optional("shipReferences"):
                             [lambda s: var_check(s, 64)],
                         Optional("comments"): str,
-                        Optional("ThirdPartyAccount"): thirdParty_schema,
+                        Optional("ThirdPartyAccount"): third_party_schema,
                         "allowConsolidation": Use(xml_bool),
                         "blindShip": Use(xml_bool),
                         "packingListRequired": Use(xml_bool),

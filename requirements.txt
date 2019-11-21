@@ -1,16 +1,16 @@
 # choose your server in start.sh
-gunicorn
-gevent
+gunicorn==20.0.0
+gevent==1.4.0
 # or uwsgi (only if using cpython instead of pypy3)
-uWSGI
+#uWSGI==2.0.18
 
-requests
-flask-appbuilder
-boto3
-suds-py3
-mysqlclient
-schema
+requests==2.22.0
+flask-appbuilder==2.2.0
+boto3==1.10.23
+suds-py3==1.3.4.0
+mysqlclient==1.4.6
+schema==0.7.1
 # zappa
 # used on developement
-pysnooper
-xmljson
+pysnooper==0.2.8
+xmljson==0.2.0

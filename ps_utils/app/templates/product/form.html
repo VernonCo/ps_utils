@@ -19,6 +19,23 @@
                             </tr>
                             <tr>
                                 <td class="col-lg-2">
+                                    <label for="service_method" control-label="">
+                                        Service
+                                        <strong style="color: red">*</strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    <select id="service_method" name="service_method" required="" autocomplete="false" onchange="setRequired(this)">
+                                        <option value="" selected>-- Select One --</option>
+                                        <option value="getProduct">Get Product Info</option>
+                                        <option value="getProductCloseOut">Get Close Out Products</option>
+                                        <option value="getProductSellable">Get Product is Sellable?</option>
+                                    </select>
+                                    <span class="help-block">Enter the desired service call.</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-lg-2">
                                     <label for="productId" control-label="">
                                         Product SKU
                                         <strong style="color: red">*</strong>
@@ -31,66 +48,76 @@
                                         inventory.</span>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="product sellable">
                                 <td class="col-lg-2">
-                                    <label for="service_method" control-label="">
-                                        Service
-                                        <strong style="color: red">*</strong>
+                                    <label for="partId" control-label="">
+                                        Part ID
                                     </label>
                                 </td>
                                 <td>
-                                    <select id="service_method" name="service_method" required="" onchange="setRequired(this)">
-                                        <option value="" selected>-- Select One --</option>
-                                        <option value="getAvailableCharges">Get Available Charges</option>
-                                        <option value="getFobPoints">Get FOB Locations</option>
-                                        <option value="getConfigurationAndPricing">Get Product, Pricing, & Config</option>
-                                    </select>
-                                    <span class="help-block">Enter the desired service call.</span>
+                                   <input type="text" name="partId">
+                                    <span class="help-block">Specific part Id for part</span>
                                 </td>
                             </tr>
-                            <tr  class="PPC">
+                            <tr class="product">
                                 <td class="col-lg-2">
-                                    <label for="fobId" control-label="">
-                                        fobId <strong style="color: red">*</strong><br>If unkown: use 'Get FOB Locations'<br> or locaionId from Inventory
-
+                                    <label for="colorName" control-label="">
+                                        Color Name
                                     </label>
                                 </td>
                                 <td>
-                                    <input class="ppcInput" name="fobId" type="text" maxlength="64">
+                                    <input name="colorName" type="text" maxlength="64">
                                 </td>
                             </tr>
-                            <tr >
+                            <tr class="product">
                                 <td class="col-lg-2">
-                                    <label for="priceType" control-label="">
-                                        Price Type
-                                        <strong style="color: red">*</strong>
+                                    <label for="ApparelSizeArray.apparelStyle" control-label="">
+                                        Apparel Style<br/>
+                                        <i>(Select as needed)</i>
                                     </label>
                                 </td>
                                 <td>
-                                    <select name="priceType"  autocomplete="false">
-                                        <option value="">Select One</option>
-                                        <option value="Customer">Customer</option>
-                                        <option value="List">List</option>
-                                        <option value="Net">Net</option>
+                                    <select name="ApparelSizeArray.apparelStyle" multiple style="width:200px;"  autocomplete="false">
+                                        <option value="Unisex">Unisex</option>
+                                        <option value="Youth">Youth</option>
+                                        <option value="Girls">Girl's</option>
+                                        <option value="Boys">Boy's</option>
+                                        <option value="Womens">Women's</option>
+                                        <option value="WomensTall">Women's Tall</option>
+                                        <option value="Mens">Men's</option>
+                                        <option value="MensTall">Men's Tall</option>
                                     </select>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="product">
                                 <td class="col-lg-2">
-                                    <label for="configurationType" control-label="">
-                                        Config Type
-                                        <strong style="color: red">*</strong>
+                                    <label for="ApparelSizeArray.labelSize" control-label="">
+                                        Apparel Label<br/>
+                                        <i>(Select as needed)</i>
                                     </label>
                                 </td>
                                 <td>
-                                    <select name="configurationType"  autocomplete="false">
-                                        <option value="">Select One</option>
-                                        <option value="Blank">Blank</option>
-                                        <option value="Decorated">Decorated</option>
+                                    <select name="ApparelSizeArray.labelSize" multiple style="width:200px;"  autocomplete="false">
+                                        <option value="OSFA">OSFA</option>
+                                        <option value="6XS">6XS</option>
+                                        <option value="5XS">5XS</option>
+                                        <option value="4XS">4XS</option>
+                                        <option value="3XS">3XS</option>
+                                        <option value="2XS">2XS</option>
+                                        <option value="XS">XS</option>
+                                        <option value="S">S</option>
+                                        <option value="M">M</option>
+                                        <option value="L">L</option>
+                                        <option value="XL">XL</option>
+                                        <option value="2XL">2XL</option>
+                                        <option value="3XL">3XL</option>
+                                        <option value="4XL">4XL</option>
+                                        <option value="5XL">5XL</option>
+                                        <option value="6XL">6XL</option>
                                     </select>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="product">
                                 <td class="col-lg-2">
                                     <label for="localizationCountry" control-label="">
                                         Country
@@ -98,13 +125,13 @@
                                     </label>
                                 </td>
                                 <td>
-                                    <select name="localizationCountry" >
+                                    <select class="ppcInput" name="localizationCountry" >
                                         <option selected value="US">US</option>
                                         <option value="CA">Canada</option>
                                     </select>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="product">
                                 <td class="col-lg-2">
                                     <label for="localizationLanguage" control-label="">
                                             Language
@@ -112,7 +139,7 @@
                                     </label>
                                 </td>
                                 <td>
-                                    <select name="localizationLanguage" >
+                                    <select class="ppcInput" name="localizationLanguage" >
                                         <option selected value="en">English</option>
                                         <option value="fr">French</option>
                                     </select>
@@ -129,7 +156,7 @@
                                     {% include 'returnTypeSelect.html' %}
                                 </td>
                             </tr>
-                            <!--tr>
+                            <tr>
                                 <td class="col-lg-2">
                                     <label for="service_version" control-label="">
                                         Service Version
@@ -144,7 +171,7 @@
                                     </select>
                                     <span class="help-block">Auto selects latest version for selected Company.  Version 2 provides inventory by location.</span>
                                 </td>
-                            </tr-->
+                            </tr>
                         </tbody>
                         </table>
                     </div>

@@ -43,7 +43,7 @@
                 {% include service_path + '/form.html' %}
             {% endcall %}
         {%endif %}
-        {% call lib.accordion_tag('orderTable', formValues['vendorName'] + " Shipping Status", True) %}
+        {% call lib.accordion_tag('orderTable', form_values['vendorName'] + " Shipping Status", True) %}
             <!-- found some non-compliant vendors using code=0 and description=SUCCESS -->
             {% if error['errorMessage'] %}
                 <div>

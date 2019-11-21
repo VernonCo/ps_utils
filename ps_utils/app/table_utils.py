@@ -8,7 +8,7 @@ def titlize(columnName):
     """
     return ' '.join(re.findall('[a-zA-Z][^A-Z]*', columnName)).title()
 
-def getField(obj):
+def get_field(obj):
     """get the field that has the main # for the row"""
     number = ''
     keyList = list(obj.keys())
@@ -25,13 +25,13 @@ def getField(obj):
         number = 'id'
     return number
 
-def getIdField(obj):
+def get_id_field(obj):
     """get the id field from the dict"""
     number = ''
     if isinstance(obj,dict):
-        number = getField(obj)
+        number = get_field(obj)
     elif isinstance(obj,list) and isinstance(obj[0],dict):
-        number = getField(obj[0])
+        number = get_field(obj[0])
     return number
 
 
@@ -41,41 +41,49 @@ class Table():
     def __init__(self, obj, action):
         self.soap_obj = obj
         self.parsed = {}
-        self.listColumns = []
+        self.list_columns = []
         self.action = action  #ie. OrderShipmentNotification
         self.html = ''
         self.list_header = ''
 
-    def html_column(self,obj, tableId):
+    def _html_column(self,obj, tableId):
         """ create a table in the column from the obj"""
         # insert table
         #******************************************************
-        headerList = self.html_header(obj, tableId)
-        if headerList:
+        header_list = self._html_header(obj, tableId)
+        if header_list:
             self.html += '<tbody><tr>'
-            for name in headerList:
+            for name in header_list:
                 self.html += '<td>'
                 # insert value, table with one row, or table with rows
                 ##################################################################
                 if not isinstance(obj[name],list) and not isinstance(obj[name],dict):
                     self.html += '{}'.format(obj[name])
                 elif isinstance(obj[name],dict):
-                    self.html_column(obj[name], name)
+                    self._html_column(obj[name], name)
                 elif isinstance(obj[name],list):
-                    self.html += '<div class="{}">'.format(name)
-                    self.html_list(obj[name], name)
-                    self.html += '</div>'
+                    #list of text
+                    if 'suds.sax.text.Text' in str(type(obj[name][0])):
+                        self.html += '<section><h3>{}</h3><ul>'.format(name.capitalize())
+                        for row in obj[name]:
+                            self.html += '<li>{}</li>'.format(row)
+                        self.html += '</ul></section>'
+                    # list of objects
+                    else:
+                        self.html += '<div class="{}">'.format(name)
+                        self._html_list(obj[name], name)
+                        self.html += '</div>'
                 ###################################################################
                 self.html += '</td>'
             self.html += '</tr></tbody>'
         self.html += '</table>'
         #*****************************************************************
 
-    def html_list(self,obj, tableId):
+    def _html_list(self,obj, tableId):
         """
-        create rows of html from obj following the structure of the headerList
+        create rows of html from obj following the structure of the header_list
         """
-        number = getIdField(obj)
+        number = get_id_field(obj)
         for row in obj:
             if number:
                 self.html += '<h3>{} {}</h3><div class="table-striped">'.format(titlize(tableId),row[number])
@@ -83,21 +91,28 @@ class Table():
                 self.html += '<h3>{}</h3><div class="table-striped">'.format(titlize(tableId))
             # insert table
             ##***************************************************************
-            headerList = self.html_header(obj, tableId)  #<table><thead></thead>
-            if headerList:
+            header_list = self._html_header(obj, tableId)  #<table><thead></thead>
+            if header_list:
                 self.html += '<tbody><tr>'
-                for name in headerList:
+                for name in header_list:
                     self.html += '<td>'
                     # insert value, table with one row, or table with rows
                     ##################################################################
                     if not isinstance(row[name],list) and not isinstance(row[name],dict):
                         self.html += '{}'.format(row[name])
                     elif isinstance(row[name],dict):
-                        self.html_column(row[name], name)
+                        self._html_column(row[name], name)
                     elif isinstance(row[name],list):
-                        self.html += '<div class="{}">'.format(name)
-                        self.html_list(row[name], name)
-                        self.html += '</div>'
+                        if 'suds.sax.text.Text' in str(type(row[name][0])):
+                            self.html += '<section><h3>{}</h3><ul>'.format(name.capitalize())
+                            for item in row[name]:
+                                self.html += '<li>{}</li>'.format(item)
+                            self.html += '</ul></section>'
+                        # list of objects
+                        else:
+                            self.html += '<div class="{}">'.format(name)
+                            self._html_list(row[name], name)
+                            self.html += '</div>'
                     ###################################################################
                     self.html += '</td>'
                 self.html += '</tr></tbody>'
@@ -105,46 +120,46 @@ class Table():
             #*****************************************************************
             self.html += '</div>'
 
-    def html_header(self,obj, tableId):
+    def _html_header(self,obj, tableId):
         """create header row from dict.keys() and place list items last in line
-            return headerList for sort and endingHtml to place at end of html_list
+            return header_list for sort and endingHtml to place at end of _html_list
         """
         reg_col = []
         reg_list = []
         reg_dict = []
-        self.isList = False
+        self.is_list = False
         if isinstance(obj,list):
-            headrow = obj[0]
-            if isinstance(headrow,list):
+            head_row = obj[0]
+            if isinstance(head_row,list):
                 for row in obj:
                     self.html += '<div class="{}">'.format(self.action)
-                    self.html_list(row, tableId)
+                    self._html_list(row, tableId)
                     self.html += '</div>'
                 return
-            self.isList = True
+            self.is_list = True
         else:
-            headrow = obj
-        columnNames = list(headrow.keys())
-        number = getIdField(headrow)
+            head_row = obj
+        column_names = list(head_row.keys())
+        number = get_id_field(head_row)
         if  number:
             #removing the id field from the header as it will be displayed in the div title
-            columnNames.remove(number)
-        for name in columnNames:
-            if isinstance(headrow[name],list):
+            column_names.remove(number)
+        for name in column_names:
+            if isinstance(head_row[name],list):
                 reg_list.append(name)
-            elif isinstance(headrow[name],dict):
+            elif isinstance(head_row[name],dict):
                 reg_dict.append(name)
             else:
                 reg_col.append(name)
-        columnNames = reg_col + reg_dict
+        column_names = reg_col + reg_dict
         self.html += '<table class="{}" border="1" style="width:100%"><thead><tr>'.format(tableId)
         self.list_header = tableId if not self.list_header else self.list_header
-        for name in columnNames:
+        for name in column_names:
             self.html += '<th>{}</th>'.format(titlize(name))
         for name in reg_list:
             self.html += '<th>{}(s)</th>'.format(titlize(name))
         self.html += '</tr></thead>'
-        return columnNames + reg_list
+        return column_names + reg_list
 
 
     def table_html(self):
@@ -154,10 +169,10 @@ class Table():
         # try:
         if isinstance(self.parsed,list):
             self.html += '<div class="{}">'.format(self.action)
-            self.html_list(self.parsed,self.action)
+            self._html_list(self.parsed,self.action)
             self.html += '</div>'
         elif isinstance(self.parsed,dict):
-            self.html_column(self.parsed,self.action)
+            self._html_column(self.parsed,self.action)
         # except Exception as e:
         #     logging.error(str(e))
         #     self.html = 'Error parsing result'
@@ -168,9 +183,9 @@ class Table():
         """ break up the soap_obj by fields and lists"""
         if not isinstance(self.soap_obj, dict):
             return
-        self.parsed = self.parse_obj(self.soap_obj,self.action)
+        self.parsed = self._parse_obj(self.soap_obj,self.action)
 
-    def parse_obj(self, obj, fieldName):
+    def _parse_obj(self, obj, fieldName):
         if not isinstance(obj, dict) and not isinstance(obj,list):
             return obj
         elif isinstance(obj, dict):
@@ -179,26 +194,30 @@ class Table():
             for column in columns:
                 if 'Array' in column:
                     field = column.replace('Array','')
-                    if field not in self.listColumns:
-                        self.listColumns.append(field)
+                    if field not in self.list_columns:
+                        self.list_columns.append(field)
             for k, v in obj.items():
                 if 'Array' in k:
-                    v = v[k.replace('Array','')]
+                    next_field_name = k.replace('Array','')
+                    # this name does not follow the standard naming convention
+                    if k == 'ProductPackagingArray':
+                        next_field_name = "ProductPackage"
+                    v = v[next_field_name]
                     # print({'k':k,'path':path,'parsed':self.parsed[path][field]})
-                    temp[k.replace('Array','')] = self.parse_obj(v,fieldName)
+                    temp[k.replace('Array','')] = self._parse_obj(v,fieldName)
                 else:
-                    temp[k] = self.parse_obj(v,fieldName)
+                    temp[k] = self._parse_obj(v,fieldName)
             return temp
         elif isinstance(obj,list):
             # pp.pprint({'field':field,'path':path,'parsed':self.parsed})
             temp = []
             for l in obj:
-                temp.append(self.parse_obj(l, fieldName))
+                temp.append(self._parse_obj(l, fieldName))
             return temp
 
 
 
-    def test(self):
+    def _test(self):
         self.soap_obj = {"OrderShipmentNotificationArray":
                 {"OrderShipmentNotification": [{
                     "purchaseOrderNumber": "6100088",
@@ -335,10 +354,10 @@ class Table():
 
 
 # t = Table({},'OrderShipmentNotification')
-# t.test()
+# t._test()
 # t.parse_return()
 # print(t.table_html())
-# print(t.listColumns)
+# print(t.list_columns)
 # # pp.pprint(t.parsed)
 # f = open('test.html','w')
 # f.write(t.html)

@@ -14,10 +14,10 @@ from urllib.parse import urlparse
 
 from . import app, db, PRODUCTION
 from .models import Company
-from .soap_utils import tryUrl
+from .soap_utils import try_url
 
 
-def sendMail(subj, content, to, cc='', bcc='', filename='',
+def send_mail(subj, content, to, cc='', bcc='', filename='',
     emailFrom=app.config.get('SMTP_FROM'), html=True):
     """
     send an email via smtp variables from config
@@ -96,7 +96,7 @@ class Utilities(BaseView):
 
     @expose('/updateCompanies/')
     @has_access
-    def updateCompanies(self):
+    def update_companies(self):
         """ gets a list of companies from PromoStandards
             Checks if a distributor and gets services and urls for company
             Check urls and versions and saves company information
@@ -169,7 +169,7 @@ class Utilities(BaseView):
                 url = urlparse(row['URL'])    # use scheme and domain from URL
                 wsdl_url = '{}://{}/{}'.format(url.scheme, url.netloc, re.sub('wsdl','',epS['WSDL'].strip(), 1, flags=re.I))
                 # check endpoint for wsdl retrieval
-                good_url = tryUrl(row['URL'].strip(), wsdl_url, code, service_version)
+                good_url = try_url(row['URL'].strip(), wsdl_url, code, service_version)
                 if good_url:
                     has_url = True
                     # will overwrite each with the latest version given
@@ -200,9 +200,13 @@ class Utilities(BaseView):
                         c.order_wsdl = good_url
                         c.order_version = service_version
                     if code == 'Product':
-                        c.produc_url = row['URL']
-                        c.produc_wsdl = good_url
-                        c.produc_version = service_version
+                        c.product_wsdl = good_url
+                        if service_version[:1] == '1':
+                            c.product_url = row['URL']
+                            c.product_version = service_version
+                        else:
+                            c.product_urlV2 = row['URL']
+                            c.product_versionV2 = service_version
                     if code == 'PPC':
                         c.price_url = row['URL']
                         c.price_wsdl = good_url
@@ -226,7 +230,7 @@ class Utilities(BaseView):
 
     @expose('/updatePasswords/')
     @has_access
-    def updatePasswords(self):
+    def update_passwords(self):
         """get passwords from previous data so you don't have to migrate them manually
             set the fields used from your previous db in your config file to map to current db
         """

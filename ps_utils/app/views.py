@@ -7,13 +7,15 @@ from flask_babel import lazy_gettext as _
 
 from . import app, appbuilder, db, PRODUCTION
 from .inventory import Inventory
+from .invoice import Invoice
 from .models import Company
 from .order_status import OrderStatus
+from .media import Media
+from .product import Product
 from .ppc import PPC
 from .purchase_order import JsonPO
 from .shipping_status import ShippingStatus
 from .utilities import Utilities
-
 
 """
     Create your Model based REST API::
@@ -58,7 +60,7 @@ except Exception as e:
 
 appbuilder.add_view(
     Inventory,
-    "INV Request",
+    "Inventory Request",
     href='/inventory/index/',
     icon="fa-search",
     category='Forms',
@@ -66,9 +68,36 @@ appbuilder.add_view(
 ) #  label=_("Inventory Request Form"),
 
 appbuilder.add_view(
+    Invoice,
+    "Invoice Request",
+    href='/invoice/index/',
+    icon="fa-search",
+    category='Forms',
+    category_icon='fa-wpforms'
+)
+
+appbuilder.add_view(
     OrderStatus,
     "Order Status Request",
     href='/orderstatus/index/',
+    icon="fa-search",
+    category='Forms',
+    category_icon='fa-wpforms'
+)
+
+appbuilder.add_view(
+    Media,
+    "Media Request",
+    href='/media/index/',
+    icon="fa-search",
+    category='Forms',
+    category_icon='fa-wpforms'
+)
+
+appbuilder.add_view(
+    Product,
+    "Product Data",
+    href='/product/index/',
     icon="fa-search",
     category='Forms',
     category_icon='fa-wpforms'
@@ -121,5 +150,5 @@ def page_not_found(e):
         ),
         404,
     )
+
 appbuilder.security_cleanup()
-db.create_all()
