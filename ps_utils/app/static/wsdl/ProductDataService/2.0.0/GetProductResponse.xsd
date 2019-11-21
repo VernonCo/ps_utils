@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/" xmlns:ns2="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/" xmlns:ns3="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/SharedObjects/" targetNamespace="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.promostandards.org/WSDL/ProductDataService/2.0.0/SharedObjects/" schemaLocation="SharedProductObjects.xsd"/>
+	<xsd:element name="Product">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns3:productId"/>
+				<xsd:element ref="ns3:productName"/>
+				<xsd:element ref="ns3:description" maxOccurs="unbounded"/>
+				<xsd:element ref="ns3:priceExpiresDate" minOccurs="0"/>
+				<xsd:element name="ProductMarketingPointArray" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns3:ProductMarketingPoint" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ProductKeywordArray" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns3:ProductKeyword" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns3:productBrand" minOccurs="0"/>
+				<xsd:element name="export" type="xsd:boolean" nillable="true"/>
+				<xsd:element name="ProductCategoryArray" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns3:ProductCategory" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="RelatedProductArray" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns3:RelatedProduct" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns3:primaryImageUrl" minOccurs="0"/>
+				<xsd:element name="ProductPriceGroupArray">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="ns3:ProductPriceGroup" maxOccurs="unbounded"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns3:complianceInfoAvailable"/>
+				<xsd:element name="unspscCommodityCode" type="xsd:int" minOccurs="0"/>
+				<xsd:element ref="ns3:LocationDecorationArray" minOccurs="0"/>
+				<xsd:element name="ProductPartArray" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ProductPart" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element ref="ns3:partId"/>
+										<xsd:element name="primaryColor" minOccurs="0">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element ref="ns3:Color" minOccurs="0" maxOccurs="1"/>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element ref="ns3:description" minOccurs="0" maxOccurs="unbounded"/>
+										<xsd:element ref="ns3:countryOfOrigin" minOccurs="0"/>
+										<xsd:element name="ColorArray" minOccurs="0">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element ref="ns3:Color" maxOccurs="unbounded"/>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element ref="ns3:primaryMaterial" minOccurs="0"/>
+										<xsd:element name="SpecificationArray" minOccurs="0">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element ref="ns3:Specification" maxOccurs="unbounded"/>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element ref="ns3:shape" minOccurs="0"/>
+										<xsd:element ref="ns3:ApparelSize" minOccurs="0"/>
+										<xsd:element ref="ns3:Dimension" minOccurs="0"/>
+										<xsd:element name="leadTime" type="xsd:int" minOccurs="0"/>
+										<xsd:element ref="ns3:unspsc" minOccurs="0"/>
+										<xsd:element ref="ns3:gtin" minOccurs="0"/>
+										<xsd:element ref="ns3:isRushService"/>
+										<xsd:element name="ProductPackagingArray" minOccurs="0">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element ref="ns3:ProductPackage" maxOccurs="unbounded"/>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="ShippingPackageArray" minOccurs="0">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element ref="ns3:ShippingPackage" maxOccurs="unbounded"/>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element ref="ns3:endDate"/>
+										<xsd:element ref="ns3:effectiveDate"/>
+										<xsd:element ref="ns3:isCloseout"/>
+										<xsd:element ref="ns3:isCaution"/>
+										<xsd:element ref="ns3:cautionComment" minOccurs="0"/>
+										<xsd:element ref="ns3:nmfcCode" minOccurs="0"/>
+										<xsd:element ref="ns3:nmfcDescription" minOccurs="0"/>
+										<xsd:element ref="ns3:nmfcNumber" minOccurs="0"/>
+										<xsd:element ref="ns3:isOnDemand"/>
+										<xsd:element ref="ns3:isHazmat"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="lastChangeDate" type="xsd:dateTime"/>
+				<xsd:element name="creationDate" type="xsd:dateTime"/>
+				<xsd:element ref="ns3:endDate"/>
+				<xsd:element ref="ns3:effectiveDate"/>
+				<xsd:element ref="ns3:isCaution"/>
+				<xsd:element ref="ns3:cautionComment" minOccurs="0"/>
+				<xsd:element ref="ns3:isCloseout"/>
+				<xsd:element ref="ns3:lineName" minOccurs="0"/>
+				<xsd:element ref="ns3:defaultSetupCharge" minOccurs="0"/>
+				<xsd:element ref="ns3:defaultRunCharge" minOccurs="0"/>
+				<xsd:element ref="ns3:imprintSize" minOccurs="0"/>
+				<xsd:element ref="ns3:FobPointArray"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="GetProductResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ns1:Product" minOccurs="0"/>
+				<xsd:element ref="ns3:ServiceMessageArray" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

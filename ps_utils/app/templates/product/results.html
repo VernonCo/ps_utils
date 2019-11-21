@@ -66,10 +66,26 @@
     });
 </script>
 <script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='jquery-ui-1.12.1/jquery-ui.min.js')}}"></script>
+
+<script  type="text/javascript" charset="utf8" src="{{url_for('static',filename='js/getVersion.js')}}"></script>
 <script>
     // var accordion_list = {{accordion_list | safe}};
     $(document).ready(function ($) {
 
+        function setRequired(obj) {
+            if(obj.value == 'getProduct'){
+                $(".product").show();
+                // alway remove the class before adding so that it does not double up by accident
+                $(".ppcInput").prop('required',true);
+            }else if (obj.value == 'getProductSellable'){
+                $(".product").hide();
+                $(".sellable").show();
+                $(".ppcInput").prop('required',false);
+            }else{
+                $(".product").hide();
+                $(".ppcInput").prop('required',false);
+            }
+        }
     {% for item in accordion_list %}
         {{item}}Panels = $(".{{item}} > div").hide();
         $(".{{item}} > h3").addClass("ui-state-default");
@@ -88,15 +104,5 @@
         });
     });
 
-    function setRequired(obj) {
-        if(obj.value == 'getConfigurationAndPricing'){
-            $(".PPC").show();
-            // alway remove the class before adding so that it does not double up by accident
-            $(".ppcInput").prop('required',true);
-        }else if (obj.value != 'getConfigurationAndPricing'){
-            $(".PPC").hide();
-            $(".ppcInput").prop('required',false);
-        }
-    }
 </script>
 {% endblock %}

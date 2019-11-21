@@ -1,7 +1,7 @@
 import re
 
 class Tracking_No():
-    def __init__(self, trk_no, carrier='', shipmentMethod=''):
+    def __init__(self, trk_no, carrier='', shipment_method=''):
         self.trk_no = trk_no
         UPS = "http://wwwapps.ups.com/etracking/tracking.cgi?AcceptUPSLicenseAgreement=yes&TypeOfInquiryNumber=T&InquiryNumber1="
         FEDEX ="https://www.fedex.com/apps/fedextrack/?action=track&cntry_code=us_english&tracknumbers="
@@ -11,28 +11,28 @@ class Tracking_No():
             carrier1 = carrier.lower()
         else:
             carrier1 = ''
-        if shipmentMethod:
-            shipmentMethod1 = shipmentMethod.lower()
+        if shipment_method:
+            shipment_method1 = shipment_method.lower()
         else:
-            shipmentMethod1 = ''
+            shipment_method1 = ''
 
-        carrierdata=" (Not Specified)"
+        carrier_data=" (Not Specified)"
 
-        # determine carrier link by carrier or shipmentMethod given
+        # determine carrier link by carrier or shipment_method given
         if carrier1 != "":
-            carrierdata = " (" + carrier + ")"
+            carrier_data = " (" + carrier + ")"
         else:
-            carrierdata = ''
+            carrier_data = ''
         if carrier1 == 'ups (usa)' or carrier1 == 'ups' or carrier1 == 'ups (us)':
             clink = UPS
-        elif carrier1 == "" and len(shipmentMethod) > 3 and shipmentMethod[0:3] == 'ups':
+        elif carrier1 == "" and len(shipment_method) > 3 and shipment_method[0:3] == 'ups':
             clink = UPS
-            carrierdata =" (" + shipmentMethod1 + ")"
+            carrier_data =" (" + shipment_method1 + ")"
         elif carrier1 == 'fedex (usa)' or carrier1 == 'fedex' or  carrier1 == 'fedex (us)':
             clink = FEDEX
-        elif carrier1 == '' and len(shipmentMethod) > 6 and  shipmentMethod[0, 5] =='fedex':
+        elif carrier1 == '' and len(shipment_method) > 6 and  shipment_method[0, 5] =='fedex':
             clink = FEDEX
-            carrierdata =" (" + shipmentMethod1 + ")"
+            carrier_data =" (" + shipment_method1 + ")"
         elif carrier1 == 'us postal service':
             clink = USPS
         else: clink = ""
@@ -47,9 +47,9 @@ class Tracking_No():
                 clink = USPS
 
         if clink != "":
-            self.trdata = "<a href='" + clink + "" + trk_no + "' target='_blank'>" + trk_no + "</a>" + carrierdata
+            self.trdata = "<a href='" + clink + "" + trk_no + "' target='_blank'>" + trk_no + "</a>" + carrier_data
         else:
-            self.trdata=trk_no + "" + carrierdata
+            self.trdata=trk_no + "" + carrier_data
         if trk_no == "" : self.trdata = ""
 
     def link(self):

@@ -40,37 +40,37 @@
                 <!-- found Brand and partID to be optional in returns -->
                     <th>Part ID</th>
                     <th class="center">Main Part</th>
-                    {% if 'partDescription' in checkRow and checkRow.partDescription %}
+                    {% if 'partDescription' in check_row and check_row.partDescription %}
                         {% set partDescription = "1" %}
                     <th class="center">Description</th>
                     {% endif %}
-                    {% if 'quantityAvailable' in checkRow and checkRow.quantityAvailable %}
+                    {% if 'quantityAvailable' in check_row and check_row.quantityAvailable %}
                         {% set quantityAvailable = "1" %}
                     <th class="center">Quantity UOM</th>
                     {% endif %}
-                    {% if 'partColor' in checkRow and checkRow.partColor %}
+                    {% if 'partColor' in check_row and check_row.partColor %}
                         {% set color = "1" %}
                         <th class="center">Color</th>
                     {% endif %}
-                    {% if 'labelSize' in checkRow and checkRow.labelSize %}
+                    {% if 'labelSize' in check_row and check_row.labelSize %}
                         {% set size = "1" %}
                         <th class="center">Size</th>
                     {% endif %}
-                    {% if 'attributeSelection' in checkRow and checkRow.attributeSelection %}
+                    {% if 'attributeSelection' in check_row and check_row.attributeSelection %}
                         {% set attributeSelection = "1" %}
                         <th class="center">Extra Attr.</th>
                     {% endif %}
                     <th class="hidden-xs center">Manfg. on Demand</th>
                     <th class="hidden-xs center">Buy to Order</th>
-                    {% if 'replenishmentLeadTime' in checkRow and checkRow.replenishmentLeadTime %}
+                    {% if 'replenishmentLeadTime' in check_row and check_row.replenishmentLeadTime %}
                         {% set replenishmentLeadTime = "1" %}
                     <th class="hidden-xs center">Lead Time</th>
                     {% endif %}
-                    {% if 'InventoryLocationArray' in checkRow and checkRow.InventoryLocationArray and 'InventoryLocation' in checkRow.InventoryLocationArray %}
+                    {% if 'InventoryLocationArray' in check_row and check_row.InventoryLocationArray and 'InventoryLocation' in check_row.InventoryLocationArray %}
                         {% set InventoryLocationArray = "1" %}
                     <th class="hidden-xs center">Locations</th>
                     {% endif %}
-                    {% if 'lastModified' in checkRow %}
+                    {% if 'lastModified' in check_row %}
                         {% set lastModified = "1" %}
                     <th class="hidden-xs center">Last Modified</th>
                     {% endif %}

@@ -1,7 +1,7 @@
 # PS Utilities -- A JSON REST API for Promo Standard Services
 ## (including forms for manual entry)
 -   Can update a db with a list of companies and their working endpoints (/update).
--   Returns json or html table for ajax form_encoded POST to services (ie returnType=json or returnType=table)
+-   Returns json or html table for ajax form_encoded POST to services (ie return_type=json or return_type=table)
 -   Or has forms for manual use
 -   Can use a plugin to update your ERP order status
 -   Can import username/passwd service authentications from previous database

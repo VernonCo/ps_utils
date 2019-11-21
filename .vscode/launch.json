@@ -18,7 +18,7 @@
             "request": "launch",
             "stopOnEntry": false,
             "program": "${workspaceFolder}/ps_utils/vs_debug.py",
-            "envFile": "path_to/.env",
+            "envFile": "/home/stuartz/Applications/.env",
             "pythonPath": "${workspaceFolder}/venv/bin/python",
             "args": [
                 "run",

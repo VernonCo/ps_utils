@@ -38,26 +38,26 @@
             <thead>
                 <tr>
                 <!-- found Brand and partID to be optional in returns -->
-                    {% if 'brand' in checkRow and checkRow['brand'] %}
+                    {% if 'brand' in check_row and check_row['brand'] %}
                         {% set brand = "1" %}
                         <th>Brand</th>'
                     {% endif %}
-                    {% if 'partID' in checkRow and checkRow['partID'] %}
+                    {% if 'partID' in check_row and check_row['partID'] %}
                         {% set productNo = "1" %}
                         <th>Part ID</th>
                     {% endif %}
                     <th>Description</th>
                     <th>Quantity</th>
-                    {% if 'attributeColor' in checkRow and checkRow['attributeColor'] %}
+                    {% if 'attributeColor' in check_row and check_row['attributeColor'] %}
                         {% set color = "1" %}
                         <th>Color</th>
                     {% endif %}
-                    {% if 'attributeSize' in checkRow and checkRow['attributeSize'] %}
+                    {% if 'attributeSize' in check_row and check_row['attributeSize'] %}
                         {% set size = "1" %}
                         <th>Size</th>
                     {% endif %}
                     <th>Extra Attr</th>
-                    {% if 'entryType' in checkRow and checkRow['entryType'] %}
+                    {% if 'entryType' in check_row and check_row['entryType'] %}
                         {% set entryType = "1" %}
                         <th class="hidden-xs center">Entry Type</th>
                     {% endif %}
@@ -113,32 +113,32 @@
         and 'ProductCompanionInventory' in data.ProductCompanionInventoryArray
         and data.ProductCompanionInventoryArra.ProductCompanionInventory %}
         {% set brand, productNo, color, size, entryType = (0,0,0,0,0) %}
-        {% set checkRow = data.ProductCompanionInventoryArra.ProductCompanionInventory[0] %}
+        {% set check_row = data.ProductCompanionInventoryArra.ProductCompanionInventory[0] %}
 
         {% call lib.accordion_tag('companionTable',"Companion Products", True) %}
         <table id="resultsTable2" class="table table-condensed table-bordered table-hover gradienttable">
             <thead>
                 <tr>
-                        {% if 'brand' in checkRow and checkRow['brand'] %}
+                        {% if 'brand' in check_row and check_row['brand'] %}
                         {% set brand = "1" %}
                         <th class="center">Brand</th>'
                     {% endif %}
-                    {% if 'partID' in checkRow and checkRow['partID'] %}
+                    {% if 'partID' in check_row and check_row['partID'] %}
                         {% set productNo = "1" %}
                         <th>Part ID</th>
                     {% endif %}
                     <th class="center">Description</th>
                     <th class="center">Quantity</th>
-                    {% if 'attributeColor' in checkRow and checkRow['attributeColor'] %}
+                    {% if 'attributeColor' in check_row and check_row['attributeColor'] %}
                         {% set color = "1" %}
                         <th class="center">Color</th>
                     {% endif %}
-                    {% if 'attributeSize' in checkRow and checkRow['attributeSize'] %}
+                    {% if 'attributeSize' in check_row and check_row['attributeSize'] %}
                         {% set size = "1" %}
                         <th class="center">Size</th>
                     {% endif %}
                     <th class="center">Extra Attr</th>
-                    {% if 'entryType' in checkRow and checkRow['entryType'] %}
+                    {% if 'entryType' in check_row and check_row['entryType'] %}
                         {% set entryType = "1" %}
                         <th class="hidden-xs">Entry Type</th>
                     {% endif %}
