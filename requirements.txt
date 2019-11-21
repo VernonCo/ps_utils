@@ -4,7 +4,7 @@ gevent
 # or uwsgi (only if using cpython instead of pypy3)
 uWSGI
 
-requests
+requests==2.22.0
 flask-appbuilder
 boto3
 suds-py3
