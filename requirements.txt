@@ -13,4 +13,4 @@ schema==0.7.1
 # zappa
 # used on developement
 pysnooper==0.2.8
-xmljson
+xmljson==0.2.0
