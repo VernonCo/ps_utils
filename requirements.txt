@@ -1,5 +1,5 @@
 # choose your server in start.sh
-gunicorn
+gunicorn==20.0.0
 gevent
 # or uwsgi (only if using cpython instead of pypy3)
 uWSGI
