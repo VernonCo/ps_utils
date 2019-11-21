@@ -9,7 +9,7 @@ flask-appbuilder==2.2.0
 boto3==1.10.23
 suds-py3==1.3.4.0
 mysqlclient==1.4.6
-schema
+schema==0.7.1
 # zappa
 # used on developement
 pysnooper
