@@ -2,7 +2,7 @@
 gunicorn==20.0.0
 gevent==1.4.0
 # or uwsgi (only if using cpython instead of pypy3)
-uWSGI==2.0.18
+#uWSGI==2.0.18
 
 requests==2.22.0
 flask-appbuilder==2.2.0
