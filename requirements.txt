@@ -12,5 +12,5 @@ mysqlclient==1.4.6
 schema==0.7.1
 # zappa
 # used on developement
-pysnooper
+pysnooper==0.2.8
 xmljson
