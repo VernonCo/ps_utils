@@ -1,8 +1,24 @@
 {
-  "extends": [
-    "config:base"
-  ],
-  "python": {
-    "enabled": true
-  }
+  "extends": ["config:base", ":semanticCommitTypeAll(chore)"],
+  "baseBranches": ["master","dev"],
+  "labels": ["renovate"],
+  "minor": {
+    "groupName": "all minor dependencies"
+  },
+  "patch": {
+    "groupName": "all patch dependencies"
+  },
+  "separateMinorPatch": true,
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "depTypeList": ["peerDependencies"],
+      "enabled": false
+    },
+	{
+	  "baseBranchList": ["dev"],
+      "updateTypes": ["digest", "pin", "patch", "minor", "major"],
+      "enabled": false
+	}
+  ]
 }
