@@ -15,10 +15,11 @@
       "depTypeList": ["peerDependencies"],
       "enabled": false
     },
-	{
-	  "baseBranchList": ["dev"],
-      "updateTypes": ["digest", "pin", "patch", "minor", "major"],
-      "enabled": false
-	}
-  ]
+    {
+      "baseBranchList": ["dev"],
+        "updateTypes": ["digest", "pin", "patch", "minor", "major"],
+        "enabled": false
+    }
+  ],
+  "schedule": ["every weekend"]
 }

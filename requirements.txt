@@ -1,12 +1,12 @@
 # choose your server in start.sh
-gunicorn==20.0.2
+gunicorn==20.0.4
 gevent==1.4.0
 # or uwsgi (only if using cpython instead of pypy3)
 #uWSGI==2.0.18
 
 requests==2.22.0
 flask-appbuilder==2.2.0
-boto3==1.10.26
+boto3==1.10.28
 suds-py3==1.3.4.0
 mysqlclient==1.4.6
 schema==0.7.1
