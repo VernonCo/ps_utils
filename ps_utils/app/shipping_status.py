@@ -108,20 +108,28 @@ class ShippingStatus(SimpleFormView):
         form_title = 'Ship Status Request Form'
         error_flag = False
         html_code = 200
+        errorMessage = ''
         client = SoapClient(service_method='getOrderShipmentNotification', service_url=c.shipping_url, service_WSDL=c.shipping_wsdl, service_code='OSN',
                 service_version=c.shipping_version, filters=False, values=values, **kw)
         data = client.service_call()
         # if error return to request form
-        if data == {} or ('errorMessage' not in data and 'OrderShipmentNotificationArray' not in data):
-            flash('Error: empty response returned for request', 'error')
+        if data == {} \
+            or ('errorMessage' not in data and \
+                ('OrderShipmentNotificationArray' not in data) \
+            or ('OrderShipmentNotificationArray' in data \
+                and not data['OrderShipmentNotificationArray'])):
+            errorMessage = 'Error: empty response returned for request'
+            flash(errorMessage, 'error')
             error_flag = True
         if data == 'Unable to get Response':
-            flash('Error: {}'.format(data), 'error')
+            errorMessage = 'Error: {}'.format(data)
+            flash(errorMessage, 'error')
             error_flag = True
             html_code = 500
         elif 'SoapFault' in data:
             # safe html from exceptions
-            flash(Markup('{}'.format(data['SoapFault'])), 'error')
+            errorMessage = Markup('{}'.format(data['SoapFault']))
+            flash(errorMessage, 'error')
             error_flag = True
             html_code = 500
         elif 'errorMessage' in data and data.errorMessage.code > 9:
@@ -129,6 +137,11 @@ class ShippingStatus(SimpleFormView):
             flash('Error Message: {} from {}'.format(data.errorMessage.description, c), 'error')
             error_flag = True
 
+        if error_flag and return_type == 'internal':
+            if not errorMessage: #has errorMessage in sobject
+                return client.sobject_to_dict(json_serialize=True)
+            else:
+                return {"errorMessage":{"code":500,"description":errorMessage}}
         # if requesting json
         if  return_type == 'json':
             data = client.sobject_to_json()
