@@ -215,6 +215,15 @@ class Utilities(BaseView):
                         c.po_url = row['URL']
                         c.po_wsdl = good_url
                         c.po_version = service_version
+                        # add po test url if available
+                        try:
+                            wsdl_url_test = row['TestURL'].strip() + "?wsdl"
+                            good_url_test = try_url(row['TestURL'].strip(), wsdl_url_test, code, service_version)
+                            if good_url_test:
+                                c.po_url_test = row['TestURL']
+                                c.po_wsdl_test = good_url_test
+                        except:
+                            pass
 
             #save working url endpoints into db
             if has_url:

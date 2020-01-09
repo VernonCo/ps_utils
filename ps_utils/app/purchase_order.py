@@ -7,7 +7,7 @@ from flask_appbuilder import SimpleFormView, expose
 from flask_appbuilder.api import safe
 from schema import And, Const, Optional, Regex, Schema, Use
 
-from . import csrf, db  # , PRODUCTION
+from . import csrf, db, PRODUCTION
 from .models import Company
 from .soap_utils import SoapClient
 
@@ -184,13 +184,24 @@ class JsonPO(SimpleFormView):
         logging.error('XML: {}'.format(self.XML))
         # assert False
 
-    def send_order_types_request(self, kw):
+    def send_order_types_request(self, **kw):
         """send the request.  Can be used by index or a plugin"""
         html_code = 200
-        # TODO: add test links to the model and use 'if not PRODUCTION:' to switch to test
-        client = SoapClient(service_method='sendPO',
-                            service_url=self.company.po_url,
-                            service_WSDL=self.company.po_wsdl,
+        if 'companyID' in kw:
+            cid = int(kw.pop('companyID'))
+            self.company = db.session.query(Company).get(cid)
+        if not self.company:
+            return [json.dumps({"errorMessage":"Company's getSupportedOrderTypes() service is not available"}), 500]
+        else:
+            if PRODUCTION:
+                url = self.company.po_url
+                wsdl = self.company.po_wsdl
+            else:
+                url = self.company.po_url_test
+                wsdl = self.company.po_wsdl_test
+            client = SoapClient(service_method='getSupportedOrderTypes',
+                            service_url=url,
+                            service_WSDL=wsdl,
                             service_code='PO',
                             service_version=self.company.po_version,
                             filters=False,
@@ -244,6 +255,15 @@ class JsonPO(SimpleFormView):
             ])
             data = json.dumps(error)
             return data, 500, {'Content-Type': 'application/json'}
+        wsdl = self.company.po_wsdl
+        if not PRODUCTION:
+            wsdl = self.company.po_wsdl_test
+        if not wsdl:
+            error = dict(ServiceMessageArray=[
+                dict(Code=100, Description="Company does not have a PO service url.")
+            ])
+            data = json.dumps(error)
+            return data, 500, {'Content-Type': 'application/json'}
         kw = {
             "wsVersion": self.company.po_version,
             "id": self.company.user_name,
@@ -273,10 +293,15 @@ class JsonPO(SimpleFormView):
         self.XML = ''
         self.PO = kw
         self._create_XML()
-        # TODO: add test links to the model and use 'if not PRODUCTION:' to switch to test
+        if PRODUCTION:
+            url = self.company.po_url
+            wsdl = self.company.po_wsdl
+        else:
+            url = self.company.po_url_test
+            wsdl = self.company.po_wsdl_test
         client = SoapClient(service_method='sendPO',
-                            service_url=self.company.po_url,
-                            service_WSDL=self.company.po_wsdl,
+                            service_url=url,
+                            service_WSDL=wsdl,
                             service_code='PO',
                             service_version=self.company.po_version,
                             filters=False,

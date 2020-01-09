@@ -11,17 +11,19 @@
         <h4 class="panel-title">Instructions for submitting a PO</h4>
     </div>
     <div class="well">
+        <p style="text-align: center; font-weight: bold;">To submit a production PO for a company, the company's live_po field must be set to 1.</p>
         <p style="text-align: center; font-weight: bold; color: red;">
             When testing...Make sure that you create a companyID that is either:
         </p>
         <p style="text-align: center; font-weight: bold;">
-            Hitting '/jsonpo/receiveTest/' for it's po_url
+            Hitting '<i>scheme://thisdomain</i>/jsonpo/receiveTest/' for it's po_url
         </p>
         <p style="text-align: center; font-weight: bold; color: red;">
             OR
         </p>
         <p style="text-align: center; font-weight: bold;">
-            The po_url and po_wsdl of the requested companyID are pointing to the company test site!
+            The environment variable ENVIRONMENT=1 is commented out or set to 0 and <br/>
+            The po_url_test and po_wsdl_test of the requested companyID are pointing to the company test site!
         </p>
     </div>
     <div>
