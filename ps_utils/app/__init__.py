@@ -50,6 +50,15 @@ if 'product_urlV2' not in check:
             e = repr(e)
         logging.error('Database not updated. See app.__init__. Error: {}'.format(e))
         exit(1)
+if 'po_url_test' not in check:
+    try:
+        sql = DDL('ALTER TABLE company ADD COLUMN po_url_test VARCHAR(255) AFTER po_url')
+        db.engine.execute(sql)
+        sql = DDL('ALTER TABLE company ADD COLUMN po_wsdl_test VARCHAR(255) AFTER po_wsdl')
+        db.engine.execute(sql)
+    except:
+        logging.error('Database not updated. See app.__init__')
+        exit(1)
 
 appbuilder = AppBuilder(app, db.session)
 csrf = CSRFProtect(app)

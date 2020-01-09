@@ -26,6 +26,8 @@ class Company(Model, AuditMixin):
     media_version =  Column(String(564), default='1.0.0')
     order_url =  Column(String(255), nullable=True)
     order_wsdl =  Column(String(255), nullable=True)
+    po_url_test =  Column(String(255), nullable=True)
+    po_wsdl_test =  Column(String(255), nullable=True)
     order_version =  Column(String(564), default='1.0.0')
     po_url =  Column(String(255), nullable=True)
     po_wsdl =  Column(String(255), nullable=True)
