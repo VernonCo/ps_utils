@@ -315,10 +315,9 @@ class JsonPO(SimpleFormView):
         result = client.sobject_to_dict()
         # sudsy-py3 not parsing response correctly for ServiceMessageArray
         try:
-            if result['ServiceMessageArray']['ServiceMessage'][0]['code']:
-                temp = result['ServiceMessageArray']
-                ServiceMessageArray = [{"ServiceMessage":temp['ServiceMessage'][0]}]
-                result['ServiceMessageArray'] = ServiceMessageArray
+            if 'ServiceMessageArray' in result and result['ServiceMessageArray']['ServiceMessage'][0]['code']:
+                # {ServiceMessage:[{code: 2xx, severity: Error, description: "something"},{...}]
+                pass # it worked
         except Exception as e:
             print(str(e))
         return [json.dumps(result), html_code]
