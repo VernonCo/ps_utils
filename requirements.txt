@@ -5,11 +5,11 @@ gevent==1.4.0
 #uWSGI==2.0.18
 
 requests==2.23.0
-flask-appbuilder==2.3.0
-suds-py3==1.4.0.0
+flask-appbuilder==2.3.4
+suds-py3==1.4.5.0
 mysqlclient==1.4.6
-schema==0.7.1
+schema==0.7.5
 # zappa
 # used on developement
 pysnooper==0.3.0
-xmljson==0.2.0
+xmljson==0.2.1
