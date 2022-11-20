@@ -1,6 +1,6 @@
 # choose your server in start.sh
 gunicorn==20.0.4
-gevent==1.4.0
+gevent==22.10.2
 # or uwsgi (only if using cpython instead of pypy3)
 #uWSGI==2.0.18
 
