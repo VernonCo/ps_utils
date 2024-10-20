@@ -7,7 +7,7 @@ gevent==1.4.0
 requests==2.23.0
 flask-appbuilder==2.3.0
 suds-py3==1.4.0.0
-mysqlclient==1.4.6
+mysqlclient==2.2.5
 schema==0.7.1
 # zappa
 # used on developement
